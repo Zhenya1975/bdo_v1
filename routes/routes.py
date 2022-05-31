@@ -10,5 +10,7 @@ home = Blueprint('home', __name__)
 
 @home.route('/')
 def home_view():
-  eo_data=Eo_DB.query.all()
+  eo_data=Eo_DB.query.order_by(Eo_DB.teh_mesto, Eo_DB.be_code).all()
+  
+  # eo_data.sort_values(['teh_mesto', 'be_description', 'eo_class_code', 'head_eo_model_descr'], inplace=True)
   return render_template('home.html', eo_data = eo_data)

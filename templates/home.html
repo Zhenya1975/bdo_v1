@@ -20,7 +20,7 @@
             <tr>
                 <th>be_code, be_description</th>
                 <th>eo_code</th>
-                <th>eo_description</th>
+                <th>eo_description / teh_mesto</th>
              
             </tr>
         </thead>
@@ -29,7 +29,7 @@
           <tr>  
                 <td>{{ eo.be_data.be_code }}: {{ eo.be_data.be_description }}</td>
                 <td>{{ eo.eo_code }}</td>
-                <td>{{ eo.eo_description }}</td>
+                <td>{{ eo.eo_description }} / {{eo.teh_mesto }}</td>
                 
             </tr>
           {% endfor %}  
