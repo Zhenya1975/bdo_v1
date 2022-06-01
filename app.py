@@ -3,10 +3,14 @@ from extensions import extensions
 from routes.routes import home
 import os
 
+
 db_dir = os.path.abspath(os.path.dirname(__file__)) + "/database"
 
 db = extensions.db
 migrate = extensions.migrate
+
+
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'

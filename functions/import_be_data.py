@@ -9,8 +9,9 @@ db = extensions.db
 def update_sap_be_data():
   with app.app_context():
     with open('temp_data/be_data.csv', encoding='utf8') as csvfile:
-      sap_eo_data = csv.reader(csvfile)
-      for row in sap_eo_data:
+      sap_be_data = csv.reader(csvfile)
+      header = next(sap_be_data)
+      for row in sap_be_data:
         be_code = row[0]
         be_description = row[1]
         be_location = row[2]

@@ -9,6 +9,9 @@ class Eo_DB(db.Model):
   eo_description = db.Column(db.String)
   be_code = db.Column(db.Integer, db.ForeignKey('be_DB.be_code'))
   teh_mesto = db.Column(db.String)
+  gar_no = db.Column(db.Integer)
+  head_type = db.Column(db.String)
+  
 
 class Be_DB(db.Model):
   be_id = db.Column(db.Integer, primary_key=True)

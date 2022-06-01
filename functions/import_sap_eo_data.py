@@ -17,6 +17,8 @@ def update_sap_eo_data():
         temp_eo_code = row[2]
         eo_description = row[3]
         teh_mesto = row[4]
+        gar_no = row[5]
+        head_type = row[6]
         
         actual_eo_data = Eo_DB.query.filter_by(eo_code=eo_code).first()
         if actual_eo_data:
@@ -24,8 +26,12 @@ def update_sap_eo_data():
           actual_eo_data.eo_description = eo_description
           actual_eo_data.be_code = be_code
           actual_eo_data.teh_mesto = teh_mesto
+          actual_eo_data.head_type = head_type
+          actual_eo_data.gar_no = gar_no
         else:
-          eo_record = Eo_DB(be_code = be_code, eo_code=eo_code, temp_eo_code = temp_eo_code, eo_description = eo_description, teh_mesto=teh_mesto)
+          eo_record = Eo_DB(be_code = be_code, eo_code=eo_code, temp_eo_code = temp_eo_code, eo_description = eo_description, teh_mesto=teh_mesto, head_type = head_type, gar_no = gar_no)
+          
+            
           db.session.add(eo_record)
         try:
           db.session.commit()
