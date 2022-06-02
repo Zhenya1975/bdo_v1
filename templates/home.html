@@ -23,15 +23,15 @@
         <h4>SAP master EO data check</h4>
         <div>
           <table id="example" class="table table-striped table-bordered" style="width:100%">
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th>Upload</th>
-                <th>Download</th>
-            </tr>
-        </thead>
-        <tbody>
-          <tr>  
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Upload</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr>  
                 <td>Данные БДО САП</td>
                 <td>
                   <p>Загрузка данных БДО САП. Имя файла: "sap_eo_data.xlsx"</p>
@@ -39,13 +39,20 @@
                   <input type=file name=file>
                   <button type="submit">Загрузить</button>
                 </form></td>
-                <td></td>
-                
-                
-            </tr>
-       
-    </table>
+                <td></td>    
+              </tr>
+          </table>
         </div>
+        <h4>Logs</h4>
+        <!-- Блок с логами -->
+        <div class="text-left">
+          <ul class="list-group list-group-flush">
+            {% for log_record in log_data %}
+              <li class="list-group-item">{{log_record.log_date}} {{log_record.log_text}}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        
     </div>
   </div>
 </div>

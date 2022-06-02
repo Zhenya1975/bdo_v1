@@ -1,7 +1,11 @@
 from extensions import extensions
 from datetime import datetime
+import pytz
 
 db = extensions.db
+utc_now = pytz.utc.localize(datetime.utcnow())
+pst_now = utc_now.astimezone(pytz.timezone("Europe/Moscow")).strftime("%d.%m.%Y %H:%M:%S")
+
 
 class Eo_DB(db.Model):
   eo_id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +28,6 @@ class Be_DB(db.Model):
 class LogsDB(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   log_text = db.Column(db.Text)
-  log_date = db.Column(db.DateTime, default=datetime.now())
+  log_date = db.Column(db.String, default=pst_now)
   log_status = db.Column(db.String)
   

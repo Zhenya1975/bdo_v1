@@ -1,9 +1,13 @@
 from flask import Blueprint, render_template, flash, request, jsonify, redirect, url_for, abort
 from sqlalchemy import desc
-from models.models import Eo_DB, Be_DB
+import pandas as pd
+from models.models import Eo_DB, Be_DB, LogsDB
 from extensions import extensions
+from initial_values.initial_values import sap_columns_to_master_columns
 from werkzeug.utils import secure_filename
 import os
+from functions import read_sap_eo_xlsx_file
+
 
 UPLOAD_FOLDER = '/uploads'
 ALLOWED_EXTENSIONS = {'csv', 'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -16,9 +20,10 @@ home = Blueprint('home', __name__)
 @home.route('/')
 def home_view():
   eo_data=Eo_DB.query.order_by(Eo_DB.teh_mesto, Eo_DB.be_code).all()
+  log_data = LogsDB.query.filter_by(log_status = "new").all()
   
   # eo_data.sort_values(['teh_mesto', 'be_description', 'eo_class_code', 'head_eo_model_descr'], inplace=True)
-  return render_template('home.html', eo_data = eo_data)
+  return render_template('home.html', eo_data = eo_data, log_data=log_data)
 
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -53,7 +58,11 @@ def upload_file():
     else:    
       # uploaded_file.save(os.path.join('uploads', uploaded_file.filename))
       uploaded_file.save(os.path.join('uploads', "sap_eo_data.xlsx"))
-      message = f"файл {uploaded_file.filename} загружен"    
+      message = f"файл {uploaded_file.filename} загружен"
+
+      read_sap_eo_xlsx_file.read_sap_eo_xlsx()
+      
+     
       flash(message, 'alert-success')
     return redirect(url_for('home.home_view'))
   
