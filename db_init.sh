@@ -4,4 +4,4 @@ rm -r migrations
 flask db init
 flask db migrate -m 'init'
 flask db upgrade
-python func.py
+python db_init_load_data.py

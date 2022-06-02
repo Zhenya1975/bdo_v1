@@ -1,6 +1,6 @@
 import pandas as pd
 from extensions import extensions
-from models.models import Eo_DB, Be_DB
+from models.models import Eo_DB, Be_DB, LogsDB
 from initial_values.initial_values import sap_columns_to_master_columns
 from app import app
 
@@ -27,6 +27,14 @@ def read_sap_eo_xlsx():
         db.session.add(new_eo_master_data_record)
         db.session.commit()
         print('в мастер-файл добавлена новая запись с eo: ', eo_code)
+        # обновляем статус в предыдущих записях лог файла
+        # log_data = LogsDB.query.all()
+        log_data_updated = LogsDB.query.update(dict(log_status='old'))
+        db.session.commit()
+        # добавляем новую запись в лог файл
+        log_data_new_record = LogsDB(log_text = f"В eo_master_data добавлена запись eo: {eo_code}", log_status = "new")
+        db.session.add(log_data_new_record)
+        db.session.commit()
 
         
     

@@ -1,4 +1,5 @@
 from extensions import extensions
+from datetime import datetime
 
 db = extensions.db
 
@@ -20,3 +21,9 @@ class Be_DB(db.Model):
   be_location = db.Column(db.String)
   be_data = db.relationship('Eo_DB', backref='be_data')
 
+class LogsDB(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  log_text = db.Column(db.Text)
+  log_date = db.Column(db.DateTime, default=datetime.now())
+  log_status = db.Column(db.String)
+  

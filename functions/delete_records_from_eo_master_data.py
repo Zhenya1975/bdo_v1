@@ -4,7 +4,7 @@ from app import app
 
 db = extensions.db
 
-# eo_to_delete = ['10000007379014589']
+eo_to_delete = ['10000007379014589']
 
 def delete_from_eo_master_data():
   with app.app_context():
