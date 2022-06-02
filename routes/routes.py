@@ -37,7 +37,9 @@ def upload_file():
     
     uploaded_file = request.files['file']
     if uploaded_file.filename != '':
-        uploaded_file.save(os.path.join('uploads', uploaded_file.filename))
+      uploaded_file.save(os.path.join('uploads', uploaded_file.filename))
+      message = f"файл {uploaded_file.filename} загружен"    
+      flash(message)
     return redirect(url_for('home.home_view'))
   
   return 'not uploaded'
