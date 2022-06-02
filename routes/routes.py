@@ -20,14 +20,12 @@ def home_view():
   # eo_data.sort_values(['teh_mesto', 'be_description', 'eo_class_code', 'head_eo_model_descr'], inplace=True)
   return render_template('home.html', eo_data = eo_data)
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
 def allowed_file(filename):
-    return '.' in filename and \
-    filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+  ALLOWED_EXTENSIONS = {'csv', 'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}  
+  return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @home.route('/upload', methods=['GET', 'POST'])
 def upload_file():
@@ -36,10 +34,18 @@ def upload_file():
     
     
     uploaded_file = request.files['file']
-    if uploaded_file.filename != '':
+    if uploaded_file.filename == '':
+      message = f"файл с пустым именем"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+    elif allowed_file(uploaded_file.filename) == False:
+      message = f"Неразрешенное расширение файла {uploaded_file.filename}"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+    else:  
       uploaded_file.save(os.path.join('uploads', uploaded_file.filename))
       message = f"файл {uploaded_file.filename} загружен"    
-      flash(message)
+      flash(message, 'alert-success')
     return redirect(url_for('home.home_view'))
   
   return 'not uploaded'

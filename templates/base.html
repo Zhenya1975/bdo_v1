@@ -14,17 +14,18 @@
 </head>
 <body>
   
-{% with messages = get_flashed_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     <ul class=flashes style="list-style: none;">
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      {% for message in messages %}
+    
+      {% for category, message in messages %}
+      <div class="alert {{ category }} alert-dismissible fade show" role="alert">  
       <li>{{ message }}</li>
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
+      </div>
     {% endfor %}
-    </div>  
     </ul>
   {% endif %}
 {% endwith %}
