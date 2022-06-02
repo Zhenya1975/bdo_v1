@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, request, jsonify, redirect, url_for, abort
+from flask import Blueprint, render_template, flash, request, jsonify, redirect, url_for, abort, send_file
 from sqlalchemy import desc
 import pandas as pd
 from models.models import Eo_DB, Be_DB, LogsDB
@@ -6,7 +6,7 @@ from extensions import extensions
 from initial_values.initial_values import sap_columns_to_master_columns
 from werkzeug.utils import secure_filename
 import os
-from functions import read_sap_eo_xlsx_file
+from functions import read_sap_eo_xlsx_file, generate_excel_master_eo
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -32,8 +32,11 @@ def allowed_file(filename):
   ALLOWED_EXTENSIONS = {'xlsx','csv'}  
   return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@home.route('/upload', methods=['GET', 'POST'])
-def upload_file():
+
+
+
+@home.route('/upload_sap_eo_file', methods=['GET', 'POST'])
+def upload_sap_eo_file():
   if request.method == 'POST':
     # check if the post request has the file part
   
@@ -66,4 +69,17 @@ def upload_file():
     return redirect(url_for('home.home_view'))
   
   return 'not uploaded'
-  
+
+
+@home.route('/download_master_eo_file', methods=['GET', 'POST'])
+def download_master_eo_file():
+  if request.method == 'POST':
+    
+    # выпекаем excel-файл из базы данных
+    generate_excel_master_eo.generate_excel_master_eo()
+    downloads = os.path.join('downloads', "eo_master_data.xlsx")
+    # Returning file from appended path
+    return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
+
+    
+    

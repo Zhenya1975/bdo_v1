@@ -35,11 +35,18 @@
                 <td>Данные БДО САП</td>
                 <td>
                   <p>Загрузка данных БДО САП. Имя файла: "sap_eo_data.xlsx"</p>
-                  <form action = "{{url_for( 'home.upload_file' )}}" method=post enctype=multipart/form-data>
+                  <form action = "{{url_for( 'home.upload_sap_eo_file' )}}" method=post enctype=multipart/form-data>
                   <input type=file name=file>
-                  <button type="submit">Загрузить</button>
-                </form></td>
-                <td></td>    
+                  <button class="btn btn-primary" type="submit">Загрузить</button>
+                </form>
+                </td>
+                <td>
+              
+                  <form action = "{{url_for( 'home.download_master_eo_file' )}}" method=post enctype=multipart/form-data>
+                    Выгрузка мастер-данных БДО
+                  <button class="btn btn-info" type="submit">Выгрузить</button>
+                </form>
+                </td>    
               </tr>
           </table>
         </div>
