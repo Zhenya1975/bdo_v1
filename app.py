@@ -10,8 +10,6 @@ db = extensions.db
 migrate = extensions.migrate
 
 
-
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fights.db'
