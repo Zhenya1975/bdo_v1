@@ -36,8 +36,7 @@ def allowed_file(filename):
 def upload_file():
   if request.method == 'POST':
     # check if the post request has the file part
-    
-    
+  
     uploaded_file = request.files['file']
     if uploaded_file.filename == '':
       message = f"файл с пустым именем"
