@@ -22,13 +22,14 @@ def read_sap_eo_xlsx():
     eo_description = getattr(row, "eo_description")
     teh_mesto = getattr(row, "teh_mesto")
     gar_no = getattr(row, "gar_no")
+    head_type = getattr(row, "head_type")
     # print("eo_code в файле excel из сап ", eo_code)
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=eo_code).first()
     # если данных нет, то добавляем запись. Если данные есть, то будем далее обновлять
     if eo_master_data == None:
       # new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no)
-      new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no)
+      new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no, head_type=head_type)
       db.session.add(new_eo_master_data_record)
       db.session.commit()
       print('в мастер-файл добавлена новая запись с eo: ', eo_code)
@@ -41,7 +42,13 @@ def read_sap_eo_xlsx():
       db.session.add(log_data_new_record)
       db.session.commit()
     else:
-      print('данные уже есть')
+      # данные уже есть
+      eo_master_data.eo_description = eo_description
+      eo_master_data.teh_mesto = teh_mesto
+      eo_master_data.gar_no = gar_no
+      eo_master_data.head_type=head_type
+      db.session.commit()
+    
         
     
 

@@ -77,8 +77,7 @@ def download_master_eo_file():
     
     # выпекаем excel-файл из базы данных
     generate_excel_master_eo.generate_excel_master_eo()
-    downloads = os.path.join('downloads', "eo_master_data.xlsx")
-    # Returning file from appended path
+
     return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
 
     
