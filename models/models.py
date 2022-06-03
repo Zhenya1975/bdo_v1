@@ -16,6 +16,8 @@ class Eo_DB(db.Model):
   teh_mesto = db.Column(db.String)
   gar_no = db.Column(db.Integer)
   head_type = db.Column(db.String)
+  operation_start_date=db.Column(db.DateTime)
+  expected_operation_finish_date = db.Column(db.DateTime)
   
 
 class Be_DB(db.Model):

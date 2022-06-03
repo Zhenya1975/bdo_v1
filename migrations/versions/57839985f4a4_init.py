@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 703843831d06
+Revision ID: 57839985f4a4
 Revises: 
-Create Date: 2022-06-02 15:08:35.612120
+Create Date: 2022-06-03 06:57:06.282003
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '703843831d06'
+revision = '57839985f4a4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -42,6 +42,8 @@ def upgrade():
     sa.Column('teh_mesto', sa.String(), nullable=True),
     sa.Column('gar_no', sa.Integer(), nullable=True),
     sa.Column('head_type', sa.String(), nullable=True),
+    sa.Column('operation_start_date', sa.DateTime(), nullable=True),
+    sa.Column('expected_operation_finish_date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['be_code'], ['be_DB.be_code'], name=op.f('fk_eo_DB_be_code_be_DB')),
     sa.PrimaryKeyConstraint('eo_id', name=op.f('pk_eo_DB')),
     sa.UniqueConstraint('eo_code', name=op.f('uq_eo_DB_eo_code'))
