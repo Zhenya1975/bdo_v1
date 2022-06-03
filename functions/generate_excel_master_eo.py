@@ -18,6 +18,13 @@ def generate_excel_master_eo():
     temp_dict['teh_mesto'] = eo_data.teh_mesto
     temp_dict['gar_no'] = eo_data.gar_no
     temp_dict['head_type'] = eo_data.head_type
+    operation_start_date = eo_data.operation_start_date.strftime("%d.%m.%Y")
+    temp_dict['operation_start_date'] = operation_start_date
+    expected_operation_finish_date = eo_data.expected_operation_finish_date.strftime("%d.%m.%Y")
+    if expected_operation_finish_date == '31.12.2199':
+      temp_dict['expected_operation_finish_date'] = ""
+    else:
+      temp_dict['expected_operation_finish_date'] = expected_operation_finish_date
     
     result_data.append(temp_dict)
   excel_master_eo_df = pd.DataFrame(result_data)

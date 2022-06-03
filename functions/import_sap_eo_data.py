@@ -30,11 +30,11 @@ def update_sap_eo_data():
       head_type = getattr(row, "head_type")
       operation_start_date = getattr(row, "operation_start_date")
       expected_operation_finish_date = getattr(row, "expected_operation_finish_date")
-      # print("из sap_eo_data csv: eo_code", eo_code)
+
       actual_eo_data = Eo_DB.query.filter_by(eo_code=eo_code).first()
       # print(actual_eo_data)
       if actual_eo_data != None:
-        # print("в бд есть запись с eo ", eo_code, " обновляем данные")
+
         actual_eo_data.temp_eo_code = temp_eo_code
         actual_eo_data.eo_description = eo_description
         actual_eo_data.be_code = be_code
