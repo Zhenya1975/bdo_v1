@@ -25,10 +25,13 @@ def generate_excel_master_eo():
       temp_dict['expected_operation_finish_date'] = ""
     else:
       temp_dict['expected_operation_finish_date'] = expected_operation_finish_date
-    
+    try:
+      temp_dict['eo_model_name'] = eo_data.model_data.eo_model_name
+    except:
+      pass
     result_data.append(temp_dict)
   excel_master_eo_df = pd.DataFrame(result_data)
-  excel_master_eo_df.sort_values(['be_code', 'teh_mesto'], inplace=True)
+  excel_master_eo_df.sort_values(['be_code','teh_mesto', 'eo_model_name'], inplace=True)
   
   
   excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)

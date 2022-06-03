@@ -18,6 +18,13 @@ class Eo_DB(db.Model):
   head_type = db.Column(db.String)
   operation_start_date=db.Column(db.DateTime)
   expected_operation_finish_date = db.Column(db.DateTime)
+  eo_model_id = db.Column(db.Integer, db.ForeignKey('models_DB.eo_model_id'))
+
+class Models_DB(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  eo_model_id = db.Column(db.Integer, unique=True)
+  eo_model_name = db.Column(db.String)
+  model_data = db.relationship('Eo_DB', backref='model_data')
   
 
 class Be_DB(db.Model):
