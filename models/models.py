@@ -49,7 +49,7 @@ class LogsDB(db.Model):
 
 class Eo_data_conflicts(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  eo_code = db.Column(db.Integer, db.ForeignKey('eo_DB.eo_code'))
+  eo_code = db.Column(db.String, db.ForeignKey('eo_DB.eo_code'))
   eo_conflict_field = db.Column(db.String)
   eo_conflict_field_current_master_data = db.Column(db.String)
   eo_conflict_field_uploaded_data = db.Column(db.String)
