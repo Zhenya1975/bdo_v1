@@ -20,6 +20,7 @@ class Eo_DB(db.Model):
   expected_operation_finish_date = db.Column(db.DateTime)
   eo_model_id = db.Column(db.Integer, db.ForeignKey('models_DB.eo_model_id'))
   eo_class_code = db.Column(db.String, db.ForeignKey('eo_class_DB.eo_class_code'))
+  conflict_data = db.relationship('Eo_data_conflicts', backref='conflict_data')
 
 class Models_DB(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -45,4 +46,15 @@ class LogsDB(db.Model):
   log_text = db.Column(db.Text)
   log_date = db.Column(db.String, default=pst_now)
   log_status = db.Column(db.String)
+
+class Eo_data_conflicts(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  eo_code = db.Column(db.Integer, db.ForeignKey('eo_DB.eo_code'))
+  eo_conflict_field = db.Column(db.String)
+  eo_conflict_field_current_master_data = db.Column(db.String)
+  eo_conflict_field_uploaded_data = db.Column(db.String)
+  eo_conflict_description = db.Column(db.Text)
+  eo_conflict_date = db.Column(db.String, default=pst_now)
+  eo_conflict_status = db.Column(db.String, default='active')
+
   

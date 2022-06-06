@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, flash, request, jsonify, redirect, url_for, abort, send_file
 from sqlalchemy import desc
 import pandas as pd
-from models.models import Eo_DB, Be_DB, LogsDB
+from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts
 from extensions import extensions
 from initial_values.initial_values import sap_columns_to_master_columns
 from werkzeug.utils import secure_filename
