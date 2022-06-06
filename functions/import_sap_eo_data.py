@@ -31,6 +31,7 @@ def update_sap_eo_data():
       operation_start_date = getattr(row, "operation_start_date")
       expected_operation_finish_date = getattr(row, "expected_operation_finish_date")
       eo_model_id = getattr(row, "eo_model_id")
+      eo_class_code = getattr(row, "eo_class_code")
 
       actual_eo_data = Eo_DB.query.filter_by(eo_code=eo_code).first()
       # print(actual_eo_data)
@@ -44,10 +45,11 @@ def update_sap_eo_data():
         actual_eo_data.operation_start_date = operation_start_date
         actual_eo_data.expected_operation_finish_date=expected_operation_finish_date
         actual_eo_data.eo_model_id = eo_model_id
+        actual_eo_data.eo_class_code = eo_class_code
         
       else:
         # print("в бд нет записи с eo ", eo_code, " добавляем данные")
-        eo_record = Eo_DB(be_code = be_code, eo_code=eo_code, temp_eo_code = temp_eo_code, eo_description = eo_description, teh_mesto=teh_mesto, head_type = head_type, gar_no = gar_no, operation_start_date=operation_start_date, expected_operation_finish_date=expected_operation_finish_date, eo_model_id=eo_model_id)
+        eo_record = Eo_DB(be_code = be_code, eo_code=eo_code, temp_eo_code = temp_eo_code, eo_description = eo_description, teh_mesto=teh_mesto, head_type = head_type, gar_no = gar_no, operation_start_date=operation_start_date, expected_operation_finish_date=expected_operation_finish_date, eo_model_id=eo_model_id, eo_class_code=eo_class_code)
         
         db.session.add(eo_record)
       try:

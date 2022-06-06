@@ -13,8 +13,18 @@ def generate_excel_master_eo():
     temp_dict = {}
     temp_dict['be_code'] = eo_data.be_code
     temp_dict['be_description'] = eo_data.be_data.be_description
+    try:
+      temp_dict['eo_class_code'] = eo_data.eo_class_code
+      temp_dict['eo_class_description'] = eo_data.eo_class_data.eo_class_description
+    except:
+      pass
     temp_dict['eo_code'] = eo_data.eo_code
     temp_dict['eo_description'] = eo_data.eo_description
+    try:
+      temp_dict['eo_model_id'] = eo_data.eo_model_id
+      temp_dict['eo_model_name'] = eo_data.model_data.eo_model_name
+    except:
+      pass
     temp_dict['teh_mesto'] = eo_data.teh_mesto
     temp_dict['gar_no'] = eo_data.gar_no
     temp_dict['head_type'] = eo_data.head_type
@@ -25,10 +35,7 @@ def generate_excel_master_eo():
       temp_dict['expected_operation_finish_date'] = ""
     else:
       temp_dict['expected_operation_finish_date'] = expected_operation_finish_date
-    try:
-      temp_dict['eo_model_name'] = eo_data.model_data.eo_model_name
-    except:
-      pass
+    
     result_data.append(temp_dict)
   excel_master_eo_df = pd.DataFrame(result_data)
   excel_master_eo_df.sort_values(['be_code','teh_mesto', 'eo_model_name'], inplace=True)

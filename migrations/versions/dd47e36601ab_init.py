@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 8a039edb78c0
+Revision ID: dd47e36601ab
 Revises: 
-Create Date: 2022-06-03 15:15:29.485190
+Create Date: 2022-06-06 07:44:04.964831
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8a039edb78c0'
+revision = 'dd47e36601ab'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,6 +25,13 @@ def upgrade():
     sa.Column('be_location', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('be_id', name=op.f('pk_be_DB')),
     sa.UniqueConstraint('be_code', name=op.f('uq_be_DB_be_code'))
+    )
+    op.create_table('eo_class_DB',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('eo_class_code', sa.String(), nullable=True),
+    sa.Column('eo_class_description', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_eo_class_DB')),
+    sa.UniqueConstraint('eo_class_code', name=op.f('uq_eo_class_DB_eo_class_code'))
     )
     op.create_table('logsDB',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -52,7 +59,9 @@ def upgrade():
     sa.Column('operation_start_date', sa.DateTime(), nullable=True),
     sa.Column('expected_operation_finish_date', sa.DateTime(), nullable=True),
     sa.Column('eo_model_id', sa.Integer(), nullable=True),
+    sa.Column('eo_class_code', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['be_code'], ['be_DB.be_code'], name=op.f('fk_eo_DB_be_code_be_DB')),
+    sa.ForeignKeyConstraint(['eo_class_code'], ['eo_class_DB.eo_class_code'], name=op.f('fk_eo_DB_eo_class_code_eo_class_DB')),
     sa.ForeignKeyConstraint(['eo_model_id'], ['models_DB.eo_model_id'], name=op.f('fk_eo_DB_eo_model_id_models_DB')),
     sa.PrimaryKeyConstraint('eo_id', name=op.f('pk_eo_DB')),
     sa.UniqueConstraint('eo_code', name=op.f('uq_eo_DB_eo_code'))
@@ -65,5 +74,6 @@ def downgrade():
     op.drop_table('eo_DB')
     op.drop_table('models_DB')
     op.drop_table('logsDB')
+    op.drop_table('eo_class_DB')
     op.drop_table('be_DB')
     # ### end Alembic commands ###
