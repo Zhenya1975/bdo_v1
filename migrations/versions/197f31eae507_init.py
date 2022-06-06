@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 0e6656a8c994
+Revision ID: 197f31eae507
 Revises: 
-Create Date: 2022-06-06 12:59:22.681665
+Create Date: 2022-06-06 15:38:54.313596
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0e6656a8c994'
+revision = '197f31eae507'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -68,7 +68,7 @@ def upgrade():
     )
     op.create_table('eo_data_conflicts',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('eo_code', sa.Integer(), nullable=True),
+    sa.Column('eo_code', sa.String(), nullable=True),
     sa.Column('eo_conflict_field', sa.String(), nullable=True),
     sa.Column('eo_conflict_field_current_master_data', sa.String(), nullable=True),
     sa.Column('eo_conflict_field_uploaded_data', sa.String(), nullable=True),

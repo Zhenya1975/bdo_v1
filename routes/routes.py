@@ -6,7 +6,7 @@ from extensions import extensions
 from initial_values.initial_values import sap_columns_to_master_columns
 from werkzeug.utils import secure_filename
 import os
-from functions import read_sap_eo_xlsx_file, generate_excel_master_eo
+from functions import read_sap_eo_xlsx_file, generate_excel_master_eo, generate_excel_conflicts
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -79,6 +79,15 @@ def download_master_eo_file():
     generate_excel_master_eo.generate_excel_master_eo()
 
     return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
+
+@home.route('/conflicts', methods=['GET', 'POST'])
+def conflicts():
+  if request.method == 'POST':
+    
+    # выпекаем excel-файл из базы данных
+    generate_excel_conflicts.generate_excel_conflicts()
+
+    return send_file("downloads/conflicts.xlsx", as_attachment=True) 
 
     
     
