@@ -37,10 +37,10 @@ def read_sap_eo_xlsx():
     gar_no = str(getattr(row, "gar_no"))
     
     # если в поле гаражного номера не цифра, то меняем это значение на ноль
-    try:
-      gar_no = int(gar_no)
-    except:
-      gar_no = 0
+    # try:
+    #   gar_no = int(gar_no)
+    # except:
+    #   gar_no = 0
     # head_type = getattr(row, "head_type")
     operation_start_date = getattr(row, "operation_start_date")
     # print("eo_code в файле excel из сап ", eo_code)
