@@ -56,7 +56,7 @@
               </tr>
               <tr>
                 <td>
-                  Данные с Бизнес-единиц
+                  Данные из Бизнес-единиц
                 </td>
                 <td>
                   <p>Загрузка данных из файлов "Парк оборудования". Имя файла: <strong>"be_eo_data.xlsx"</strong>. Имя листа: <strong>"be_eo_data"</strong> </p>
@@ -65,6 +65,13 @@
                   <input type=file name=file>
                   <button class="btn btn-primary" type="submit">Загрузить</button>
                 </form>
+                </td>
+                <td>
+                  <form action = "{{url_for( 'home.download_be_data_template' )}}" method=post enctype=multipart/form-data>
+                    Шаблон загрузки данных из Бизнес единиц
+                  <button class="btn btn-info" type="submit">Выгрузить</button>
+                </form>
+                  
                 </td>
               </tr>
                 

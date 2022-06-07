@@ -115,13 +115,24 @@ def upload_sap_eo_file():
   return 'not uploaded'
 
 
+
+@home.route('/download_be_data_template', methods=['GET', 'POST'])
+def download_be_data_template():
+  if request.method == 'POST':    
+    return send_file("downloads/be_eo_data_template.xlsx", as_attachment=True) 
+  return 'not downloaded be_eo_data_template'
+
+
 @home.route('/download_master_eo_file', methods=['GET', 'POST'])
 def download_master_eo_file():
   if request.method == 'POST':
     
     # выпекаем excel-файл из базы данных
-    generate_excel_master_eo.generate_excel_master_eo()
-
+    try:
+      generate_excel_master_eo.generate_excel_master_eo()
+    except Exception as e:
+      print("не удалось создать excel файл eo_master_data.xlsx. Ошибка: ", e)
+      
     return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
 
 @home.route('/conflicts', methods=['GET', 'POST'])
