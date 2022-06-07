@@ -21,9 +21,11 @@ home = Blueprint('home', __name__)
 def home_view():
   eo_data=Eo_DB.query.order_by(Eo_DB.teh_mesto, Eo_DB.be_code).all()
   log_data = LogsDB.query.filter_by(log_status = "new").all()
-  
+  conflicts_data = Eo_data_conflicts.query.filter_by(eo_conflict_status="active").all()
+  number_of_active_conflicts = len(list(conflicts_data))
+
   # eo_data.sort_values(['teh_mesto', 'be_description', 'eo_class_code', 'head_eo_model_descr'], inplace=True)
-  return render_template('home.html', eo_data = eo_data, log_data=log_data)
+  return render_template('home.html', eo_data = eo_data, log_data=log_data, number_of_active_conflicts=number_of_active_conflicts)
 
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}

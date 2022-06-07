@@ -6,6 +6,21 @@ db = extensions.db
 utc_now = pytz.utc.localize(datetime.utcnow())
 pst_now = utc_now.astimezone(pytz.timezone("Europe/Moscow")).strftime("%d.%m.%Y %H:%M:%S")
 
+class Eo_candidatesDB(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  eo_code = db.Column(db.String, unique=True)
+  temp_eo_code = db.Column(db.String)
+  eo_description = db.Column(db.String)
+  be_code = db.Column(db.Integer)
+  teh_mesto = db.Column(db.String)
+  gar_no = db.Column(db.String)
+  head_type = db.Column(db.String)
+  eo_model_id = db.Column(db.Integer)
+  eo_class_code = db.Column(db.String)
+
+
+  
+  
 
 class Eo_DB(db.Model):
   eo_id = db.Column(db.Integer, primary_key=True)

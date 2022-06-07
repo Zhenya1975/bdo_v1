@@ -23,7 +23,7 @@
         <h4>SAP master EO data check</h4>
         <div class="d-flex justify-content-start">
         <form action = "{{url_for( 'home.conflicts' )}}" method=post enctype=multipart/form-data>
-                    Конфликты
+                    Конфликты ({{number_of_active_conflicts }})
                   <button class="btn btn-info" type="submit">Выгрузить</button>
                 </form>
         </div>
