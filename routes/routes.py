@@ -60,22 +60,12 @@ def upload_be_eo_file():
       flash(message, 'alert-danger')    
       return redirect(url_for('home.home_view'))
 
-    elif "xlsx" not in uploaded_file.filename:
-      message = "В имени файла нет расширения xlsx"
-      flash(message, 'alert-danger')    
-      return redirect(url_for('home.home_view'))
     
     else:    
       uploaded_file.save(os.path.join('uploads', "be_eo_data.xlsx"))
       message = f"файл {uploaded_file.filename} загружен"
-      
-      read_file_result = read_be_eo_xlsx_file.read_be_eo_xlsx()
-      if read_file_result == "fail":
-        message = f"Не удалось прочитать файл {uploaded_file.filename}. Нет листа be_eo_data"
-        flash(message, 'alert-danger')
-        return redirect(url_for('home.home_view'))
-        
-        
+      print(f"файл {uploaded_file.filename} загружен")
+      read_be_eo_xlsx_file.read_be_eo_xlsx()
       flash(message, 'alert-success')
       return redirect(url_for('home.home_view'))
 
