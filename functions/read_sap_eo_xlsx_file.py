@@ -74,7 +74,7 @@ def read_sap_eo_xlsx():
       # проверяем на ситуацию в конфликте после внесения изменений
       if str(potencial_gar_no_conflict.eo_conflict_field_current_master_data) == (potencial_gar_no_conflict.eo_conflict_field_uploaded_data):
         potencial_gar_no_conflict.eo_conflict_status = "resolved"
-        log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({eo_code}). Текущее значение гаражного номера в мастер-данных: {gar_no}")
+        log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({eo_code}). Текущее значение гаражного номера в мастер-данных: {gar_no}", 	log_status = "new")
         db.session.add(log_data_new_record)
         
         db.session.commit()
