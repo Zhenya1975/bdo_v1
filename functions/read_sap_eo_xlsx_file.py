@@ -16,9 +16,9 @@ def read_sap_eo_xlsx():
   sap_eo_data = sap_eo_raw_data.rename(columns=sap_columns_to_master_columns)
   # поля с датами - в формат даты
   sap_eo_data["operation_start_date"] = pd.to_datetime(sap_eo_data["operation_start_date"])
-  sap_eo_data["gar_no"] = sap_eo_data["gar_no"].astype(int)
-  sap_eo_data['gar_no'].fillna(0, inplace = True) 
-    
+  sap_eo_data['gar_no'].fillna(0, inplace = True)
+  sap_eo_data["gar_no"] = sap_eo_data["gar_no"].astype(str)
+   
   date_time_plug = '31/12/2199 23:59:59'
   date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
   sap_eo_data['operation_start_date'].fillna(date_time_plug, inplace = True)
@@ -34,7 +34,7 @@ def read_sap_eo_xlsx():
     eo_code = getattr(row, "eo_code")
     eo_description = getattr(row, "eo_description")
     teh_mesto = getattr(row, "teh_mesto")
-    gar_no = getattr(row, "gar_no")
+    gar_no = str(getattr(row, "gar_no"))
     
     # если в поле гаражного номера не цифра, то меняем это значение на ноль
     try:
@@ -66,6 +66,7 @@ def read_sap_eo_xlsx():
     # по полю "Гаражный номер"
     # ищем запись в таблице конфликтов
     potencial_gar_no_conflict = Eo_data_conflicts.query.filter_by(eo_code = eo_code, eo_conflict_field = "gar_no").first()
+    # если запись находим
     if potencial_gar_no_conflict:
       # обновляем запись в поле eo_conflict_field_current_master_data
       potencial_gar_no_conflict.eo_conflict_field_current_master_data = str(gar_no)
@@ -74,6 +75,11 @@ def read_sap_eo_xlsx():
       if str(potencial_gar_no_conflict.eo_conflict_field_current_master_data) == (potencial_gar_no_conflict.eo_conflict_field_uploaded_data):
         potencial_gar_no_conflict.eo_conflict_status = "resolved"
         db.session.commit()
+ 
+      
+
+        
+      
         
 
 

@@ -34,6 +34,41 @@ def allowed_file(filename):
 
 
 
+@home.route('/upload_be_eo_file', methods=['GET', 'POST'])
+def upload_be_eo_file():
+  if request.method == 'POST':
+    uploaded_file = request.files['file']
+    if uploaded_file.filename == '':
+      message = f"файл с пустым именем"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+    
+    elif allowed_file(uploaded_file.filename) == False:
+      message = f"Неразрешенное расширение файла {uploaded_file.filename}"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+
+    elif "be_eo_data" not in uploaded_file.filename:
+      message = "В имени файла нет текста be_eo_data"
+      flash(message, 'alert-danger')    
+      return redirect(url_for('home.home_view'))
+
+    elif "xlsx" not in uploaded_file.filename:
+      message = "В имени файла нет расширения xlsx"
+      flash(message, 'alert-danger')    
+      return redirect(url_for('home.home_view'))
+    
+    else:    
+      uploaded_file.save(os.path.join('uploads', "sap_be_data.xlsx"))
+      message = f"файл {uploaded_file.filename} загружен"
+
+      # read_sap_eo_xlsx_file.read_sap_eo_xlsx()
+      
+     
+      flash(message, 'alert-success')
+
+      
+    return 'not uploaded'
 
 @home.route('/upload_sap_eo_file', methods=['GET', 'POST'])
 def upload_sap_eo_file():
@@ -90,4 +125,4 @@ def conflicts():
     return send_file("downloads/conflicts.xlsx", as_attachment=True) 
 
     
-    
+
