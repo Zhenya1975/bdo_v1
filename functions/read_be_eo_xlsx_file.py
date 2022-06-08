@@ -16,7 +16,6 @@ def read_be_eo_xlsx():
   try:
     be_eo_raw_data = pd.read_excel('uploads/be_eo_data.xlsx', sheet_name='be_eo_data', index_col = False, dtype=str)
  
-    # print("файл прочитан в датафрейм")
     be_eo_data = be_eo_raw_data.rename(columns=be_data_columns_to_master_columns)
     # поля с датами - в формат даты
     be_eo_data['gar_no'].fillna(0, inplace = True)
@@ -45,14 +44,30 @@ def read_be_eo_xlsx():
   log_data_updated = LogsDB.query.update(dict(log_status='old'))
   db.session.commit()
 
+
+  ################################################ чтение загруженного файла ###############################################
   for row in be_eo_data.itertuples():
     # получаем eo_code
     be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
     be_data_eo_code = getattr(row, "eo_code")
     be_data_gar_no = str(getattr(row, "gar_no"))
+    be_data_operation_start_date_raw = getattr(row, "operation_start_date")
+    # конвертируем в datetime
+    try:
+      be_data_operation_start_date = datetime.strptime(be_data_operation_start_date_raw, '%d.%m.%Y')
+      be_data_operation_start_date = be_data_operation_start_date.date()
+      print("be_data_operation_start_date ", type(be_data_operation_start_date))
+      print("be_data_operation_start_date", be_data_operation_start_date)
+    except:
+      print("не удалось конвертировать текст из файла БЕ в дату")
     
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=be_data_eo_code).first()
+
+    # operation_start_date в мастер данных
+    master_data_operation_start_date = eo_master_data.operation_start_date.date()
+    print("master_data_operation_start_date: ", type(master_data_operation_start_date))
+    print("be_data_operation_start_date", be_data_operation_start_date)
 
     # если в мастер-данных нет записи с текущим eo_code, то добавляем запись в таблицу кандидатов на добавление
     if eo_master_data == None:
