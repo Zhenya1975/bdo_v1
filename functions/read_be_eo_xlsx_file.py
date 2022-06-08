@@ -15,6 +15,7 @@ def read_be_eo_xlsx():
   be_eo_data = pd.DataFrame()
   try:
     be_eo_raw_data = pd.read_excel('uploads/be_eo_data.xlsx', sheet_name='be_eo_data', index_col = False, dtype=str)
+ 
     # print("файл прочитан в датафрейм")
     be_eo_data = be_eo_raw_data.rename(columns=be_data_columns_to_master_columns)
     # поля с датами - в формат даты
@@ -39,8 +40,7 @@ def read_be_eo_xlsx():
   infodata_sender_email = be_data_info.loc[be_data_info.index[0], ['sender_email']][0]
   infodata_sender_email_date = be_data_info.loc[be_data_info.index[0], ['e-mail_date']][0]
 
-
-    
+   
   # предыдущие данные в лог файле ресетим
   log_data_updated = LogsDB.query.update(dict(log_status='old'))
   db.session.commit()
@@ -50,10 +50,10 @@ def read_be_eo_xlsx():
     be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
     be_data_eo_code = getattr(row, "eo_code")
     be_data_gar_no = str(getattr(row, "gar_no"))
-
+    
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=be_data_eo_code).first()
-    
+
     # если в мастер-данных нет записи с текущим eo_code, то добавляем запись в таблицу кандидатов на добавление
     if eo_master_data == None:
       new_eo_candidate_record = Eo_candidatesDB(eo_code=be_data_eo_code, gar_no = be_data_gar_no)
@@ -72,7 +72,7 @@ def read_be_eo_xlsx():
         
         # проверяем есть ли запись о конфликте
         if potencial_conflict_record:
-          # если запись о конфликте есть, то просто выводим в лог
+          # если запись о конфликте есть, то просто выводим 
           log_data_new_record = LogsDB(log_text = f"В таблице конфликтов уже есть запись о конфликте по полю 'гаражный номер' eo_code ({be_data_eo_code})", log_status = "new")
           db.session.add(log_data_new_record)
         else:  
@@ -88,23 +88,21 @@ def read_be_eo_xlsx():
       # если гаражные номера совпадают, то конфликта нет и движемся дальше
         db.session.commit()
       
-      # ситуация, когда конфликт есть и при этом значение из мастер - файла и в загруженном файле совпали.
-      # это ситуация, когда конфликт разрешен  
+      # гаражные номера равны
       else:
-        # записываем значения в мастер-файл
-        eo_master_data.gar_no = be_data_gar_no
-        # ресетим запись в конфликтах
-        conflict_record = Eo_data_conflicts.query.filter_by(eo_code = be_data_eo_code, eo_conflict_field = "gar_no", eo_conflict_field_current_master_data = eo_master_data.gar_no).first()
-        print("conflict_record: ", conflict_record)
-        conflict_record.eo_conflict_status = "resolved"
+        
+        # проверяем есть ли конфликт
+        potencial_conflict_record = Eo_data_conflicts.query.filter_by(eo_code = be_data_eo_code, eo_conflict_field = "gar_no", eo_conflict_field_current_master_data = eo_master_data_garno).first()
+        # проверяем есть ли запись о конфликте
+        if potencial_conflict_record:
+          potencial_conflict_record.eo_conflict_status = "resolved"
         # добавляем запись в лог-файл
-        log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({be_data_eo_code}). Значение гаражного номера в мастер-данных: {be_data_gar_no}", 	log_status = "new")
-        db.session.add(log_data_new_record)
+          log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({be_data_eo_code}). Значение гаражного номера в мастер-данных: {be_data_gar_no}", 	log_status = "new")
+          db.session.add(log_data_new_record)
+          db.session.commit()
         
-        db.session.commit()
         
-        
-    db.session.commit()  
+    # db.session.commit()  
         
       
     

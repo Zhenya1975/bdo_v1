@@ -8,7 +8,7 @@ pst_now = utc_now.astimezone(pytz.timezone("Europe/Moscow")).strftime("%d.%m.%Y 
 
 class Eo_candidatesDB(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  eo_code = db.Column(db.String, unique=True)
+  eo_code = db.Column(db.String)
   temp_eo_code = db.Column(db.String)
   eo_description = db.Column(db.String)
   be_code = db.Column(db.Integer)
