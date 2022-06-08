@@ -41,6 +41,9 @@ def read_be_eo_xlsx():
     if eo_master_data == None:
       new_eo_candidate_record = Eo_candidatesDB(eo_code=be_data_eo_code, gar_no = be_data_gar_no)
       db.session.add(new_eo_candidate_record)
+      log_data_new_record = LogsDB(log_text = f"Добавлен кандидат на добавление в мастер. eo_code: {be_data_eo_code}, gar_no: {be_data_gar_no}", log_status = "new")
+      db.session.add(log_data_new_record)
+      
     # если данные есть, то проверяем на наличие конфликта
     else:
       eo_master_data_garno = eo_master_data.gar_no

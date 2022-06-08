@@ -36,7 +36,7 @@
 
                   <div>
                       <form action = "{{url_for( 'home.add_candidates' )}}" method=post enctype=multipart/form-data>
-                        Кандидаты на добавление
+                        Кандидаты на добавление ({{number_of_add_candidates}})
                         <button class="btn btn-info" type="submit">Выгрузить</button>
                       </form>
                   </div>    
@@ -101,8 +101,13 @@
         </div>    
                   
       <div class="row">
-              <div class="col d-flex justify-content-center"
+              <div class="col d-flex justify-content-center">
                   <h3>Logs</h3>
+              </div>
+      </div>
+  
+      <div class="row">
+              <div class="col">
                   <!-- Блок с логами -->
                   <div class="text-left">
                     <ul class="list-group list-group-flush">

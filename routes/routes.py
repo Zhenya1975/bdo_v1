@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, flash, request, jsonify, redirect, url_for, abort, send_file
 from sqlalchemy import desc
 import pandas as pd
-from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts
+from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
 from extensions import extensions
 from initial_values.initial_values import sap_columns_to_master_columns
 from werkzeug.utils import secure_filename
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, generate_excel_master_eo, generate_excel_conflicts
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -23,9 +23,11 @@ def home_view():
   log_data = LogsDB.query.filter_by(log_status = "new").all()
   conflicts_data = Eo_data_conflicts.query.filter_by(eo_conflict_status="active").all()
   number_of_active_conflicts = len(list(conflicts_data))
+  add_candidates_data = Eo_candidatesDB.query.all()
+  number_of_add_candidates = len(list(add_candidates_data))
 
   # eo_data.sort_values(['teh_mesto', 'be_description', 'eo_class_code', 'head_eo_model_descr'], inplace=True)
-  return render_template('home.html', eo_data = eo_data, log_data=log_data, number_of_active_conflicts=number_of_active_conflicts)
+  return render_template('home.html', eo_data = eo_data, log_data=log_data, number_of_active_conflicts=number_of_active_conflicts, number_of_add_candidates=number_of_add_candidates)
 
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -141,11 +143,19 @@ def conflicts():
 @home.route('/add_candidates', methods=['GET', 'POST'])
 def add_candidates():
   if request.method == 'POST':
-    
-    # выпекаем excel-файл из базы данных
-    # generate_excel_conflicts.generate_excel_conflicts()
+    try:
+      try:
+        os.remove("downloads/add_candidate_df.xlsx")
+      except:
+        pass
+      # выпекаем excel-файл из базы данных
+      generate_excel_add_candidates.generate_excel_add_candidates()
+      return send_file("downloads/add_candidate_df.xlsx", as_attachment=True) 
+    except Exception as e:
+      print("не удалось создать excel файл add_candidate_df.xlsx. Ошибка: ", e)
+      message = f"Не удалось выгрузить файл 'add_candidate_df.xlsx'"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view')) 
 
-    return "add_candidates"
-    # return send_file("downloads/conflicts.xlsx", as_attachment=True) 
 
 
