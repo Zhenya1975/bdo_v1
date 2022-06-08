@@ -18,6 +18,9 @@ def generate_excel_conflicts():
     temp_dict['eo_conflict_field_uploaded_data'] = conflict.eo_conflict_field_uploaded_data
     temp_dict['eo_conflict_description'] = conflict.eo_conflict_description
     temp_dict['eo_conflict_date'] = conflict.eo_conflict_date
+    temp_dict['filename'] = conflict.filename
+    temp_dict['sender_email'] = conflict.sender_email
+    temp_dict['email_date'] = conflict.email_date
     temp_dict['eo_conflict_status'] = conflict.eo_conflict_status
     
     

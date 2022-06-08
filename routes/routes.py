@@ -133,7 +133,10 @@ def download_master_eo_file():
 @home.route('/conflicts', methods=['GET', 'POST'])
 def conflicts():
   if request.method == 'POST':
-    
+    try:
+        os.remove("conflicts.xlsx")
+    except:
+      pass
     # выпекаем excel-файл из базы данных
     generate_excel_conflicts.generate_excel_conflicts()
 
