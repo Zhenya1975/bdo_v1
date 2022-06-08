@@ -25,9 +25,22 @@ def read_be_eo_xlsx():
     print("не удалось прочитать файл uploads/be_eo_data.xlsx. Ошибка: ", e)
     log_data_new_record = LogsDB(log_text = f"не удалось прочитать файл uploads/be_eo_data.xlsx. Ошибка: , {e})", log_status = "new")
     db.session.add(log_data_new_record)
-    
-    # return "fail"
 
+  # читаем данные из инфо вкладки   
+  be_data_info = pd.DataFrame()
+  try:
+    be_data_info = pd.read_excel('uploads/be_eo_data.xlsx', sheet_name='be_eo_file_data', index_col = False, dtype=str)
+  except Exception as e:
+    print("не удалось прочитать данные из инфо-вкладки файла uploads/be_eo_data.xlsx. Ошибка: ", e)
+    log_data_new_record = LogsDB(log_text = f"не удалось прочитать данные из инфо-вкладки файла uploads/be_eo_data.xlsx. Ошибка: , {e})", log_status = "new")
+    db.session.add(log_data_new_record)
+  # print(be_data_info.info())
+  infodata_filename = be_data_info.loc[be_data_info.index[0], ['filename']][0]
+  infodata_sender_email = be_data_info.loc[be_data_info.index[0], ['sender_email']][0]
+  infodata_sender_email_date = be_data_info.loc[be_data_info.index[0], ['e-mail_date']][0]
+
+
+    
   # предыдущие данные в лог файле ресетим
   log_data_updated = LogsDB.query.update(dict(log_status='old'))
   db.session.commit()
@@ -62,7 +75,10 @@ def read_be_eo_xlsx():
           log_data_new_record = LogsDB(log_text = f"В таблице конфликтов уже есть запись о конфликте по полю 'гаражный номер' eo_code ({be_data_eo_code})", log_status = "new")
           db.session.add(log_data_new_record)
         else:  
-          new_conflict_record = Eo_data_conflicts(be_eo_data_row_no = be_eo_data_row_no, eo_code = be_data_eo_code, eo_conflict_field = "gar_no", eo_conflict_field_current_master_data = eo_master_data_garno, eo_conflict_field_uploaded_data = be_data_gar_no, eo_conflict_description = f"В EO {be_data_eo_code} гаражный номер в файле из бизнес-единицы {be_data_gar_no} не соответствует гаражному номеру в мастер-файле {eo_master_data_garno}")
+          # если записи о конфликте нет, то создаем новую запись о конфликте
+          new_conflict_record = Eo_data_conflicts(be_eo_data_row_no = be_eo_data_row_no, eo_code = be_data_eo_code, eo_conflict_field = "gar_no", eo_conflict_field_current_master_data = eo_master_data_garno, eo_conflict_field_uploaded_data = be_data_gar_no, eo_conflict_description = f"В EO {be_data_eo_code} гаражный номер в файле из бизнес-единицы {be_data_gar_no} не соответствует гаражному номеру в мастер-файле {eo_master_data_garno}", filename = infodata_filename, sender_email = infodata_sender_email, email_date = infodata_sender_email_date)
+  
+          
           db.session.add(new_conflict_record)
           # добавляем новую запись в лог файл
           log_data_new_record = LogsDB(log_text = f"Добавлена запись о новом конфликте. В eo_code ({be_data_eo_code}) гаражный номер в загруженном файле ({be_data_gar_no}) не соответствует гаражному номеру в мастер-файле ({eo_master_data_garno})", log_status = "new")

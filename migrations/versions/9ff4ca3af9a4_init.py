@@ -1,8 +1,8 @@
 """init
 
-Revision ID: da7553d9dc25
+Revision ID: 9ff4ca3af9a4
 Revises: 
-Create Date: 2022-06-08 08:23:37.350055
+Create Date: 2022-06-08 09:46:57.124796
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'da7553d9dc25'
+revision = '9ff4ca3af9a4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -95,6 +95,9 @@ def upgrade():
     sa.Column('eo_conflict_description', sa.Text(), nullable=True),
     sa.Column('eo_conflict_date', sa.String(), nullable=True),
     sa.Column('eo_conflict_status', sa.String(), nullable=True),
+    sa.Column('filename', sa.String(), nullable=True),
+    sa.Column('sender_email', sa.String(), nullable=True),
+    sa.Column('email_date', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['eo_code'], ['eo_DB.eo_code'], name=op.f('fk_eo_data_conflicts_eo_code_eo_DB')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_eo_data_conflicts'))
     )

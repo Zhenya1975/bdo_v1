@@ -28,6 +28,10 @@ def generate_excel_add_candidates():
   excel_add_candidate_df = pd.DataFrame(result_data)
   
   excel_add_candidate_df.to_excel('downloads/sap_eo_data.xlsx', sheet_name = 'sap_eo_data', index = False)
+  test_df = pd.DataFrame()
+  with pd.ExcelWriter('downloads/sap_eo_data.xlsx', engine='openpyxl', mode='a') as writer:  
+    test_df.to_excel(writer, sheet_name='x2')
+
     
     
 

@@ -74,5 +74,7 @@ class Eo_data_conflicts(db.Model):
   eo_conflict_description = db.Column(db.Text)
   eo_conflict_date = db.Column(db.String, default=pst_now)
   eo_conflict_status = db.Column(db.String, default='active')
-
-  
+  filename = db.Column(db.String)
+  sender_email = db.Column(db.String)
+  email_date = db.Column(db.String)
+  		
