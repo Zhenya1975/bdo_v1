@@ -1,6 +1,6 @@
 import pandas as pd
 from extensions import extensions
-from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts
+from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
 from initial_values.initial_values import sap_columns_to_master_columns
 from datetime import datetime
 # from app import app
@@ -35,15 +35,8 @@ def read_sap_eo_xlsx():
     eo_description = getattr(row, "eo_description")
     teh_mesto = getattr(row, "teh_mesto")
     gar_no = str(getattr(row, "gar_no"))
-    
-    # если в поле гаражного номера не цифра, то меняем это значение на ноль
-    # try:
-    #   gar_no = int(gar_no)
-    # except:
-    #   gar_no = 0
-    # head_type = getattr(row, "head_type")
     operation_start_date = getattr(row, "operation_start_date")
-    # print("eo_code в файле excel из сап ", eo_code)
+
     
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=eo_code).first()
@@ -62,6 +55,16 @@ def read_sap_eo_xlsx():
       eo_master_data.gar_no = gar_no
     db.session.commit()
 
+    # сверяемся с файлом кандидатов на добавление.
+    add_candidate_record  = Eo_candidatesDB.query.filter_by(eo_code = eo_code).first()
+    if add_candidate_record:
+      # удаляем запись из таблицы add_candidate_record
+      db.session.delete(add_candidate_record)
+      log_data_new_record = LogsDB(log_text = f"Добавлена запись из списка кандидатов на добавление. eo_code: {eo_code}", 	log_status = "new")
+      db.session.add(log_data_new_record)
+      db.session.commit()
+
+    
     # сверяемся с файлом конфликтов.
     # по полю "Гаражный номер"
     # ищем запись в таблице конфликтов

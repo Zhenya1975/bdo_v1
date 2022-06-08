@@ -145,15 +145,15 @@ def add_candidates():
   if request.method == 'POST':
     try:
       try:
-        os.remove("downloads/add_candidate_df.xlsx")
+        os.remove("downloads/sap_eo_data.xlsx")
       except:
         pass
       # выпекаем excel-файл из базы данных
       generate_excel_add_candidates.generate_excel_add_candidates()
-      return send_file("downloads/add_candidate_df.xlsx", as_attachment=True) 
+      return send_file("downloads/sap_eo_data.xlsx", as_attachment=True) 
     except Exception as e:
-      print("не удалось создать excel файл add_candidate_df.xlsx. Ошибка: ", e)
-      message = f"Не удалось выгрузить файл 'add_candidate_df.xlsx'"
+      print("не удалось создать excel файл sap_eo_data.xlsx с кандидатами на добавление. Ошибка: ", e)
+      message = f"Не удалось выгрузить файл sap_eo_data.xlsx с кандидатами на добавление"
       flash(message, 'alert-danger')
       return redirect(url_for('home.home_view')) 
 

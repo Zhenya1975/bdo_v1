@@ -12,14 +12,16 @@ class Eo_candidatesDB(db.Model):
   temp_eo_code = db.Column(db.String)
   eo_description = db.Column(db.String)
   be_code = db.Column(db.Integer)
+  be_description = db.Column(db.String)
   teh_mesto = db.Column(db.String)
   gar_no = db.Column(db.String)
   head_type = db.Column(db.String)
   eo_model_id = db.Column(db.Integer)
+  eo_model_name = db.Column(db.String)
   eo_class_code = db.Column(db.String)
-
-
-  
+  eo_class_description = db.Column(db.String)
+  operation_start_date=db.Column(db.DateTime)
+  expected_operation_finish_date = db.Column(db.DateTime)
   
 
 class Eo_DB(db.Model):
@@ -64,6 +66,7 @@ class LogsDB(db.Model):
 
 class Eo_data_conflicts(db.Model):
   id = db.Column(db.Integer, primary_key=True)
+  be_eo_data_row_no = db.Column(db.Integer)
   eo_code = db.Column(db.String, db.ForeignKey('eo_DB.eo_code'))
   eo_conflict_field = db.Column(db.String)
   eo_conflict_field_current_master_data = db.Column(db.String)

@@ -1,8 +1,8 @@
 """init
 
-Revision ID: bde357d65115
+Revision ID: da7553d9dc25
 Revises: 
-Create Date: 2022-06-07 15:34:10.597355
+Create Date: 2022-06-08 08:23:37.350055
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bde357d65115'
+revision = 'da7553d9dc25'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,11 +32,16 @@ def upgrade():
     sa.Column('temp_eo_code', sa.String(), nullable=True),
     sa.Column('eo_description', sa.String(), nullable=True),
     sa.Column('be_code', sa.Integer(), nullable=True),
+    sa.Column('be_description', sa.String(), nullable=True),
     sa.Column('teh_mesto', sa.String(), nullable=True),
     sa.Column('gar_no', sa.String(), nullable=True),
     sa.Column('head_type', sa.String(), nullable=True),
     sa.Column('eo_model_id', sa.Integer(), nullable=True),
+    sa.Column('eo_model_name', sa.String(), nullable=True),
     sa.Column('eo_class_code', sa.String(), nullable=True),
+    sa.Column('eo_class_description', sa.String(), nullable=True),
+    sa.Column('operation_start_date', sa.DateTime(), nullable=True),
+    sa.Column('expected_operation_finish_date', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_eo_candidatesDB')),
     sa.UniqueConstraint('eo_code', name=op.f('uq_eo_candidatesDB_eo_code'))
     )
@@ -82,6 +87,7 @@ def upgrade():
     )
     op.create_table('eo_data_conflicts',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('be_eo_data_row_no', sa.Integer(), nullable=True),
     sa.Column('eo_code', sa.String(), nullable=True),
     sa.Column('eo_conflict_field', sa.String(), nullable=True),
     sa.Column('eo_conflict_field_current_master_data', sa.String(), nullable=True),
