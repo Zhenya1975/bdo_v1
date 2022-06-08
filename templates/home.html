@@ -26,10 +26,17 @@
 
   
         <div class="row">
-              <div class="col">
-                  <div class="d-flex justify-content-start">
+              <div class="col d-flex justify-content-start">
+                  <div>
                       <form action = "{{url_for( 'home.conflicts' )}}" method=post enctype=multipart/form-data>
                         Конфликты ({{number_of_active_conflicts }})
+                        <button class="btn btn-info" type="submit">Выгрузить</button>
+                      </form>
+                  </div> 
+
+                  <div>
+                      <form action = "{{url_for( 'home.add_candidates' )}}" method=post enctype=multipart/form-data>
+                        Кандидаты на добавление
                         <button class="btn btn-info" type="submit">Выгрузить</button>
                       </form>
                   </div>    

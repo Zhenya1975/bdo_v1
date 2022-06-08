@@ -137,5 +137,15 @@ def conflicts():
 
     return send_file("downloads/conflicts.xlsx", as_attachment=True) 
 
+
+@home.route('/add_candidates', methods=['GET', 'POST'])
+def add_candidates():
+  if request.method == 'POST':
     
+    # выпекаем excel-файл из базы данных
+    # generate_excel_conflicts.generate_excel_conflicts()
+
+    return "add_candidates"
+    # return send_file("downloads/conflicts.xlsx", as_attachment=True) 
+
 
