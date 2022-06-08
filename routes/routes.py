@@ -161,4 +161,14 @@ def add_candidates():
       return redirect(url_for('home.home_view')) 
 
 
+@home.route('/clean_candidates', methods=['GET', 'POST'])
+def clean_candidates():
+  if request.method == 'POST':
+    Eo_candidatesDB.query.delete()
+    log_data_new_record = LogsDB(log_text = f"Очищена таблица Кандидаты на добавление", 	log_status = "new")
+    db.session.add(log_data_new_record)
+    db.session.commit()
+    
+    return redirect(url_for('home.home_view'))
+
 

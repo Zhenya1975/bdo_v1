@@ -34,12 +34,18 @@
                       </form>
                   </div> 
 
-                  <div>
+                  <div style="margin-left: 30px">
                       <form action = "{{url_for( 'home.add_candidates' )}}" method=post enctype=multipart/form-data>
                         Кандидаты на добавление ({{number_of_add_candidates}})
                         <button class="btn btn-info" type="submit">Выгрузить</button>
                       </form>
-                  </div>    
+                  </div>
+                  <div style="margin-left: 20px">
+                    <form action = "{{url_for( 'home.clean_candidates' )}}" method=post enctype=multipart/form-data>
+                
+                        <button class="btn btn-info" type="submit">Очистить</button>
+                      </form>
+                  </div>
                 
               </div>
         </div>
