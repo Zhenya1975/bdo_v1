@@ -60,7 +60,6 @@ def upload_be_eo_file():
       flash(message, 'alert-danger')    
       return redirect(url_for('home.home_view'))
 
-    
     else:    
       uploaded_file.save(os.path.join('uploads', "be_eo_data.xlsx"))
       message = f"файл {uploaded_file.filename} загружен"
@@ -119,11 +118,15 @@ def download_master_eo_file():
     
     # выпекаем excel-файл из базы данных
     try:
+      os.remove("downloads/eo_master_data.xlsx")
       generate_excel_master_eo.generate_excel_master_eo()
+      return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
     except Exception as e:
       print("не удалось создать excel файл eo_master_data.xlsx. Ошибка: ", e)
-      
-    return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
+      message = f"Не удалось выгрузить файл 'eo_master_data.xlsx'"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view')) 
+    
 
 @home.route('/conflicts', methods=['GET', 'POST'])
 def conflicts():

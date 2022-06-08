@@ -14,7 +14,7 @@ def read_be_eo_xlsx():
   # читаем excel с данными из бизнес-единиц. Проверяем - если нет нужного листа с данными, то отдаем ошибку
   try:
     be_eo_raw_data = pd.read_excel('uploads/be_eo_data.xlsx', sheet_name='be_eo_data', index_col = False, dtype=str)
-    print("файл прочитан в датафрейм")
+    # print("файл прочитан в датафрейм")
     be_eo_data = be_eo_raw_data.rename(columns=be_data_columns_to_master_columns)
     # поля с датами - в формат даты
     be_eo_data['gar_no'].fillna(0, inplace = True)
@@ -22,7 +22,7 @@ def read_be_eo_xlsx():
     # print(be_eo_data.info())
   except Exception as e:
     print("не удалось прочитать файл uploads/be_eo_data.xlsx. Ошибка: ", e)
-    return "fail"
+    # return "fail"
 
   # предыдущие данные в лог файле ресетим
   log_data_updated = LogsDB.query.update(dict(log_status='old'))
