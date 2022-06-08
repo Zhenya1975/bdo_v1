@@ -35,6 +35,7 @@ def read_sap_eo_xlsx():
     eo_description = getattr(row, "eo_description")
     teh_mesto = getattr(row, "teh_mesto")
     gar_no = str(getattr(row, "gar_no"))
+    head_type = str(getattr(row, "head_type"))
     operation_start_date = getattr(row, "operation_start_date")
 
     
@@ -43,7 +44,7 @@ def read_sap_eo_xlsx():
     # если данных нет, то добавляем запись.
     if eo_master_data == None:
       # new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no)
-      new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no, operation_start_date=operation_start_date)
+      new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no, head_type = head_type, operation_start_date=operation_start_date)
       db.session.add(new_eo_master_data_record)
       # добавляем новую запись в лог файл
       log_data_new_record = LogsDB(log_text = f"В eo_master_data добавлена запись eo: {eo_code}", log_status = "new")
@@ -53,6 +54,7 @@ def read_sap_eo_xlsx():
       eo_master_data.eo_description = eo_description
       eo_master_data.teh_mesto = teh_mesto
       eo_master_data.gar_no = gar_no
+      eo_master_data.head_type = head_type
     db.session.commit()
 
     # сверяемся с файлом кандидатов на добавление.
