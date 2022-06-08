@@ -120,7 +120,11 @@ def download_master_eo_file():
     
     # выпекаем excel-файл из базы данных
     try:
-      os.remove("downloads/eo_master_data.xlsx")
+      try:
+        os.remove("downloads/eo_master_data.xlsx")
+      except:
+        pass
+      
       generate_excel_master_eo.generate_excel_master_eo()
       return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
     except Exception as e:

@@ -5,6 +5,9 @@ import pytz
 db = extensions.db
 utc_now = pytz.utc.localize(datetime.utcnow())
 pst_now = utc_now.astimezone(pytz.timezone("Europe/Moscow")).strftime("%d.%m.%Y %H:%M:%S")
+date_time_plug = '31/12/2199 23:59:59'
+date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
+
 
 class Eo_candidatesDB(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -34,7 +37,7 @@ class Eo_DB(db.Model):
   gar_no = db.Column(db.String)
   head_type = db.Column(db.String)
   operation_start_date=db.Column(db.DateTime)
-  expected_operation_finish_date = db.Column(db.DateTime)
+  expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug)
   eo_model_id = db.Column(db.Integer, db.ForeignKey('models_DB.eo_model_id'))
   eo_class_code = db.Column(db.String, db.ForeignKey('eo_class_DB.eo_class_code'))
   conflict_data = db.relationship('Eo_data_conflicts', backref='conflict_data')
