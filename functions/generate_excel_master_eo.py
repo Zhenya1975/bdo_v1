@@ -50,7 +50,7 @@ def generate_excel_master_eo():
       
       result_data.append(temp_dict)
     excel_master_eo_df = pd.DataFrame(result_data)
-    excel_master_eo_df.sort_values(['be_code','teh_mesto', 'eo_model_name'], inplace=True)
+    excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
   else:
     excel_master_eo_df = pd.DataFrame(columns=['be_code', 'be_description', 'eo_class_code', 'eo_class_description', 'eo_code', 'eo_description', 'eo_model_id', 'eo_model_name', 'teh_mesto', 'gar_no', 'head_type', 'operation_start_date', 'expected_operation_finish_date'])
   

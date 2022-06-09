@@ -57,9 +57,15 @@ def read_sap_eo_xlsx():
       head_type_excel = str(getattr(row, "head_type"))
     except:
       pass
+    eo_model_id_excel = 'plug'
+    try:
+      eo_model_id_excel = getattr(row, "eo_model_id")
+    except:
+      pass  
     operation_start_date_raw = getattr(row, "operation_start_date")
     operation_start_date = read_date(operation_start_date_raw)
-
+    # print(operation_start_date)
+  
     
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=eo_code).first()
@@ -78,8 +84,11 @@ def read_sap_eo_xlsx():
       eo_master_data.gar_no = gar_no
       if head_type_excel != "plug":
         eo_master_data.head_type = head_type_excel
-      else:
-        eo_master_data.head_type = eo_master_data.head_type
+      
+      if eo_model_id_excel != "plug":
+        eo_master_data.eo_model_id = eo_model_id_excel
+
+      
       eo_master_data.operation_start_date = operation_start_date
     db.session.commit()
 
