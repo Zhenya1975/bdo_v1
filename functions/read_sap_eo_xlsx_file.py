@@ -9,6 +9,23 @@ db = extensions.db
 
 sap_columns_to_master_columns = sap_columns_to_master_columns
 
+def read_date(date_input):  
+  if "timestamp" in str(type(date_input)):
+    date_output = date_input
+    return date_output
+  elif "str" in str(type(date_input)):
+    try:
+      date_output = datetime.strptime(date_input, '%d.%m.%Y')
+      return date_output
+    except Exception as e:
+      print(f"не удалось сохранить в дату '{date_input}'. Ошибка: ", e)
+  elif "nat" in str(type(date_input)) or "NaT" in str(type(date_input)):
+    date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+    return date_output
+  else:
+    print("не покрыто типами данных дат", type(date_input), date_input)
+
+
 def read_sap_eo_xlsx():
   # with app.app_context():
   sap_eo_raw_data = pd.read_excel('uploads/sap_eo_data.xlsx', index_col = False, dtype=str)
@@ -35,8 +52,13 @@ def read_sap_eo_xlsx():
     eo_description = getattr(row, "eo_description")
     teh_mesto = getattr(row, "teh_mesto")
     gar_no = str(getattr(row, "gar_no"))
-    head_type = str(getattr(row, "head_type"))
-    operation_start_date = getattr(row, "operation_start_date")
+    head_type_excel = "plug"
+    try:
+      head_type_excel = str(getattr(row, "head_type"))
+    except:
+      pass
+    operation_start_date_raw = getattr(row, "operation_start_date")
+    operation_start_date = read_date(operation_start_date_raw)
 
     
     # читаем мастер-файл из базы
@@ -44,7 +66,7 @@ def read_sap_eo_xlsx():
     # если данных нет, то добавляем запись.
     if eo_master_data == None:
       # new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no)
-      new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no, head_type = head_type, operation_start_date=operation_start_date)
+      new_eo_master_data_record = Eo_DB(be_code=be_code, eo_code=eo_code, eo_description=eo_description, teh_mesto=teh_mesto, gar_no=gar_no, operation_start_date=operation_start_date)
       db.session.add(new_eo_master_data_record)
       # добавляем новую запись в лог файл
       log_data_new_record = LogsDB(log_text = f"В eo_master_data добавлена запись eo: {eo_code}", log_status = "new")
@@ -54,7 +76,11 @@ def read_sap_eo_xlsx():
       eo_master_data.eo_description = eo_description
       eo_master_data.teh_mesto = teh_mesto
       eo_master_data.gar_no = gar_no
-      eo_master_data.head_type = head_type
+      if head_type_excel != "plug":
+        eo_master_data.head_type = head_type_excel
+      else:
+        eo_master_data.head_type = eo_master_data.head_type
+      eo_master_data.operation_start_date = operation_start_date
     db.session.commit()
 
     # сверяемся с файлом кандидатов на добавление.
