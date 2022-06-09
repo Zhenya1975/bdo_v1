@@ -61,11 +61,6 @@ def upload_be_eo_file():
       message = "В имени файла нет расширения xlsx"
       flash(message, 'alert-danger')    
       return redirect(url_for('home.home_view'))
-      
-    elif "XLSX" not in uploaded_file.filename:
-      message = "В имени файла нет расширения xlsx"
-      flash(message, 'alert-danger')    
-      return redirect(url_for('home.home_view'))  
 
     else:    
       uploaded_file.save(os.path.join('uploads', "be_eo_data.xlsx"))
@@ -179,5 +174,14 @@ def clean_candidates():
     db.session.commit()
     
     return redirect(url_for('home.home_view'))
+
+@home.route('/clean_conflicts')
+def clean_conflicts():
+  
+  Eo_data_conflicts.query.delete()
+  
+  db.session.commit()
+  
+  return redirect(url_for('home.home_view'))    
 
 
