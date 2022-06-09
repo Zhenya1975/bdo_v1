@@ -9,6 +9,25 @@ db = extensions.db
 
 be_data_columns_to_master_columns = be_data_columns_to_master_columns
 
+def read_date(date_input):  
+  if "timestamp" in str(type(date_input)):
+    date_output = date_input
+    return date_output
+  elif "str" in str(type(date_input)):
+    try:
+      date_output = datetime.strptime(date_input, '%d.%m.%Y')
+      return date_output
+    except Exception as e:
+      print(f"не удалось сохранить в дату '{date_input}'. Ошибка: ", e)
+  elif "nat" in str(type(date_input)) or "NaT" in str(type(date_input)):
+    date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+    return date_output
+  else:
+    print("не покрыто типами данных дат", type(date_input), date_input)
+
+    
+    
+
 def solve_conflict(eo_code, eo_conflict_field, conflict_field_value):
   conflict_record = Eo_data_conflicts.query.filter_by(eo_code = eo_code, eo_conflict_field = eo_conflict_field, eo_conflict_status = "active").first()
   conflict_record.eo_conflict_status = "resolved"
@@ -38,7 +57,6 @@ def create_conflict(be_eo_data_row_no, be_data_eo_code, eo_conflict_field, eo_co
 
 
 def field_check_status(be_eo_data_row_no, be_data_eo_code, field_name, field_be_data, field_master_data, infodata_filename, infodata_sender_email, infodata_sender_email_date):
-  field_name =field_name
   field_status ={}
   field_status['field_name'] = field_name
   field_status['be_data'] = field_be_data
@@ -83,12 +101,13 @@ def read_be_eo_xlsx():
   # читаем excel с данными из бизнес-единиц. Проверяем - если нет нужного листа с данными, то отдаем ошибку
   be_eo_data = pd.DataFrame()
   try:
-    be_eo_raw_data = pd.read_excel('uploads/be_eo_data.xlsx', sheet_name='be_eo_data', index_col = False, dtype=str)
+    be_eo_raw_data = pd.read_excel('uploads/be_eo_data.xlsx', sheet_name='be_eo_data', index_col = False)
  
     be_eo_data = be_eo_raw_data.rename(columns=be_data_columns_to_master_columns)
     # поля с датами - в формат даты
     be_eo_data['gar_no'].fillna(0, inplace = True)
     be_eo_data["gar_no"] = be_eo_data["gar_no"].astype(str)
+    be_eo_data["eo_code"] = be_eo_data["eo_code"].astype(str)
     # print(be_eo_data.info())
   except Exception as e:
     print("не удалось прочитать файл uploads/be_eo_data.xlsx. Ошибка: ", e)
@@ -116,21 +135,11 @@ def read_be_eo_xlsx():
 
   ################################################ чтение загруженного файла ###############################################
   for row in be_eo_data.itertuples():
-    # получаем eo_code
     be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
     be_data_eo_code = getattr(row, "eo_code")
     be_data_gar_no = str(getattr(row, "gar_no"))
     be_data_operation_start_date_raw = getattr(row, "operation_start_date")
-    # конвертируем в datetime
-    try:
-      be_data_operation_start_datetime = datetime.strptime(be_data_operation_start_date_raw, '%d.%m.%Y')
-      be_data_operation_start_date = be_data_operation_start_datetime.date()
-    except:
-      print("не удалось конвертировать текст из файла БЕ в дату")
-      ######### здесь надо создавать конфликт
-    
-    # operation_start_date в мастер данных -> в формат даты
-    # master_data_operation_start_date = eo_master_data.operation_start_date.date()
+  
 
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=be_data_eo_code).first()
@@ -143,7 +152,6 @@ def read_be_eo_xlsx():
       
     # если в мастер-данных есть запись с текущим eo_code, то последовательно проверяем значения в полях
     else:
-      
       ############# ПОЛЕ ГАРАЖНЫЙ НОМЕР gar_no ##############################
       eo_master_data_garno = eo_master_data.gar_no
       # print("be_data_gar_no: ", be_data_gar_no, type(be_data_gar_no))
@@ -153,6 +161,33 @@ def read_be_eo_xlsx():
       field_master_data = eo_master_data_garno
 
       # запуск функции по проверке статуса текущего поля
+      field_check_status(
+        be_eo_data_row_no,
+        be_data_eo_code,
+        field_name, 
+        field_be_data,
+        field_master_data,
+        infodata_filename, 
+        infodata_sender_email, 
+        infodata_sender_email_date
+      )
+      
+      ############# ПОЛЕ Дата начала эксплуатации operation_start_date ##############################
+      eo_master_data_operation_start_datetime = eo_master_data.operation_start_date
+      eo_master_data_operation_start_date = eo_master_data_operation_start_datetime.date()
+      field_name = "operation_start_date"
+
+      be_data_operation_start_datetime = read_date(be_data_operation_start_date_raw)
+
+      if be_data_operation_start_datetime == datetime.strptime('1.1.2199', '%d.%m.%Y'):
+        be_data_operation_start_datetime = eo_master_data_operation_start_datetime
+          
+      be_data_operation_start_date = be_data_operation_start_datetime.date()
+      
+      field_be_data = str(be_data_operation_start_date)
+      field_master_data = str(eo_master_data_operation_start_date)
+      # print("eo_master_data_operation_start_date", eo_master_data_operation_start_date)
+
       field_check_status(
         be_eo_data_row_no,
         be_data_eo_code,
