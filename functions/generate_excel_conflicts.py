@@ -11,6 +11,7 @@ def generate_excel_conflicts():
   result_data = []
   for conflict in conflicts_data:
     temp_dict = {}
+    temp_dict['id'] = conflict.id
     temp_dict['be_eo_data_row_no'] = conflict.be_eo_data_row_no
     temp_dict['eo_code'] = conflict.eo_code
     temp_dict['eo_conflict_field'] = conflict.eo_conflict_field

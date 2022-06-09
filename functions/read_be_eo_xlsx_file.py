@@ -74,7 +74,7 @@ def field_check_status(be_eo_data_row_no, be_data_eo_code, field_name, field_be_
     pass
 
   else:
-    print("что-то не понятное")
+    print("что-то непонятное")
 
 
 
@@ -123,22 +123,20 @@ def read_be_eo_xlsx():
     be_data_operation_start_date_raw = getattr(row, "operation_start_date")
     # конвертируем в datetime
     try:
-      be_data_operation_start_date = datetime.strptime(be_data_operation_start_date_raw, '%d.%m.%Y')
-      be_data_operation_start_date = be_data_operation_start_date.date()
+      be_data_operation_start_datetime = datetime.strptime(be_data_operation_start_date_raw, '%d.%m.%Y')
+      be_data_operation_start_date = be_data_operation_start_datetime.date()
     except:
       print("не удалось конвертировать текст из файла БЕ в дату")
       ######### здесь надо создавать конфликт
     
+    # operation_start_date в мастер данных -> в формат даты
+    # master_data_operation_start_date = eo_master_data.operation_start_date.date()
+
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=be_data_eo_code).first()
-    # operation_start_date в мастер данных -> в формат даты
-    master_data_operation_start_date = eo_master_data.operation_start_date.date()
-
     
-
-    # если в мастер-данных нет записи с текущим eo_code, то добавляем запись в таблицу кандидатов на добавление
     if eo_master_data == None:
-      new_eo_candidate_record = Eo_candidatesDB(eo_code=be_data_eo_code, gar_no = be_data_gar_no)
+      new_eo_candidate_record = Eo_candidatesDB(eo_code=be_data_eo_code, gar_no = be_data_gar_no, operation_start_date = be_data_operation_start_datetime)
       db.session.add(new_eo_candidate_record)
       log_data_new_record = LogsDB(log_text = f"Добавлен кандидат на добавление в мастер. eo_code: {be_data_eo_code}, gar_no: {be_data_gar_no}", log_status = "new")
       db.session.add(log_data_new_record)

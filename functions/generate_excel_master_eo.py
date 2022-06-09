@@ -1,10 +1,18 @@
 import pandas as pd
 from extensions import extensions
-from models.models import Eo_DB, Be_DB, LogsDB
+from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts
 from initial_values.initial_values import sap_columns_to_master_columns
 # from app import app
 
 db = extensions.db
+
+def conflict_list_prepare(eo_code):
+  conflict_data = Eo_data_conflicts.query.filter_by(eo_code = eo_code, eo_conflict_status = "active")
+  conflict_list = []
+  for conflict in conflict_data:
+    conflict_id = conflict.id
+    conflict_list.append(conflict_id)
+  return conflict_list
 
 def generate_excel_master_eo():
   
@@ -37,6 +45,8 @@ def generate_excel_master_eo():
         temp_dict['expected_operation_finish_date'] = ""
       else:
         temp_dict['expected_operation_finish_date'] = expected_operation_finish_date
+      conflict_list = conflict_list_prepare(eo_data.eo_code)
+      temp_dict['eo_active_conflicts_ids'] = conflict_list
       
       result_data.append(temp_dict)
     excel_master_eo_df = pd.DataFrame(result_data)
