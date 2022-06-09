@@ -35,6 +35,49 @@ def create_conflict(be_eo_data_row_no, be_data_eo_code, eo_conflict_field, eo_co
   db.session.add(log_data_new_record)
   db.session.commit()
 
+
+
+def field_check_status(be_eo_data_row_no, be_data_eo_code, field_name, field_be_data, field_master_data, infodata_filename, infodata_sender_email, infodata_sender_email_date):
+  field_name =field_name
+  field_status ={}
+  field_status['field_name'] = field_name
+  field_status['be_data'] = field_be_data
+  field_status['master_data'] = field_master_data
+
+  if field_be_data == field_master_data:
+    field_status['values_status'] = 'equal'
+  else:
+    field_status['values_status'] = 'not_equal'
+
+  # проверяем на наличие конфликта с текущим eo_code и eo_master_data_garno
+  conflict_data = Eo_data_conflicts.query.filter_by(eo_code = be_data_eo_code, eo_conflict_field = field_name, eo_conflict_status = "active").first()
+
+  if conflict_data:
+    field_status['conflict_status'] = 'exist'
+  else:
+    field_status['conflict_status'] = 'not_exist'
+  
+# если значения равны и конфликт есть, то разрешаем конфликт
+  if  field_status['values_status'] == 'equal' and  field_status['conflict_status'] == 'exist':
+    solve_conflict(be_data_eo_code, field_name, field_be_data)
+  
+  # если значения не равны и конфликт есть, то даем перезаписываем конфликт, даем лог и идем дальше   
+  elif field_status['values_status'] == 'not_equal' and  field_status['conflict_status'] == 'exist':
+    rewrite_conflict(be_data_eo_code, field_name, field_be_data, field_master_data)
+
+  # если значения не равны и конфликта нет, то создаем конфликт
+  elif field_status['values_status'] == 'not_equal' and  field_status['conflict_status'] == 'not_exist': 
+    create_conflict(be_eo_data_row_no, be_data_eo_code, field_name, field_master_data, field_be_data, infodata_filename, infodata_sender_email, infodata_sender_email_date)  
+  
+    # если значения равны и конфликта нет, то ничего не происходит  - идем дальше
+  elif field_status['values_status'] == 'equal' and  field_status['conflict_status'] == 'not_exist':
+    pass
+
+  else:
+    print("что-то не понятное")
+
+
+
 def read_be_eo_xlsx():
   # with app.app_context():
   # читаем excel с данными из бизнес-единиц. Проверяем - если нет нужного листа с данными, то отдаем ошибку
@@ -108,99 +151,19 @@ def read_be_eo_xlsx():
       # print("be_data_gar_no: ", be_data_gar_no, type(be_data_gar_no))
       # print("eo_master_data_garno: ", eo_master_data_garno, type(eo_master_data_garno))
       field_name = "gar_no"
-      field_status ={}
-      field_status['field_name'] = "gar_no"
-      field_status['be_data'] = be_data_gar_no
-      field_status['master_data'] = eo_master_data_garno
-      field_status['be_data'] = be_data_gar_no
+      field_be_data = be_data_gar_no
+      field_master_data = eo_master_data_garno
+
+      # запуск функции по проверке статуса текущего поля
+      field_check_status(
+        be_eo_data_row_no,
+        be_data_eo_code,
+        field_name, 
+        field_be_data,
+        field_master_data,
+        infodata_filename, 
+        infodata_sender_email, 
+        infodata_sender_email_date
+      )
       
-      if be_data_gar_no == eo_master_data_garno:
-        field_status['values_status'] = 'equal'
-      else:
-        field_status['values_status'] = 'not_equal'
-
-      # проверяем на наличие конфликта с текущим eo_code и eo_master_data_garno
-      conflict_data = Eo_data_conflicts.query.filter_by(eo_code = be_data_eo_code, eo_conflict_field = field_status['field_name'], eo_conflict_status = "active").first()
-      if conflict_data:
-        field_status['conflict_status'] = 'exist'
-      else:
-        field_status['conflict_status'] = 'not_exist'
-      
-      # если значения равны и конфликт есть, то разрешаем конфликт
-      if  field_status['values_status'] == 'equal' and  field_status['conflict_status'] == 'exist':
-        solve_conflict(be_data_eo_code, field_status['field_name'], field_status['be_data'])
-        
-      # если значения не равны и конфликт есть, то даем перезаписываем конфликт, даем лог и идем дальше   
-      elif field_status['values_status'] == 'not_equal' and  field_status['conflict_status'] == 'exist':
-        rewrite_conflict(be_data_eo_code, field_status['field_name'], field_status['be_data'], field_status['master_data'])
-
-      # если значения не равны и конфликта нет, то создаем конфликт
-      elif field_status['values_status'] == 'not_equal' and  field_status['conflict_status'] == 'not_exist': 
-        create_conflict(be_eo_data_row_no, be_data_eo_code, field_status['field_name'], field_status['master_data'], field_status['be_data'], infodata_filename, infodata_sender_email, infodata_sender_email_date)
-
-
-      # если значения равны и конфликта нет, то ничего не происходит  - идем дальше
-      elif field_status['values_status'] == 'equal' and  field_status['conflict_status'] == 'not_exist':
-        pass
-        
-      else:
-        print("что-то не понятное")
-        
-        
-        
-      
-
-# , infodata_filename, infodata_sender_email, infodata_sender_email_date
-        
-      # # ...... то проверяем на наличие конфликта
-      # # Если гаражные номера не совпадают, то это новый конфликт
-      # if eo_master_data_garno != be_data_gar_no:
-      #   # проверяем есть ли уже созданная ранее запись об этом конфликте
-      #   potencial_conflict_record = Eo_data_conflicts.query.filter_by(eo_code = be_data_eo_code, eo_conflict_field = "gar_no", eo_conflict_field_current_master_data = eo_master_data_garno, eo_conflict_field_uploaded_data = be_data_gar_no).first()
-        
-      #   # проверяем есть ли запись о конфликте
-      #   if potencial_conflict_record:
-      #     # если запись о конфликте есть, то просто выводим 
-      #     log_data_new_record = LogsDB(log_text = f"В таблице конфликтов уже есть запись о конфликте по полю 'гаражный номер' eo_code ({be_data_eo_code})", log_status = "new")
-      #     db.session.add(log_data_new_record)
-      #   else:  
-      #     # если записи о конфликте нет, то создаем новую запись о конфликте
-      #     new_conflict_record = Eo_data_conflicts(be_eo_data_row_no = be_eo_data_row_no, eo_code = be_data_eo_code, eo_conflict_field = "gar_no", eo_conflict_field_current_master_data = eo_master_data_garno, eo_conflict_field_uploaded_data = be_data_gar_no, eo_conflict_description = f"В EO {be_data_eo_code} гаражный номер в файле из бизнес-единицы {be_data_gar_no} не соответствует гаражному номеру в мастер-файле {eo_master_data_garno}", filename = infodata_filename, sender_email = infodata_sender_email, email_date = infodata_sender_email_date)
-  
-          
-      #     db.session.add(new_conflict_record)
-      #     # добавляем новую запись в лог файл
-      #     log_data_new_record = LogsDB(log_text = f"Добавлена запись о новом конфликте. В eo_code ({be_data_eo_code}) гаражный номер в загруженном файле ({be_data_gar_no}) не соответствует гаражному номеру в мастер-файле ({eo_master_data_garno})", log_status = "new")
-      #     db.session.add(log_data_new_record)
-      #     print("Создан новый конфликт. eo_code: ", be_data_eo_code, ". Гаражный номер в мастер-файле: ", eo_master_data_garno, ", гаражный номер в загружаемом файле: ", be_data_gar_no)
-      # # если гаражные номера совпадают, то конфликта нет и движемся дальше
-      #   db.session.commit()
-      
-      # # гаражные номера равны
-      # else:
-        
-      #   # проверяем есть ли конфликт
-      #   potencial_conflict_record = Eo_data_conflicts.query.filter_by(eo_code = be_data_eo_code, eo_conflict_field = "gar_no", eo_conflict_field_current_master_data = eo_master_data_garno).first()
-      #   # проверяем есть ли запись о конфликте
-      #   if potencial_conflict_record:
-      #     potencial_conflict_record.eo_conflict_status = "resolved"
-      #   # добавляем запись в лог-файл
-      #     log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({be_data_eo_code}). Значение гаражного номера в мастер-данных: {be_data_gar_no}", 	log_status = "new")
-      #     db.session.add(log_data_new_record)
-      #     db.session.commit()
-        
-        
-    # db.session.commit()  
-        
-      
-    
-
-
-
-  
-
-  
-
-  
-  
-  
+ 
