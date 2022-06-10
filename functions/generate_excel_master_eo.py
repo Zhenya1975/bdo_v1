@@ -11,7 +11,7 @@ db = extensions.db
 def sql_to_eo_master():
   con = sqlite3.connect("database/datab.db")
   # sql = "SELECT * FROM eo_DB JOIN be_DB"
-  sql = "SELECT eo_DB.be_code, \
+  sql = "SELECT \
   eo_DB.be_code, \
   be_DB.be_description, \
   eo_DB.eo_class_code, \
