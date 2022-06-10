@@ -30,8 +30,19 @@ def sql_to_eo_master():
   excel_master_eo_df = pd.read_sql_query(sql, con)
   date_time_plug = '31/12/2199 23:59:59'
   date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
-  excel_master_eo_df_subset = excel_master_eo_df.loc[excel_master_eo_df['expected_operation_finish_date'] == date_time_plug]
+  excel_master_eo_df['expected_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_finish_date'])
+  excel_master_eo_df['operation_start_date'] = pd.to_datetime(excel_master_eo_df['operation_start_date'])
   
+  excel_master_eo_df_subset = excel_master_eo_df.loc[excel_master_eo_df['expected_operation_finish_date'] == date_time_plug]
+  indexes = excel_master_eo_df_subset.index.values
+  excel_master_eo_df.loc[indexes, ['expected_operation_finish_date']] = ""
+  
+  excel_master_eo_df_2_subset = excel_master_eo_df.loc[excel_master_eo_df['operation_start_date'] == date_time_plug]
+  indexes_2 = excel_master_eo_df_2_subset.index.values
+  excel_master_eo_df.loc[indexes_2, ['operation_start_date']] = ""
+
+  excel_master_eo_df["operation_start_date"] = excel_master_eo_df["operation_start_date"].dt.strftime("%d.%m.%Y")
+
   excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)  
 
 
