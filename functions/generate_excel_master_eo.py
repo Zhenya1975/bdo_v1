@@ -15,7 +15,12 @@ def sql_to_eo_master():
   be_DB.be_description, \
   eo_DB.eo_class_code, \
   eo_class_DB.eo_class_description, \
-  models_DB.eo_model_name  \
+  models_DB.eo_model_name, \
+  eo_DB.teh_mesto, \
+  eo_DB.gar_no, \
+  eo_DB.head_type, \
+  eo_DB.operation_start_date, \
+  eo_DB.expected_operation_finish_date \
   FROM eo_DB \
   JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
   JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
