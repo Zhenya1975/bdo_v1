@@ -3,8 +3,25 @@ from extensions import extensions
 from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts
 from initial_values.initial_values import sap_columns_to_master_columns
 # from app import app
+import sqlite3
 
 db = extensions.db
+
+def sql_to_eo_master():
+  con = sqlite3.connect("database/datab.db")
+  # sql = "SELECT * FROM eo_DB JOIN be_DB"
+  sql = "SELECT eo_DB.be_code, \
+  eo_DB.be_code, \
+  be_DB.be_description, \
+  eo_DB.eo_class_code, \
+  models_DB.eo_model_name  \
+  FROM eo_DB \
+  JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
+  JOIN be_DB ON eo_DB.be_code = be_DB.be_code"
+  
+  df = pd.read_sql_query(sql, con)
+  print(df)
+
 
 def conflict_list_prepare(eo_code):
   conflict_data = Eo_data_conflicts.query.filter_by(eo_code = eo_code, eo_conflict_status = "active")

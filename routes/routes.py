@@ -119,19 +119,22 @@ def download_master_eo_file():
   if request.method == 'POST':
     
     # выпекаем excel-файл из базы данных
-    try:
-      try:
-        os.remove("downloads/eo_master_data.xlsx")
-      except:
-        pass
+    # try:
+    #   try:
+    #     os.remove("downloads/eo_master_data.xlsx")
+    #   except:
+    #     pass
       
-      generate_excel_master_eo.generate_excel_master_eo()
-      return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
-    except Exception as e:
-      print("не удалось создать excel файл eo_master_data.xlsx. Ошибка: ", e)
-      message = f"Не удалось выгрузить файл 'eo_master_data.xlsx'"
-      flash(message, 'alert-danger')
-      return redirect(url_for('home.home_view')) 
+      # generate_excel_master_eo.generate_excel_master_eo()
+    generate_excel_master_eo.sql_to_eo_master()
+
+    return "sql_to_eo_master"
+    #   return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
+    # except Exception as e:
+    #   print("не удалось создать excel файл eo_master_data.xlsx. Ошибка: ", e)
+    #   message = f"Не удалось выгрузить файл 'eo_master_data.xlsx'"
+    #   flash(message, 'alert-danger')
+    #   return redirect(url_for('home.home_view')) 
     
 
 @home.route('/conflicts', methods=['GET', 'POST'])
