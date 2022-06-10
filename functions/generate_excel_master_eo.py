@@ -2,6 +2,7 @@ import pandas as pd
 from extensions import extensions
 from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts
 from initial_values.initial_values import sap_columns_to_master_columns
+from datetime import datetime
 # from app import app
 import sqlite3
 
@@ -27,6 +28,10 @@ def sql_to_eo_master():
   JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code"
   
   excel_master_eo_df = pd.read_sql_query(sql, con)
+  date_time_plug = '31/12/2199 23:59:59'
+  date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
+  excel_master_eo_df_subset = excel_master_eo_df.loc[excel_master_eo_df['expected_operation_finish_date'] == date_time_plug]
+  
   excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)  
 
 
