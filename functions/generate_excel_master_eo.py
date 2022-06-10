@@ -14,10 +14,12 @@ def sql_to_eo_master():
   eo_DB.be_code, \
   be_DB.be_description, \
   eo_DB.eo_class_code, \
+  eo_class_DB.eo_class_description, \
   models_DB.eo_model_name  \
   FROM eo_DB \
   JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
-  JOIN be_DB ON eo_DB.be_code = be_DB.be_code"
+  JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
+  JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code"
   
   df = pd.read_sql_query(sql, con)
   print(df)
