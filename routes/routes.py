@@ -127,9 +127,7 @@ def download_master_eo_file():
       
       # generate_excel_master_eo.generate_excel_master_eo()
     generate_excel_master_eo.sql_to_eo_master()
-
-    return "sql_to_eo_master"
-    #   return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
+    return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
     # except Exception as e:
     #   print("не удалось создать excel файл eo_master_data.xlsx. Ошибка: ", e)
     #   message = f"Не удалось выгрузить файл 'eo_master_data.xlsx'"

@@ -26,8 +26,9 @@ def sql_to_eo_master():
   JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
   JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code"
   
-  df = pd.read_sql_query(sql, con)
-  print(df)
+  excel_master_eo_df = pd.read_sql_query(sql, con)
+  excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)  
+
 
 
 def conflict_list_prepare(eo_code):
