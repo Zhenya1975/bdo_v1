@@ -39,6 +39,7 @@ class Eo_DB(db.Model):
   operation_start_date=db.Column(db.DateTime)
   expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug)
   operation_status = db.Column(db.String)
+  operation_status_date = db.Column(db.DateTime, default = utc_now.astimezone(pytz.timezone("Europe/Moscow")))
   eo_model_id = db.Column(db.Integer, db.ForeignKey('models_DB.eo_model_id'))
   eo_class_code = db.Column(db.String, db.ForeignKey('eo_class_DB.eo_class_code'))
   conflict_data = db.relationship('Eo_data_conflicts', backref='conflict_data')
