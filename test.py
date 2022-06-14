@@ -10,14 +10,25 @@ import os
 
 db = extensions.db
 
+def delete_alembic_version_tabke():
+  with app.app_context():
+    con = sqlite3.connect("database/datab.db")
+    # sql = "SELECT * FROM eo_DB JOIN be_DB"
+    # sql = "SELECT eo_DB.be_code, models_DB.eo_model_name  FROM eo_DB JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id"
+    cursor = con.cursor()
+    drop_table_sql = "DROP TABLE alembic_version"
+    cursor.execute(drop_table_sql)
+    con.commit()
+    cursor.close()
+
+
 with app.app_context():
   con = sqlite3.connect("database/datab.db")
-  # sql = "SELECT * FROM eo_DB JOIN be_DB"
-  sql = "SELECT eo_DB.be_code, models_DB.eo_model_name  FROM eo_DB JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id"
-  
+  sql = "SELECT * FROM eo_DB JOIN be_DB"
   df = pd.read_sql_query(sql, con)
   print(df)
-  
+
+
 
 
 # with app.app_context():
