@@ -31,24 +31,22 @@ def read_sap_eo_xlsx():
   sap_eo_raw_data = pd.read_excel('uploads/sap_eo_data.xlsx', index_col = False, dtype=str)
   
   sap_eo_data = sap_eo_raw_data.rename(columns=sap_columns_to_master_columns)
-  date_time_plug = '31/12/2199 23:59:59'
-  date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
-
+  date_time_plug_value = '1/1/2199'
+  date_time_plug = datetime.strptime(date_time_plug_value, '%d/%m/%Y')
   
+  
+  try:
+    sap_eo_data['gar_no'].fillna(0, inplace = True)
+  except:
+    sap_eo_data['gar_no'] = "plug"
+  sap_eo_data["gar_no"] = sap_eo_data["gar_no"].astype(str)
+
   try:
     sap_eo_data["operation_start_date"] = pd.to_datetime(sap_eo_data["operation_start_date"])
     sap_eo_data['operation_start_date'].fillna(date_time_plug, inplace = True)
   except:
     sap_eo_data["operation_start_date"] = date_time_plug
-
-  try:
-    sap_eo_data['gar_no'].fillna(0, inplace = True)
-  except:
-    sap_eo_data['gar_no'] = "plug"
-  
-  sap_eo_data["gar_no"] = sap_eo_data["gar_no"].astype(str)
-
-
+    
   try:  
     sap_eo_data["expected_operation_finish_date"] = pd.to_datetime(sap_eo_data["expected_operation_finish_date"])
     sap_eo_data['expected_operation_finish_date'].fillna(date_time_plug, inplace = True)
@@ -103,16 +101,13 @@ def read_sap_eo_xlsx():
     operation_start_date_raw = getattr(row, "operation_start_date")
     operation_start_date = read_date(operation_start_date_raw)
 
-    try:
-      expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
-      expected_operation_finish_date = read_date(expected_operation_finish_date_raw)
-    except:
-      pass
+    expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
+    expected_operation_finish_date = read_date(expected_operation_finish_date_raw)
+
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=eo_code_excel).first()
     # если данных нет, то добавляем запись.
     if eo_master_data == None:
-      print(eo_code_excel, " - новый eo")
       new_eo_master_data_record = Eo_DB(be_code=be_code_excel, eo_code=eo_code_excel, eo_description=eo_description_excel, teh_mesto=teh_mesto_excel, gar_no=gar_no_excel, head_type = head_type_excel, eo_model_id = eo_model_id_excel, operation_start_date=operation_start_date, expected_operation_finish_date = expected_operation_finish_date)
       
       db.session.add(new_eo_master_data_record)
@@ -123,7 +118,6 @@ def read_sap_eo_xlsx():
    
     # иначе обновляем данные в мастер-файле
     else:
-      print(eo_code_excel, " - существующий eo")
       if be_code_excel != 0:
         eo_master_data.be_code = be_code_excel
       
@@ -135,20 +129,20 @@ def read_sap_eo_xlsx():
       
       if gar_no_excel != "plug":
         eo_master_data.gar_no = gar_no_excel
-      
-      # eo_master_data.eo_description = eo_description
-      
-      
+                
       if head_type_excel != "plug":
         eo_master_data.head_type = head_type_excel
       
-      if eo_model_id_excel != "plug":
+      if eo_model_id_excel != 0:
         eo_master_data.eo_model_id = eo_model_id_excel
 
-      eo_master_data.operation_start_date = operation_start_date
       
-      eo_master_data.expected_operation_finish_date = expected_operation_finish_date
-      print("100000065632 expected_operation_finish_date", expected_operation_finish_date, type(expected_operation_finish_date))
+      eo_master_data.operation_start_date = operation_start_date
+
+      expected_operation_finish_date_check = expected_operation_finish_date.strftime("%d.%m.%Y")
+      if expected_operation_finish_date_check != date_time_plug_value:
+        eo_master_data.expected_operation_finish_date = expected_operation_finish_date
+      
       db.session.commit()
     
     db.session.commit()
