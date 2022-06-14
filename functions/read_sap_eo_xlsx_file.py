@@ -9,7 +9,7 @@ db = extensions.db
 
 sap_columns_to_master_columns = sap_columns_to_master_columns
 
-def read_date(date_input):  
+def read_date(date_input, eo_code):  
   if "timestamp" in str(type(date_input)):
     date_output = date_input
     return date_output
@@ -17,8 +17,18 @@ def read_date(date_input):
     try:
       date_output = datetime.strptime(date_input, '%d.%m.%Y')
       return date_output
+    except:
+      pass
+    try:
+      date_output = datetime.strptime(date_input, '%Y-%m-%d %H:%M:%S')
+      return date_output
+    except:
+      pass  
+    try:
+      date_output = datetime.strptime(date_input, '%Y-%m-%d')
+      return date_output
     except Exception as e:
-      print(f"не удалось сохранить в дату '{date_input}'. Ошибка: ", e)
+      print(f"eo_code: {eo_code}. Не удалось сохранить в дату '{date_input}, тип: {type(date_input)}'. Ошибка: ", e)
   elif "nat" in str(type(date_input)) or "NaT" in str(type(date_input)):
     date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
     return date_output
@@ -31,27 +41,28 @@ def read_sap_eo_xlsx():
   sap_eo_raw_data = pd.read_excel('uploads/sap_eo_data.xlsx', index_col = False, dtype=str)
   
   sap_eo_data = sap_eo_raw_data.rename(columns=sap_columns_to_master_columns)
-  date_time_plug_value = '1/1/2199'
-  date_time_plug = datetime.strptime(date_time_plug_value, '%d/%m/%Y')
+  sap_eo_column_list = list(sap_eo_data.columns)
+  # date_time_plug_value = '1/1/2199'
+  # date_time_plug = datetime.strptime(date_time_plug_value, '%d/%m/%Y')
   
   
-  try:
-    sap_eo_data['gar_no'].fillna(0, inplace = True)
-  except:
-    sap_eo_data['gar_no'] = "plug"
-  sap_eo_data["gar_no"] = sap_eo_data["gar_no"].astype(str)
+  # try:
+  #   sap_eo_data['gar_no'].fillna(0, inplace = True)
+  # except:
+  #   pass
+  # sap_eo_data["gar_no"] = sap_eo_data["gar_no"].astype(str)
 
-  try:
-    sap_eo_data["operation_start_date"] = pd.to_datetime(sap_eo_data["operation_start_date"])
-    sap_eo_data['operation_start_date'].fillna(date_time_plug, inplace = True)
-  except:
-    sap_eo_data["operation_start_date"] = date_time_plug
+  # try:
+  #   sap_eo_data["operation_start_date"] = pd.to_datetime(sap_eo_data["operation_start_date"])
+  #   sap_eo_data['operation_start_date'].fillna(date_time_plug, inplace = True)
+  # except:
+  #   pass 
     
-  try:  
-    sap_eo_data["expected_operation_finish_date"] = pd.to_datetime(sap_eo_data["expected_operation_finish_date"])
-    sap_eo_data['expected_operation_finish_date'].fillna(date_time_plug, inplace = True)
-  except:
-    sap_eo_data["expected_operation_finish_date"] = date_time_plug
+  # try:  
+  #   sap_eo_data["expected_operation_finish_date"] = pd.to_datetime(sap_eo_data["expected_operation_finish_date"])
+  #   sap_eo_data['expected_operation_finish_date'].fillna(date_time_plug, inplace = True)
+  # except:
+  #   pass
     
   # предыдущие данные в лог файле ресетим
   log_data_updated = LogsDB.query.update(dict(log_status='old'))
@@ -60,56 +71,12 @@ def read_sap_eo_xlsx():
   # итерируемся по полученному файлу
   for row in sap_eo_data.itertuples():
     eo_code_excel = getattr(row, "eo_code")
-    
-    be_code_excel = 0
-    try:
-      be_code_excel = getattr(row, "be_code")
-    except:
-      pass
-    
-    eo_description_excel = "plug"
-    try:
-      eo_description_excel = getattr(row, "eo_description")
-    except:
-      pass
-    
-    teh_mesto_excel = "plug"
-    try:
-      teh_mesto_excel = getattr(row, "teh_mesto")
-    except:
-      pass
-    
-    gar_no_excel = "plug"  
-    try:
-      gar_no_excel = str(getattr(row, "gar_no"))
-    except:
-      pass
-
-    head_type_excel = "plug"
-    try:
-      head_type_excel = str(getattr(row, "head_type"))
-    except:
-      pass  
-
-    eo_model_id_excel = 0
-    try:
-      eo_model_id_excel = getattr(row, "eo_model_id")
-    except:
-      pass   
-
-    
-    operation_start_date_raw = getattr(row, "operation_start_date")
-    operation_start_date = read_date(operation_start_date_raw)
-
-    expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
-    expected_operation_finish_date = read_date(expected_operation_finish_date_raw)
-
+  
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=eo_code_excel).first()
     # если данных нет, то добавляем запись.
     if eo_master_data == None:
-      new_eo_master_data_record = Eo_DB(be_code=be_code_excel, eo_code=eo_code_excel, eo_description=eo_description_excel, teh_mesto=teh_mesto_excel, gar_no=gar_no_excel, head_type = head_type_excel, eo_model_id = eo_model_id_excel, operation_start_date=operation_start_date, expected_operation_finish_date = expected_operation_finish_date)
-      
+      new_eo_master_data_record = Eo_DB(eo_code=eo_code_excel)
       db.session.add(new_eo_master_data_record)
       # добавляем новую запись в лог файл
       log_data_new_record = LogsDB(log_text = f"В eo_master_data добавлена запись eo: {eo_code_excel}", log_status = "new")
@@ -118,29 +85,32 @@ def read_sap_eo_xlsx():
    
     # иначе обновляем данные в мастер-файле
     else:
-      if be_code_excel != 0:
-        eo_master_data.be_code = be_code_excel
-      
-      if eo_description_excel != "plug":
-        eo_master_data.eo_description = eo_description_excel
+      if 'be_code' in sap_eo_column_list:
+        eo_master_data.be_code = getattr(row, "be_code")
 
-      if teh_mesto_excel != "plug":
-        eo_master_data.teh_mesto = teh_mesto_excel
-      
-      if gar_no_excel != "plug":
-        eo_master_data.gar_no = gar_no_excel
-                
-      if head_type_excel != "plug":
-        eo_master_data.head_type = head_type_excel
-      
-      if eo_model_id_excel != 0:
-        eo_master_data.eo_model_id = eo_model_id_excel
+      if 'eo_description' in sap_eo_column_list:
+        eo_master_data.eo_description = getattr(row, "eo_description")
 
-      
-      eo_master_data.operation_start_date = operation_start_date
+      if 'teh_mesto' in sap_eo_column_list:
+        eo_master_data.teh_mesto = getattr(row, "teh_mesto")
 
-      expected_operation_finish_date_check = expected_operation_finish_date.strftime("%d.%m.%Y")
-      if expected_operation_finish_date_check != date_time_plug_value:
+      if 'gar_no' in sap_eo_column_list:
+        eo_master_data.gar_no = getattr(row, "gar_no")
+      
+      if 'head_type' in sap_eo_column_list:
+        eo_master_data.head_type = getattr(row, "head_type")  
+
+      if 'eo_model_id' in sap_eo_column_list:
+        eo_master_data.eo_model_id = getattr(row, "eo_model_id")
+
+      if 'operation_start_date' in sap_eo_column_list:
+        operation_start_date_raw = getattr(row, "operation_start_date")
+        operation_start_date = read_date(operation_start_date_raw, eo_code_excel)
+        eo_master_data.operation_start_date = operation_start_date
+
+      if 'expected_operation_finish_date' in sap_eo_column_list:
+        expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
+        expected_operation_finish_date = read_date(expected_operation_finish_date_raw, eo_code_excel)
         eo_master_data.expected_operation_finish_date = expected_operation_finish_date
       
       db.session.commit()

@@ -43,7 +43,7 @@ def sql_to_eo_master():
   excel_master_eo_df.loc[indexes_2, ['operation_start_date']] = ""
 
   excel_master_eo_df["operation_start_date"] = excel_master_eo_df["operation_start_date"].dt.strftime("%d.%m.%Y")
-
+  excel_master_eo_df["expected_operation_finish_date"] = excel_master_eo_df["expected_operation_finish_date"].dt.strftime("%d.%m.%Y")
   excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)  
 
 
