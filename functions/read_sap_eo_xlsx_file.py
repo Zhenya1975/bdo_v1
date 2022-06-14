@@ -42,27 +42,6 @@ def read_sap_eo_xlsx():
   
   sap_eo_data = sap_eo_raw_data.rename(columns=sap_columns_to_master_columns)
   sap_eo_column_list = list(sap_eo_data.columns)
-  # date_time_plug_value = '1/1/2199'
-  # date_time_plug = datetime.strptime(date_time_plug_value, '%d/%m/%Y')
-  
-  
-  # try:
-  #   sap_eo_data['gar_no'].fillna(0, inplace = True)
-  # except:
-  #   pass
-  # sap_eo_data["gar_no"] = sap_eo_data["gar_no"].astype(str)
-
-  # try:
-  #   sap_eo_data["operation_start_date"] = pd.to_datetime(sap_eo_data["operation_start_date"])
-  #   sap_eo_data['operation_start_date'].fillna(date_time_plug, inplace = True)
-  # except:
-  #   pass 
-    
-  # try:  
-  #   sap_eo_data["expected_operation_finish_date"] = pd.to_datetime(sap_eo_data["expected_operation_finish_date"])
-  #   sap_eo_data['expected_operation_finish_date'].fillna(date_time_plug, inplace = True)
-  # except:
-  #   pass
     
   # предыдущие данные в лог файле ресетим
   log_data_updated = LogsDB.query.update(dict(log_status='old'))
@@ -122,7 +101,7 @@ def read_sap_eo_xlsx():
     if add_candidate_record:
       # удаляем запись из таблицы add_candidate_record
       db.session.delete(add_candidate_record)
-      log_data_new_record = LogsDB(log_text = f"Добавлена запись из списка кандидатов на добавление. eo_code: {eo_code}", 	log_status = "new")
+      log_data_new_record = LogsDB(log_text = f"Добавлена запись из списка кандидатов на добавление. eo_code: {eo_code_excel}", 	log_status = "new")
       db.session.add(log_data_new_record)
       db.session.commit()
 
@@ -134,12 +113,12 @@ def read_sap_eo_xlsx():
     # если запись находим
     if potencial_gar_no_conflict:
       # обновляем запись в поле eo_conflict_field_current_master_data
-      potencial_gar_no_conflict.eo_conflict_field_current_master_data = str(gar_no_excel)
+      potencial_gar_no_conflict.eo_conflict_field_current_master_data = str(getattr(row, "gar_no"))
       db.session.commit()
       # проверяем на ситуацию в конфликте после внесения изменений
       if str(potencial_gar_no_conflict.eo_conflict_field_current_master_data) == (potencial_gar_no_conflict.eo_conflict_field_uploaded_data):
         potencial_gar_no_conflict.eo_conflict_status = "resolved"
-        log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({eo_code_excel}). Текущее значение гаражного номера в мастер-данных: {gar_no_excel}", 	log_status = "new")
+        log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({eo_code_excel}). Текущее значение гаражного номера в мастер-данных: {eo_master_data.gar_no}", 	log_status = "new")
         db.session.add(log_data_new_record)
         
         db.session.commit()
