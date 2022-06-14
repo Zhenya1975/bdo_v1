@@ -10,7 +10,7 @@ import os
 
 db = extensions.db
 
-def delete_alembic_version_tabke():
+def delete_alembic_version_table():
   with app.app_context():
     con = sqlite3.connect("database/datab.db")
     # sql = "SELECT * FROM eo_DB JOIN be_DB"
@@ -21,12 +21,13 @@ def delete_alembic_version_tabke():
     con.commit()
     cursor.close()
 
+delete_alembic_version_table()
 
-with app.app_context():
-  con = sqlite3.connect("database/datab.db")
-  sql = "SELECT * FROM eo_DB JOIN be_DB"
-  df = pd.read_sql_query(sql, con)
-  print(df)
+# with app.app_context():
+#   con = sqlite3.connect("database/datab.db")
+#   sql = "SELECT * FROM eo_DB JOIN be_DB"
+#   df = pd.read_sql_query(sql, con)
+#   print(df)
 
 
 

@@ -19,13 +19,14 @@ def sql_to_eo_master():
   models_DB.eo_model_name, \
   eo_DB.teh_mesto, \
   eo_DB.gar_no, \
+  eo_DB.eo_code, \
   eo_DB.head_type, \
   eo_DB.operation_start_date, \
   eo_DB.expected_operation_finish_date \
   FROM eo_DB \
-  JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
-  JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
-  JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code"
+  LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
+  LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
+  LEFT JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code"
   
   excel_master_eo_df = pd.read_sql_query(sql, con)
   date_time_plug = '31/12/2199 23:59:59'

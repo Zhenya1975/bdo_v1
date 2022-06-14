@@ -139,10 +139,9 @@ def read_be_eo_xlsx():
     be_data_eo_code = getattr(row, "eo_code")
     be_data_gar_no = str(getattr(row, "gar_no"))
     be_data_operation_start_date_raw = getattr(row, "operation_start_date")
-    be_data_expected_operation_finish_date_raw = getattr(row, "operation_start_date")
+    be_data_expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
     be_data_expected_operation_finish_date = read_date(be_data_expected_operation_finish_date_raw)
 
-    print(be_data_expected_operation_finish_date)
     
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=be_data_eo_code).first()
@@ -175,12 +174,31 @@ def read_be_eo_xlsx():
         infodata_sender_email, 
         infodata_sender_email_date
       )
+
+      ############# ПОЛЕ Плановая дата вывода из эксплуат expected_operation_finish_date ##############################
+      eo_master_data_expected_operation_finish_datetime = eo_master_data.expected_operation_finish_date
+      field_master_data = eo_master_data_expected_operation_finish_datetime.date()
+      field_name = 'expected_operation_finish_datetime'
+      be_data_expected_operation_finish_datetime = be_data_expected_operation_finish_date.date()
+      field_be_data = str(be_data_expected_operation_finish_datetime)
+
+      field_check_status(
+        be_eo_data_row_no,
+        be_data_eo_code,
+        field_name, 
+        field_be_data,
+        field_master_data,
+        infodata_filename, 
+        infodata_sender_email, 
+        infodata_sender_email_date
+      )
+      
       
       ############# ПОЛЕ Дата начала эксплуатации operation_start_date ##############################
       eo_master_data_operation_start_datetime = eo_master_data.operation_start_date
       eo_master_data_operation_start_date = eo_master_data_operation_start_datetime.date()
       field_name = "operation_start_date"
-
+      
       
 
       if be_data_operation_start_datetime == datetime.strptime('1.1.2199', '%d.%m.%Y'):

@@ -32,7 +32,13 @@
                         Конфликты ({{number_of_active_conflicts }})
                         <button class="btn btn-info" type="submit">Выгрузить</button>
                       </form>
-                  </div> 
+                  </div>
+                  <div style="margin-left: 20px; margin-bottom: 22px;">
+                    <form action = "{{url_for( 'home.clean_conflicts' )}}" method=post enctype=multipart/form-data>
+
+                        <button class="btn btn-info" type="submit">Очистить</button>
+                      </form>
+                  </div>
 
                   <div style="margin-left: 30px">
                       <form action = "{{url_for( 'home.add_candidates' )}}" method=post enctype=multipart/form-data>
