@@ -10,21 +10,38 @@ db = extensions.db
 
 be_data_columns_to_master_columns = be_data_columns_to_master_columns
 
-def read_date(date_input):  
-  if "timestamp" in str(type(date_input)):
+
+def read_date(date_input, eo_code):  
+  # print(type(date_input), eo_code)
+  if "timestamp" in str(type(date_input)) or 'datetime' in str(type(date_input)):
     date_output = date_input
     return date_output
   elif "str" in str(type(date_input)):
     try:
       date_output = datetime.strptime(date_input, '%d.%m.%Y')
       return date_output
+    except:
+      pass
+    try:
+      date_output = datetime.strptime(date_input, '%Y-%m-%d %H:%M:%S')
+      return date_output
+    except:
+      pass  
+    try:
+      date_output = datetime.strptime(date_input, '%Y-%m-%d')
+      return date_output
     except Exception as e:
-      print(f"не удалось сохранить в дату '{date_input}'. Ошибка: ", e)
-  elif "nat" in str(type(date_input)) or "NaT" in str(type(date_input)):
+      print(f"eo_code: {eo_code}. Не удалось сохранить в дату '{date_input}, тип: {type(date_input)}'. Ошибка: ", e)
+      date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+      return date_output
+  
+  elif "nat" in str(type(date_input)) or "NaT" in str(type(date_input)) or "float" in str(type(date_input)):
     date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
     return date_output
   else:
-    print("не покрыто типами данных дат", type(date_input), date_input)
+    print(eo_code, "не покрыто типами данных дат", type(date_input), date_input)
+    date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+    return date_output
 
     
     
@@ -139,17 +156,16 @@ def read_be_eo_xlsx():
     be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
     be_data_eo_code = getattr(row, "eo_code")
     be_data_gar_no = str(getattr(row, "gar_no"))
-    be_data_operation_start_date_raw = getattr(row, "operation_start_date")
-    be_data_expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
-    be_data_expected_operation_finish_date = read_date(be_data_expected_operation_finish_date_raw)
-
+    
+    
+    be_data_operation_status = getattr(row, "operation_status")
     
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=be_data_eo_code).first()
-    be_data_operation_start_datetime = read_date(be_data_operation_start_date_raw)
+    
     
     if eo_master_data == None:
-      new_eo_candidate_record = Eo_candidatesDB(eo_code=be_data_eo_code, gar_no = be_data_gar_no, operation_start_date = be_data_operation_start_datetime)
+      new_eo_candidate_record = Eo_candidatesDB(eo_code=be_data_eo_code, gar_no = be_data_gar_no)
       db.session.add(new_eo_candidate_record)
       log_data_new_record = LogsDB(log_text = f"Добавлен кандидат на добавление в мастер. eo_code: {be_data_eo_code}, gar_no: {be_data_gar_no}", log_status = "new")
       db.session.add(log_data_new_record)
@@ -176,12 +192,18 @@ def read_be_eo_xlsx():
         infodata_sender_email_date
       )
 
-      ############# ПОЛЕ Плановая дата вывода из эксплуат expected_operation_finish_date ##############################
+      ############# ПОЛЕ Плановая дата вывода из эксплуат reported_operation_finish_date ##############################
       eo_master_data_expected_operation_finish_datetime = eo_master_data.expected_operation_finish_date
       field_master_data = eo_master_data_expected_operation_finish_datetime.date()
       field_name = 'expected_operation_finish_datetime'
-      be_data_expected_operation_finish_datetime = be_data_expected_operation_finish_date.date()
-      field_be_data = str(be_data_expected_operation_finish_datetime)
+      be_data_reported_operation_finish_date_raw = getattr(row, "reported_operation_finish_date")
+      be_data_reported_operation_finish_date = read_date(be_data_reported_operation_finish_date_raw, be_data_eo_code)
+
+      if be_data_reported_operation_finish_date == datetime.strptime('1.1.2199', '%d.%m.%Y'):
+        be_data_reported_operation_finish_date = eo_master_data_expected_operation_finish_datetime
+      
+      be_data_be_data_reported_operation_finish_date = be_data_reported_operation_finish_date.date()
+      field_be_data = str(be_data_be_data_reported_operation_finish_date)
 
       field_check_status(
         be_eo_data_row_no,
@@ -194,14 +216,16 @@ def read_be_eo_xlsx():
         infodata_sender_email_date
       )
       
+      eo_master_data.reported_operation_finish_date = be_data_reported_operation_finish_date
       
       ############# ПОЛЕ Дата начала эксплуатации operation_start_date ##############################
       eo_master_data_operation_start_datetime = eo_master_data.operation_start_date
       eo_master_data_operation_start_date = eo_master_data_operation_start_datetime.date()
       field_name = "operation_start_date"
-      
-      
 
+      be_data_operation_start_date_raw = getattr(row, "operation_start_date")
+      be_data_operation_start_datetime = read_date(be_data_operation_start_date_raw, be_data_eo_code)
+      
       if be_data_operation_start_datetime == datetime.strptime('1.1.2199', '%d.%m.%Y'):
         be_data_operation_start_datetime = eo_master_data_operation_start_datetime
           
@@ -209,7 +233,6 @@ def read_be_eo_xlsx():
       
       field_be_data = str(be_data_operation_start_date)
       field_master_data = str(eo_master_data_operation_start_date)
-      # print("eo_master_data_operation_start_date", eo_master_data_operation_start_date)
 
       field_check_status(
         be_eo_data_row_no,
@@ -222,4 +245,7 @@ def read_be_eo_xlsx():
         infodata_sender_email_date
       )
       
- 
+      ############# ПОЛЕ Статус эксплуатации operation_status ##############################
+      eo_master_data.reported_operation_status = be_data_operation_status
+      
+      db.session.commit()

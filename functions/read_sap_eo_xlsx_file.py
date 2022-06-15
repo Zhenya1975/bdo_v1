@@ -56,7 +56,8 @@ def calculate_operation_finish_date(operation_start_date_raw, operation_period_y
   return calculate_operation_finish_date
 
 def read_date(date_input, eo_code):  
-  if "timestamp" in str(type(date_input)):
+  # print(type(date_input), eo_code)
+  if "timestamp" in str(type(date_input)) or 'datetime' in str(type(date_input)):
     date_output = date_input
     return date_output
   elif "str" in str(type(date_input)):
@@ -75,11 +76,16 @@ def read_date(date_input, eo_code):
       return date_output
     except Exception as e:
       print(f"eo_code: {eo_code}. Не удалось сохранить в дату '{date_input}, тип: {type(date_input)}'. Ошибка: ", e)
-  elif "nat" in str(type(date_input)) or "NaT" in str(type(date_input)):
+      date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+      return date_output
+  
+  elif "nat" in str(type(date_input)) or "NaT" in str(type(date_input)) or "float" in str(type(date_input)):
     date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
     return date_output
   else:
     print(eo_code, "не покрыто типами данных дат", type(date_input), date_input)
+    date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+    return date_output
 
 
 def read_sap_eo_xlsx():
@@ -177,19 +183,19 @@ def read_sap_eo_xlsx():
     # сверяемся с файлом конфликтов.
     # по полю "Гаражный номер"
     # ищем запись в таблице конфликтов
-    potencial_gar_no_conflict = Eo_data_conflicts.query.filter_by(eo_code = eo_code_excel, eo_conflict_field = "gar_no").first()
+    # potencial_gar_no_conflict = Eo_data_conflicts.query.filter_by(eo_code = eo_code_excel, eo_conflict_field = "gar_no").first()
     # если запись находим
-    if potencial_gar_no_conflict:
-      # обновляем запись в поле eo_conflict_field_current_master_data
-      potencial_gar_no_conflict.eo_conflict_field_current_master_data = str(getattr(row, "gar_no"))
-      db.session.commit()
-      # проверяем на ситуацию в конфликте после внесения изменений
-      if str(potencial_gar_no_conflict.eo_conflict_field_current_master_data) == (potencial_gar_no_conflict.eo_conflict_field_uploaded_data):
-        potencial_gar_no_conflict.eo_conflict_status = "resolved"
-        log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({eo_code_excel}). Текущее значение гаражного номера в мастер-данных: {eo_master_data.gar_no}", 	log_status = "new")
-        db.session.add(log_data_new_record)
+    # if potencial_gar_no_conflict:
+    #   # обновляем запись в поле eo_conflict_field_current_master_data
+    #   potencial_gar_no_conflict.eo_conflict_field_current_master_data = str(getattr(row, "gar_no"))
+    #   db.session.commit()
+    #   # проверяем на ситуацию в конфликте после внесения изменений
+    #   if str(potencial_gar_no_conflict.eo_conflict_field_current_master_data) == (potencial_gar_no_conflict.eo_conflict_field_uploaded_data):
+    #     potencial_gar_no_conflict.eo_conflict_status = "resolved"
+    #     log_data_new_record = LogsDB(log_text = f"Разрешен конфликт с гаражным номером в eo_code ({eo_code_excel}). Текущее значение гаражного номера в мастер-данных: {eo_master_data.gar_no}", 	log_status = "new")
+    #     db.session.add(log_data_new_record)
         
-        db.session.commit()
+    #     db.session.commit()
  
       
 
