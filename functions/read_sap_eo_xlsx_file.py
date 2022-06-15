@@ -88,6 +88,7 @@ def read_sap_eo_xlsx():
   
   sap_eo_data = sap_eo_raw_data.rename(columns=sap_columns_to_master_columns)
   sap_eo_column_list = list(sap_eo_data.columns)
+  # print(sap_eo_column_list)
     
   # предыдущие данные в лог файле ресетим
   log_data_updated = LogsDB.query.update(dict(log_status='old'))
@@ -149,6 +150,15 @@ def read_sap_eo_xlsx():
       expected_operation_status = expected_operation_status_code(operation_start_date, calculated_operation_finish_date, today_datetime)
       eo_master_data.expected_operation_status_code = expected_operation_status
       
+      sap_system_status = eo_master_data.sap_system_status
+      if 'sap_system_status' in sap_eo_column_list:
+        sap_system_status = getattr(row, "sap_system_status")
+        eo_master_data.sap_system_status = sap_system_status
+
+      sap_user_status = eo_master_data.sap_user_status
+      if 'sap_user_status' in sap_eo_column_list:
+        sap_user_status = getattr(row, "sap_user_status")
+        eo_master_data.sap_user_status = sap_user_status
       
       db.session.commit()
     

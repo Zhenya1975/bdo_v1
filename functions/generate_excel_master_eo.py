@@ -26,7 +26,9 @@ def sql_to_eo_master():
   eo_DB.expected_operation_finish_date, \
   eo_DB.expected_operation_status_code, \
   operation_statusDB.operation_status_description, \
-  eo_DB.expected_operation_status_code_date \
+  eo_DB.expected_operation_status_code_date, \
+  eo_DB.sap_system_status, \
+  eo_DB.sap_user_status \
   FROM eo_DB \
   LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
   LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
