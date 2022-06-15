@@ -118,16 +118,16 @@ def read_sap_eo_xlsx():
         operation_start_date = read_date(operation_start_date_raw, eo_code_excel)
         eo_master_data.operation_start_date = operation_start_date
 
-      if 'expected_operation_period_years' in sap_eo_column_list:
-        eo_master_data.expected_operation_period_years = getattr(row, "expected_operation_period_years")
-        # пишем расчетное значение даты завершения эксплуатации
-        calculated_operation_finish_date = calculate_operation_finish_date(operation_start_date, getattr(row, "expected_operation_period_years"), eo_code_excel)
-        eo_master_data.expected_operation_finish_date = calculated_operation_finish_date
 
-      if 'expected_operation_finish_date' in sap_eo_column_list:
-        expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
-        expected_operation_finish_date = read_date(expected_operation_finish_date_raw, eo_code_excel)
-        eo_master_data.expected_operation_finish_date = expected_operation_finish_date
+
+      # пишем расчетное значение даты завершения эксплуатации
+      expected_operation_period_years = eo_master_data.expected_operation_period_years
+      if 'expected_operation_period_years' in sap_eo_column_list:
+        expected_operation_period_years = getattr(row, "expected_operation_period_years")
+        
+      calculated_operation_finish_date = calculate_operation_finish_date(operation_start_date, expected_operation_period_years, eo_code_excel)
+      eo_master_data.expected_operation_finish_date = calculated_operation_finish_date
+      
       
       db.session.commit()
     
