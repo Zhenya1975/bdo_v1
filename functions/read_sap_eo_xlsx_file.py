@@ -3,11 +3,40 @@ from extensions import extensions
 from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
 from initial_values.initial_values import sap_columns_to_master_columns
 from datetime import datetime
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
+
+
 # from app import app
 
 db = extensions.db
 
 sap_columns_to_master_columns = sap_columns_to_master_columns
+
+def calculate_operation_finish_date(operation_start_date_raw, operation_period_years_raw, eo_code):
+  if "timestamp" in str(type(operation_start_date_raw)) or 'datetime' in str(type(operation_start_date_raw)):
+    operation_start_date = operation_start_date_raw
+  elif "str" in str(type(operation_start_date_raw)):
+    try:
+      operation_start_date = datetime.strptime(operation_start_date_raw, '%d.%m.%Y')
+    except:
+      pass
+    try:
+      operation_start_date = datetime.strptime(operation_start_date_raw, '%Y-%m-%d %H:%M:%S')
+    except:
+      pass  
+    try:
+      operation_start_date = datetime.strptime(operation_start_date_raw, '%Y-%m-%d')
+    except Exception as e:
+      print(f"eo_code: {eo_code}. Не удалось сохранить в дату '{operation_start_date_raw}, тип: {type(operation_start_date_raw)}'. Ошибка: ", e)
+  
+  try:
+    operation_period_years = int(operation_period_years_raw)  
+  except Exception as e:
+    print(f"eo_code: {eo_code}. Не удалось получить период эксплуатации '{operation_period_years_raw}, тип: {type(operation_period_years_raw)}'. Ошибка: ", e)
+    operation_period_years = 1313
+  calculate_operation_finish_date = operation_start_date + relativedelta(years=operation_period_years)
+  return calculate_operation_finish_date
 
 def read_date(date_input, eo_code):  
   if "timestamp" in str(type(date_input)):
@@ -81,11 +110,18 @@ def read_sap_eo_xlsx():
 
       if 'eo_model_id' in sap_eo_column_list:
         eo_master_data.eo_model_id = getattr(row, "eo_model_id")
-
+      
+      operation_start_date = eo_master_data.operation_start_date
       if 'operation_start_date' in sap_eo_column_list:
         operation_start_date_raw = getattr(row, "operation_start_date")
         operation_start_date = read_date(operation_start_date_raw, eo_code_excel)
         eo_master_data.operation_start_date = operation_start_date
+
+      if 'expected_operation_period_years' in sap_eo_column_list:
+        eo_master_data.expected_operation_period_years = getattr(row, "expected_operation_period_years")
+        # пишем расчетное значение даты завершения эксплуатации
+        calculated_operation_finish_date = calculate_operation_finish_date(operation_start_date, getattr(row, "expected_operation_period_years"), eo_code_excel)
+        eo_master_data.expected_operation_finish_date = calculated_operation_finish_date
 
       if 'expected_operation_finish_date' in sap_eo_column_list:
         expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
