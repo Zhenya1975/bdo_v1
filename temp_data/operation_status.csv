@@ -1,0 +1,5 @@
+operation_status_code,operation_status_description,sap_operation_status
+operation,в эксплуатации,УСТН
+conservation,в консервации,КОНС
+purchase,в закупке,ВЗКП
+operation_finished,списано,МТКУ

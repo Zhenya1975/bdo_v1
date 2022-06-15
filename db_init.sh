@@ -1,5 +1,5 @@
 #!/bin/bash
-python db_backup.py
+# python db_backup.py
 # rm database/datab.db
 
 # flask db migrate -m 'init'

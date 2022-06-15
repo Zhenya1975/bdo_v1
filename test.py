@@ -23,26 +23,4 @@ def delete_alembic_version_table():
 
 delete_alembic_version_table()
 
-# with app.app_context():
-#   con = sqlite3.connect("database/datab.db")
-#   sql = "SELECT * FROM eo_DB JOIN be_DB"
-#   df = pd.read_sql_query(sql, con)
-#   print(df)
-
-
-
-
-# with app.app_context():
-#   db_dir = os.path.abspath(os.path.dirname(__file__)) + "/database"
-#   db_uri = 'sqlite:///' + os.path.join(db_dir, 'datab.db')
-#   print(db_uri)
-#   sql = Be_DB.query.all()  
-#   df = pd.read_sql_query(sql, db_uri)
-#   print(df)
-
-# with app.app_context():
-#   sql = Be_DB.query.all()
-    
-#   df = pd.read_sql_query(sql, con)
-  
-#   print(df)
+# заполяем 

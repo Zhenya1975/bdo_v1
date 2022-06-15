@@ -9,6 +9,9 @@ date_time_plug = '31/12/2199 23:59:59'
 date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
 
 
+
+
+
 class Eo_candidatesDB(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   eo_code = db.Column(db.String)
@@ -36,13 +39,29 @@ class Eo_DB(db.Model):
   teh_mesto = db.Column(db.String)
   gar_no = db.Column(db.String)
   head_type = db.Column(db.String)
-  operation_start_date=db.Column(db.DateTime)
-  expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug)
-  operation_status = db.Column(db.String)
-  operation_status_date = db.Column(db.DateTime, default = utc_now.astimezone(pytz.timezone("Europe/Moscow")))
   eo_model_id = db.Column(db.Integer, db.ForeignKey('models_DB.eo_model_id'))
   eo_class_code = db.Column(db.String, db.ForeignKey('eo_class_DB.eo_class_code'))
+  operation_start_date=db.Column(db.DateTime)
+  expected_operation_period_years = db.Column(db.Integer)
+  expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug)
+  
+  expected_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code'))
+  reported_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code'))
+  
+  reported_operation_status_date = db.Column(db.DateTime)
+  sap_system_status = db.Column(db.String)
+  sap_user_status = db.Column(db.String)
   conflict_data = db.relationship('Eo_data_conflicts', backref='conflict_data')
+
+class Operation_statusDB(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  operation_status_code = db.Column(db.String)
+  operation_status_description = db.Column(db.String)
+  sap_operation_status = db.Column(db.String)
+  expected_operation_status_data = db.relationship('Eo_DB', backref='operation_status_data', foreign_keys="[Eo_DB.expected_operation_status_code]")
+  reported_operation_status_data = db.relationship('Eo_DB', backref='reported_status_data', foreign_keys="[Eo_DB.reported_operation_status_code]")
+
+
 
 class Models_DB(db.Model):
   id = db.Column(db.Integer, primary_key=True)

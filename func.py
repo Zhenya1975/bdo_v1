@@ -1,5 +1,6 @@
-from functions import backup_restore_bd
+from functions import import_operation_status
 
 
-backup_restore_bd.backup_bd()
+import_operation_status.import_operation_status()
+
 
