@@ -14,6 +14,7 @@ db = extensions.db
 sap_columns_to_master_columns = sap_columns_to_master_columns
 
 def calculate_operation_finish_date(operation_start_date_raw, operation_period_years_raw, eo_code):
+  operation_start_date = datetime.strptime('1.1.2199', '%d.%m.%Y')
   if "timestamp" in str(type(operation_start_date_raw)) or 'datetime' in str(type(operation_start_date_raw)):
     operation_start_date = operation_start_date_raw
   elif "str" in str(type(operation_start_date_raw)):
@@ -62,7 +63,7 @@ def read_date(date_input, eo_code):
     date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
     return date_output
   else:
-    print("не покрыто типами данных дат", type(date_input), date_input)
+    print(eo_code, "не покрыто типами данных дат", type(date_input), date_input)
 
 
 def read_sap_eo_xlsx():

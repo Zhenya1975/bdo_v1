@@ -21,6 +21,18 @@ def delete_alembic_version_table():
     con.commit()
     cursor.close()
 
-delete_alembic_version_table()
+# delete_alembic_version_table()
 
-# заполяем 
+# delete record from eo
+
+def delete_record():
+  with app.app_context():
+    con = sqlite3.connect("database/datab.db")
+    # sql = "SELECT * FROM eo_DB JOIN be_DB"
+    # sql = "SELECT eo_DB.be_code, models_DB.eo_model_name  FROM eo_DB JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id"
+    cursor = con.cursor()
+    delete_records_sql = "DELETE FROM eo_DB WHERE eo_code='не присвоен';"
+    cursor.execute(delete_records_sql)
+    con.commit()
+    cursor.close()
+delete_record()    

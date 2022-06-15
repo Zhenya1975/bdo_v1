@@ -22,6 +22,7 @@ def sql_to_eo_master():
   eo_DB.eo_code, \
   eo_DB.head_type, \
   eo_DB.operation_start_date, \
+  eo_DB.expected_operation_period_years, \
   eo_DB.expected_operation_finish_date \
   FROM eo_DB \
   LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
@@ -43,6 +44,7 @@ def sql_to_eo_master():
   excel_master_eo_df.loc[indexes_2, ['operation_start_date']] = ""
 
   excel_master_eo_df["operation_start_date"] = excel_master_eo_df["operation_start_date"].dt.strftime("%d.%m.%Y")
+
   excel_master_eo_df["expected_operation_finish_date"] = excel_master_eo_df["expected_operation_finish_date"].dt.strftime("%d.%m.%Y")
   excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)  
 
