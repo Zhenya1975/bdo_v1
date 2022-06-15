@@ -23,17 +23,22 @@ def sql_to_eo_master():
   eo_DB.head_type, \
   eo_DB.operation_start_date, \
   eo_DB.expected_operation_period_years, \
-  eo_DB.expected_operation_finish_date \
+  eo_DB.expected_operation_finish_date, \
+  eo_DB.expected_operation_status_code, \
+  operation_statusDB.operation_status_description, \
+  eo_DB.expected_operation_status_code_date \
   FROM eo_DB \
   LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
   LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
-  LEFT JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code"
+  LEFT JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code \
+  LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code"
   
   excel_master_eo_df = pd.read_sql_query(sql, con)
   date_time_plug = '31/12/2199 23:59:59'
   date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
   excel_master_eo_df['expected_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_finish_date'])
   excel_master_eo_df['operation_start_date'] = pd.to_datetime(excel_master_eo_df['operation_start_date'])
+  excel_master_eo_df['expected_operation_status_code_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_status_code_date'])
   
   excel_master_eo_df_subset = excel_master_eo_df.loc[excel_master_eo_df['expected_operation_finish_date'] == date_time_plug]
   indexes = excel_master_eo_df_subset.index.values
@@ -46,6 +51,11 @@ def sql_to_eo_master():
   excel_master_eo_df["operation_start_date"] = excel_master_eo_df["operation_start_date"].dt.strftime("%d.%m.%Y")
 
   excel_master_eo_df["expected_operation_finish_date"] = excel_master_eo_df["expected_operation_finish_date"].dt.strftime("%d.%m.%Y")
+  
+  excel_master_eo_df["expected_operation_status_code_date"] = excel_master_eo_df["expected_operation_status_code_date"].dt.strftime("%d.%m.%Y")
+
+
+  
   excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)  
 
 

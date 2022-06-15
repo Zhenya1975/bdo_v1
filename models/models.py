@@ -44,8 +44,8 @@ class Eo_DB(db.Model):
   operation_start_date=db.Column(db.DateTime)
   expected_operation_period_years = db.Column(db.Integer)
   expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug)
-  
   expected_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code'))
+  expected_operation_status_code_date = db.Column(db.DateTime)
   reported_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code'))
   
   reported_operation_status_date = db.Column(db.DateTime)

@@ -7,6 +7,11 @@ from app import app
 import sqlite3
 from sqlalchemy import create_engine
 import os
+import pytz
+
+# print(pytz.all_timezones)
+# today_datetime = datetime.now(pytz.timezone('Europe/Moscow'))
+
 
 db = extensions.db
 
@@ -35,4 +40,4 @@ def delete_record():
     cursor.execute(delete_records_sql)
     con.commit()
     cursor.close()
-delete_record()    
+# delete_record()    

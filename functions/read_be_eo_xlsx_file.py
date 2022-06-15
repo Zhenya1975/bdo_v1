@@ -5,6 +5,7 @@ from initial_values.initial_values import be_data_columns_to_master_columns
 from datetime import datetime
 # from app import app
 
+
 db = extensions.db
 
 be_data_columns_to_master_columns = be_data_columns_to_master_columns

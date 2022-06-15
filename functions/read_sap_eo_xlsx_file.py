@@ -5,6 +5,7 @@ from initial_values.initial_values import sap_columns_to_master_columns
 from datetime import datetime
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+import pytz
 
 
 # from app import app
@@ -12,6 +13,21 @@ from dateutil.relativedelta import relativedelta
 db = extensions.db
 
 sap_columns_to_master_columns = sap_columns_to_master_columns
+
+def expected_operation_status_code(operation_start_date, calculated_operation_finish_date, today_datetime):
+  utc=pytz.UTC
+  operation_start_date = utc.localize(operation_start_date)
+  calculated_operation_finish_date = utc.localize(calculated_operation_finish_date)
+  
+  # print("operation_start_date: ", operation_start_date, type(operation_start_date), " calculated_operation_finish_date: ", calculated_operation_finish_date,type(calculated_operation_finish_date), " today_datetime: ", today_datetime, type(today_datetime))
+  if operation_start_date < today_datetime and calculated_operation_finish_date > today_datetime:
+    operation_status_code = "operation"
+  elif calculated_operation_finish_date <  today_datetime:
+    operation_status_code = "operation_finished"
+  elif operation_start_date > today_datetime:
+    operation_status_code = "purchase"
+  return operation_status_code
+
 
 def calculate_operation_finish_date(operation_start_date_raw, operation_period_years_raw, eo_code):
   operation_start_date = datetime.strptime('1.1.2199', '%d.%m.%Y')
@@ -118,8 +134,6 @@ def read_sap_eo_xlsx():
         operation_start_date = read_date(operation_start_date_raw, eo_code_excel)
         eo_master_data.operation_start_date = operation_start_date
 
-
-
       # пишем расчетное значение даты завершения эксплуатации
       expected_operation_period_years = eo_master_data.expected_operation_period_years
       if 'expected_operation_period_years' in sap_eo_column_list:
@@ -127,6 +141,13 @@ def read_sap_eo_xlsx():
         
       calculated_operation_finish_date = calculate_operation_finish_date(operation_start_date, expected_operation_period_years, eo_code_excel)
       eo_master_data.expected_operation_finish_date = calculated_operation_finish_date
+      today_datetime = datetime.now(pytz.timezone('Europe/Moscow'))
+      # today_datetime = pd.to_datetime(today_datetime)
+      eo_master_data.expected_operation_status_code_date = today_datetime
+
+      # expected_operation_status_code
+      expected_operation_status = expected_operation_status_code(operation_start_date, calculated_operation_finish_date, today_datetime)
+      eo_master_data.expected_operation_status_code = expected_operation_status
       
       
       db.session.commit()
