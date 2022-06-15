@@ -11,6 +11,7 @@ def backup_bd():
 
   src = r'migrations'
   dest = r'backup/migrations'
+  shutil.rmtree(r'backup/migrations')
   shutil.copytree(src, dest)
   
 
