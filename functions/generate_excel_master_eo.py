@@ -24,6 +24,7 @@ def sql_to_eo_master():
   eo_DB.operation_start_date, \
   eo_DB.expected_operation_period_years, \
   eo_DB.expected_operation_finish_date, \
+  eo_DB.sap_planned_finish_operarion_date, \
   eo_DB.expected_operation_status_code, \
   eo_DB.expected_operation_status_code_date, \
   eo_DB.sap_system_status, \
@@ -40,9 +41,15 @@ def sql_to_eo_master():
   excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
   date_time_plug = '31/12/2199 23:59:59'
   date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
+  
   excel_master_eo_df['expected_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_finish_date'])
+  
   excel_master_eo_df['operation_start_date'] = pd.to_datetime(excel_master_eo_df['operation_start_date'])
+  
   excel_master_eo_df['expected_operation_status_code_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_status_code_date'])
+  
+  excel_master_eo_df['sap_planned_finish_operarion_date'] = pd.to_datetime(excel_master_eo_df['sap_planned_finish_operarion_date'])
+  
   excel_master_eo_df['reported_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['reported_operation_finish_date'])
   
   excel_master_eo_df_subset = excel_master_eo_df.loc[excel_master_eo_df['expected_operation_finish_date'] == date_time_plug]
@@ -56,6 +63,8 @@ def sql_to_eo_master():
   excel_master_eo_df["operation_start_date"] = excel_master_eo_df["operation_start_date"].dt.strftime("%d.%m.%Y")
 
   excel_master_eo_df["expected_operation_finish_date"] = excel_master_eo_df["expected_operation_finish_date"].dt.strftime("%d.%m.%Y")
+  
+  excel_master_eo_df["sap_planned_finish_operarion_date"] = excel_master_eo_df["sap_planned_finish_operarion_date"].dt.strftime("%d.%m.%Y")
   
   excel_master_eo_df["expected_operation_status_code_date"] = excel_master_eo_df["expected_operation_status_code_date"].dt.strftime("%d.%m.%Y")
 

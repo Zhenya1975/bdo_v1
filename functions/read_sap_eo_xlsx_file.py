@@ -165,6 +165,16 @@ def read_sap_eo_xlsx():
       if 'sap_user_status' in sap_eo_column_list:
         sap_user_status = getattr(row, "sap_user_status")
         eo_master_data.sap_user_status = sap_user_status
+
+      sap_planned_finish_operarion_date = eo_master_data.sap_planned_finish_operarion_date
+      if 'sap_planned_finish_operarion_date' in sap_eo_column_list:
+        sap_planned_finish_operarion_date_raw = getattr(row, "sap_planned_finish_operarion_date")
+        sap_planned_finish_operarion_datetime = read_date(sap_planned_finish_operarion_date_raw, eo_code_excel)
+        
+        if sap_planned_finish_operarion_datetime == datetime.strptime('1.1.2199', '%d.%m.%Y'):
+          sap_planned_finish_operarion_datetime = sap_planned_finish_operarion_date
+        # записываем в базу значение 
+        eo_master_data.sap_planned_finish_operarion_date = sap_planned_finish_operarion_datetime
       
       db.session.commit()
     
