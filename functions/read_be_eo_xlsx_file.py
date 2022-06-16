@@ -120,8 +120,8 @@ def read_be_eo_xlsx():
   be_eo_data = pd.DataFrame()
   try:
     be_eo_raw_data = pd.read_excel('uploads/be_eo_data.xlsx', sheet_name='be_eo_data', index_col = False)
- 
     be_eo_data = be_eo_raw_data.rename(columns=be_data_columns_to_master_columns)
+    be_eo_column_list = list(be_eo_data.columns)
     # поля с датами - в формат даты
     be_eo_data['gar_no'].fillna(0, inplace = True)
     be_eo_data["gar_no"] = be_eo_data["gar_no"].astype(str)
@@ -145,7 +145,6 @@ def read_be_eo_xlsx():
   infodata_sender_email = be_data_info.loc[be_data_info.index[0], ['sender_email']][0]
   infodata_sender_email_date = be_data_info.loc[be_data_info.index[0], ['e-mail_date']][0]
 
-   
   # предыдущие данные в лог файле ресетим
   log_data_updated = LogsDB.query.update(dict(log_status='old'))
   db.session.commit()
@@ -153,7 +152,11 @@ def read_be_eo_xlsx():
 
   ################################################ чтение загруженного файла ###############################################
   for row in be_eo_data.itertuples():
-    be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
+    
+    be_eo_data_row_no = 'xyz'
+    if 'be_eo_data_row_no' in be_eo_column_list:
+      be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
+    
     be_data_eo_code = getattr(row, "eo_code")
     be_data_gar_no = str(getattr(row, "gar_no"))
     
@@ -162,7 +165,6 @@ def read_be_eo_xlsx():
     
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=be_data_eo_code).first()
-    
     
     if eo_master_data == None:
       new_eo_candidate_record = Eo_candidatesDB(eo_code=be_data_eo_code, gar_no = be_data_gar_no)
@@ -174,8 +176,6 @@ def read_be_eo_xlsx():
     else:
       ############# ПОЛЕ ГАРАЖНЫЙ НОМЕР gar_no ##############################
       eo_master_data_garno = eo_master_data.gar_no
-      # print("be_data_gar_no: ", be_data_gar_no, type(be_data_gar_no))
-      # print("eo_master_data_garno: ", eo_master_data_garno, type(eo_master_data_garno))
       field_name = "gar_no"
       field_be_data = be_data_gar_no
       field_master_data = eo_master_data_garno

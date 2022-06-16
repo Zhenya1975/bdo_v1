@@ -25,7 +25,6 @@ def sql_to_eo_master():
   eo_DB.expected_operation_period_years, \
   eo_DB.expected_operation_finish_date, \
   eo_DB.expected_operation_status_code, \
-  operation_statusDB.operation_status_description, \
   eo_DB.expected_operation_status_code_date, \
   eo_DB.sap_system_status, \
   eo_DB.sap_user_status, \
