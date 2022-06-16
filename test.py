@@ -61,5 +61,20 @@ def update_record():
     con.commit()
     cursor.close()
 
-
 # update_record()
+
+def clear_column_records():
+  with app.app_context():
+    con = sqlite3.connect("database/datab.db")
+    cursor = con.cursor()
+    update_record_sql = "UPDATE eo_DB SET reported_operation_finish_date=NULL, reported_operation_status_code = NULL, reported_operation_status_date = NULL, reported_operation_status = NULL;"
+    
+    cursor.execute(update_record_sql)
+    con.commit()
+    cursor.close()
+    
+# clear_column_records()
+
+# UPDATE Table1
+# SET    Col1 = NULL
+# WHERE  Col2 = 'USA'

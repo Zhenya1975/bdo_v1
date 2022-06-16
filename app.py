@@ -21,5 +21,6 @@ migrate.init_app(app, db, render_as_batch=True)
 app.register_blueprint(home)
 
 
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
