@@ -163,14 +163,16 @@ def read_be_eo_xlsx():
 
 
   ################################################ чтение загруженного файла ###############################################
+  i=0
+  lenght = len(be_eo_data)
   for row in be_eo_data.itertuples():
-    
+    i = i+1
     be_eo_data_row_no = 'xyz'
     if 'be_eo_data_row_no' in be_eo_column_list:
       be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
     
     be_data_eo_code = getattr(row, "eo_code")
-
+    print(be_data_eo_code, i, " из ", lenght)
     be_data_gar_no = 'xyz'
     if 'gar_no' in be_eo_column_list:
       be_data_gar_no = str(getattr(row, "gar_no"))
@@ -262,3 +264,4 @@ def read_be_eo_xlsx():
       
       db.session.commit()
 
+  # print("цикл завершен")

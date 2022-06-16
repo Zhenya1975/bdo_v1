@@ -1,6 +1,6 @@
-from functions import import_operation_status
+from functions import eo_calendar_status
 
 
-import_operation_status.import_operation_status()
+eo_calendar_status.sql_to_eo_master()
 
 

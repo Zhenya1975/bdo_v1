@@ -41,7 +41,7 @@ def sql_to_eo_master():
   excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
   date_time_plug = '31/12/2099 23:59:59'
   date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
-  excel_master_eo_df.to_csv('temp_data/excel_master_eo_df.csv')
+  # excel_master_eo_df.to_csv('temp_data/excel_master_eo_df.csv')
   
   excel_master_eo_df['expected_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_finish_date'], errors = 'coerce')
   
@@ -112,7 +112,7 @@ def generate_excel_master_eo():
       operation_start_date = eo_data.operation_start_date.strftime("%d.%m.%Y")
       temp_dict['operation_start_date'] = operation_start_date
       expected_operation_finish_date = eo_data.expected_operation_finish_date.strftime("%d.%m.%Y")
-      if expected_operation_finish_date == '31.12.2199':
+      if expected_operation_finish_date == '31.12.2099':
         temp_dict['expected_operation_finish_date'] = ""
       else:
         temp_dict['expected_operation_finish_date'] = expected_operation_finish_date
