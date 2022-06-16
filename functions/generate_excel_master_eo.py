@@ -39,10 +39,11 @@ def sql_to_eo_master():
   
   excel_master_eo_df = pd.read_sql_query(sql, con)
   excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
-  date_time_plug = '31/12/2199 23:59:59'
+  date_time_plug = '31/12/2099 23:59:59'
   date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
+  excel_master_eo_df.to_csv('temp_data/excel_master_eo_df.csv')
   
-  excel_master_eo_df['expected_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_finish_date'])
+  excel_master_eo_df['expected_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_finish_date'], errors = 'coerce')
   
   excel_master_eo_df['operation_start_date'] = pd.to_datetime(excel_master_eo_df['operation_start_date'])
   

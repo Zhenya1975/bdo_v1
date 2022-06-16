@@ -17,7 +17,7 @@ sap_columns_to_master_columns = sap_columns_to_master_columns
 
 
 
-def expected_operation_status_code(operation_start_date, calculated_operation_finish_date, sap_planned_finish_operarion_datetime, today_datetime):
+def expected_operation_status_code(eo_code, operation_start_date, calculated_operation_finish_date, sap_planned_finish_operarion_datetime, today_datetime):
   utc=pytz.UTC
   operation_start_date = utc.localize(operation_start_date)
   calculated_operation_finish_date = utc.localize(calculated_operation_finish_date)
@@ -30,13 +30,15 @@ def expected_operation_status_code(operation_start_date, calculated_operation_fi
   else:
     sap_planned_finish_operarion_datetime = utc.localize(sap_planned_finish_operarion_datetime)
     sap_expected_operation_finish_date = sap_planned_finish_operarion_datetime
-    
+  # print(eo_code, " sap_expected_operation_finish_date: ", sap_expected_operation_finish_date)
+  
   if operation_start_date < today_datetime and sap_expected_operation_finish_date > today_datetime:
     operation_status_code = "operation"
   elif sap_expected_operation_finish_date <  today_datetime:
     operation_status_code = "operation_finished"
   elif operation_start_date > today_datetime:
     operation_status_code = "purchase"
+  # print(operation_status_code)
   return operation_status_code
 
 
@@ -184,7 +186,7 @@ def read_sap_eo_xlsx():
           eo_master_data.sap_planned_finish_operation_date = sap_planned_finish_operation_datetime
 
       # expected_operation_status_code
-      expected_operation_status = expected_operation_status_code(operation_start_date, calculated_operation_finish_date, sap_planned_finish_operation_date, today_datetime)
+      expected_operation_status = expected_operation_status_code(eo_code_excel, operation_start_date, calculated_operation_finish_date, sap_planned_finish_operation_date, today_datetime)
       eo_master_data.expected_operation_status_code = expected_operation_status
       
       db.session.commit()
