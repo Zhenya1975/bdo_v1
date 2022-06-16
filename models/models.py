@@ -89,7 +89,10 @@ class LogsDB(db.Model):
   log_eo_code = db.Column(db.String, db.ForeignKey('eo_DB.eo_code'))
   log_text = db.Column(db.Text)
   log_date = db.Column(db.String, default=pst_now)
-  log_status = db.Column(db.String)
+  log_status = db.Column(db.String) # new or old
+  be_filename = db.Column(db.String)
+  be_sender_email = db.Column(db.String)
+  be_email_date = db.Column(db.DateTime)
 
 class Eo_data_conflicts(db.Model):
   id = db.Column(db.Integer, primary_key=True)

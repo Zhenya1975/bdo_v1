@@ -85,7 +85,7 @@ def field_check_status(be_eo_data_row_no, be_data_eo_code, field_name, field_be_
   else:
     field_status['values_status'] = 'not_equal'
 
-  # проверяем на наличие конфликта с текущим eo_code и eo_master_data_garno
+  # проверяем на наличие конфликта с текущим eo_code
   conflict_data = Eo_data_conflicts.query.filter_by(eo_code = be_data_eo_code, eo_conflict_field = field_name, eo_conflict_status = "active").first()
 
   if conflict_data:
@@ -158,10 +158,13 @@ def read_be_eo_xlsx():
       be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
     
     be_data_eo_code = getattr(row, "eo_code")
-    be_data_gar_no = str(getattr(row, "gar_no"))
+
+    be_data_gar_no = 'xyz'
+    if 'gar_no' in be_eo_column_list:
+      be_data_gar_no = str(getattr(row, "gar_no"))
     
     
-    be_data_operation_status = getattr(row, "operation_status")
+    # be_data_operation_status = getattr(row, "operation_status")
     
     # читаем мастер-файл из базы
     eo_master_data=Eo_DB.query.filter_by(eo_code=be_data_eo_code).first()
@@ -181,6 +184,7 @@ def read_be_eo_xlsx():
       field_master_data = eo_master_data_garno
 
       # запуск функции по проверке статуса текущего поля
+      # либо создается новый конфликт, либо разрашается старый. Если данные совпадают с местером, то идем дальше
       field_check_status(
         be_eo_data_row_no,
         be_data_eo_code,
@@ -193,30 +197,20 @@ def read_be_eo_xlsx():
       )
 
       ############# ПОЛЕ Плановая дата вывода из эксплуат reported_operation_finish_date ##############################
-      eo_master_data_expected_operation_finish_datetime = eo_master_data.expected_operation_finish_date
-      field_master_data = eo_master_data_expected_operation_finish_datetime.date()
-      field_name = 'expected_operation_finish_datetime'
+      eo_master_data_reported_operation_finish_datetime = eo_master_data.reported_operation_finish_date
+      
+      # field_name = 'reported_operation_finish_datetime'
+
       be_data_reported_operation_finish_date_raw = getattr(row, "reported_operation_finish_date")
-      be_data_reported_operation_finish_date = read_date(be_data_reported_operation_finish_date_raw, be_data_eo_code)
+      be_data_reported_operation_finish_datetime = read_date(be_data_reported_operation_finish_date_raw, be_data_eo_code)
 
-      if be_data_reported_operation_finish_date == datetime.strptime('1.1.2199', '%d.%m.%Y'):
-        be_data_reported_operation_finish_date = eo_master_data_expected_operation_finish_datetime
-      
-      be_data_be_data_reported_operation_finish_date = be_data_reported_operation_finish_date.date()
-      field_be_data = str(be_data_be_data_reported_operation_finish_date)
+      # если из обработчика даты приехала заглушка, то присваиваем переменной значение из мастер файла
+      if be_data_reported_operation_finish_datetime == datetime.strptime('1.1.2199', '%d.%m.%Y'):
+        be_data_reported_operation_finish_datetime = eo_master_data_reported_operation_finish_datetime
+      # записываем в базу значение 
+      eo_master_data.reported_operation_finish_date = be_data_reported_operation_finish_datetime
 
-      field_check_status(
-        be_eo_data_row_no,
-        be_data_eo_code,
-        field_name, 
-        field_be_data,
-        field_master_data,
-        infodata_filename, 
-        infodata_sender_email, 
-        infodata_sender_email_date
-      )
-      
-      eo_master_data.reported_operation_finish_date = be_data_reported_operation_finish_date
+      ######### здесь нужна проверка на расхождение между предыдущей reported date #############
       
       ############# ПОЛЕ Дата начала эксплуатации operation_start_date ##############################
       eo_master_data_operation_start_datetime = eo_master_data.operation_start_date
@@ -246,6 +240,6 @@ def read_be_eo_xlsx():
       )
       
       ############# ПОЛЕ Статус эксплуатации operation_status ##############################
-      eo_master_data.reported_operation_status = be_data_operation_status
+      # eo_master_data.reported_operation_status = be_data_operation_status
       
       db.session.commit()
