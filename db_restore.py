@@ -5,4 +5,9 @@ def restore_bd():
   target = r'database/datab.db'
   shutil.copyfile(original, target)
 
+  src = r'backup/migrations'
+  dest = r'migrations'
+  shutil.rmtree(r'backup/migrations')
+  shutil.copytree(src, dest)
+
 restore_bd()

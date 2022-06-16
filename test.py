@@ -42,6 +42,22 @@ def delete_record():
     cursor.close()
 # delete_record()    
 
+def delete_eo_records():
+  eo_to_delete_df = pd.read_excel('temp_data/delete_eo.xlsx', index_col = False, dtype=str)
+  for row in eo_to_delete_df.itertuples():
+    eo_code = getattr(row, "eo_code")
+    with app.app_context():
+      con = sqlite3.connect("database/datab.db")
+      cursor = con.cursor()
+      delete_records_sql = "DELETE FROM eo_DB WHERE eo_code=eo_code;"
+      cursor.execute(delete_records_sql)
+      con.commit()
+      cursor.close()
+    
+    
+# delete_eo_records()
+
+
 def insert_record():
   with app.app_context():
     con = sqlite3.connect("database/datab.db")

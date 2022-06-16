@@ -14,15 +14,26 @@ db = extensions.db
 
 sap_columns_to_master_columns = sap_columns_to_master_columns
 
-def expected_operation_status_code(operation_start_date, calculated_operation_finish_date, today_datetime):
+
+
+
+def expected_operation_status_code(operation_start_date, calculated_operation_finish_date, sap_planned_finish_operarion_datetime, today_datetime):
   utc=pytz.UTC
   operation_start_date = utc.localize(operation_start_date)
   calculated_operation_finish_date = utc.localize(calculated_operation_finish_date)
   
-  # print("operation_start_date: ", operation_start_date, type(operation_start_date), " calculated_operation_finish_date: ", calculated_operation_finish_date,type(calculated_operation_finish_date), " today_datetime: ", today_datetime, type(today_datetime))
-  if operation_start_date < today_datetime and calculated_operation_finish_date > today_datetime:
+
+  # print(type(sap_planned_finish_operarion_datetime))
+  # если в поле sap_planned_finish_operarion_datetime ничего нет, то берем данные из расчетного поля
+  if 'NoneType' in str(type(sap_planned_finish_operarion_datetime)):
+    sap_expected_operation_finish_date = calculated_operation_finish_date
+  else:
+    sap_planned_finish_operarion_datetime = utc.localize(sap_planned_finish_operarion_datetime)
+    sap_expected_operation_finish_date = sap_planned_finish_operarion_datetime
+    
+  if operation_start_date < today_datetime and sap_expected_operation_finish_date > today_datetime:
     operation_status_code = "operation"
-  elif calculated_operation_finish_date <  today_datetime:
+  elif sap_expected_operation_finish_date <  today_datetime:
     operation_status_code = "operation_finished"
   elif operation_start_date > today_datetime:
     operation_status_code = "purchase"
@@ -152,9 +163,6 @@ def read_sap_eo_xlsx():
       # today_datetime = pd.to_datetime(today_datetime)
       eo_master_data.expected_operation_status_code_date = today_datetime
 
-      # expected_operation_status_code
-      expected_operation_status = expected_operation_status_code(operation_start_date, calculated_operation_finish_date, today_datetime)
-      eo_master_data.expected_operation_status_code = expected_operation_status
       
       sap_system_status = eo_master_data.sap_system_status
       if 'sap_system_status' in sap_eo_column_list:
@@ -166,15 +174,18 @@ def read_sap_eo_xlsx():
         sap_user_status = getattr(row, "sap_user_status")
         eo_master_data.sap_user_status = sap_user_status
 
-      sap_planned_finish_operarion_date = eo_master_data.sap_planned_finish_operarion_date
-      if 'sap_planned_finish_operarion_date' in sap_eo_column_list:
-        sap_planned_finish_operarion_date_raw = getattr(row, "sap_planned_finish_operarion_date")
-        sap_planned_finish_operarion_datetime = read_date(sap_planned_finish_operarion_date_raw, eo_code_excel)
+      sap_planned_finish_operation_date = eo_master_data.sap_planned_finish_operation_date
+      if 'sap_planned_finish_operation_date' in sap_eo_column_list:
+        sap_planned_finish_operation_date_raw = getattr(row, "sap_planned_finish_operation_date")
+        sap_planned_finish_operation_datetime = read_date(sap_planned_finish_operation_date_raw, eo_code_excel)
         
-        if sap_planned_finish_operarion_datetime == datetime.strptime('1.1.2199', '%d.%m.%Y'):
-          sap_planned_finish_operarion_datetime = sap_planned_finish_operarion_date
-        # записываем в базу значение 
-        eo_master_data.sap_planned_finish_operarion_date = sap_planned_finish_operarion_datetime
+        if sap_planned_finish_operation_datetime != datetime.strptime('1.1.2199', '%d.%m.%Y'):
+          # print(eo_code_excel, "sap_planned_finish_operation_datetime: ", sap_planned_finish_operation_datetime)
+          eo_master_data.sap_planned_finish_operation_date = sap_planned_finish_operation_datetime
+
+      # expected_operation_status_code
+      expected_operation_status = expected_operation_status_code(operation_start_date, calculated_operation_finish_date, sap_planned_finish_operation_date, today_datetime)
+      eo_master_data.expected_operation_status_code = expected_operation_status
       
       db.session.commit()
     

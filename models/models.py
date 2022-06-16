@@ -43,7 +43,7 @@ class Eo_DB(db.Model):
   expected_operation_period_years = db.Column(db.Integer) # расчетый период эксплуатации.
   expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug) # расчетный срок завершения эксплуатации
   
-  sap_planned_finish_operarion_date = db.Column(db.DateTime) # дата из поля Плановая дата завершения эксплуатации
+  sap_planned_finish_operation_date = db.Column(db.DateTime) # дата из поля Плановая дата завершения эксплуатации
   
   expected_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code')) # статус в котором должно находиться оборудование на текущую дату
   expected_operation_status_code_date = db.Column(db.DateTime) # текущая дата снятия отчета в котором должно находиться оборудование
