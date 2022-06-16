@@ -49,13 +49,14 @@ def delete_eo_records():
     with app.app_context():
       con = sqlite3.connect("database/datab.db")
       cursor = con.cursor()
-      delete_records_sql = "DELETE FROM eo_DB WHERE eo_code=eo_code;"
+      # delete_records_sql = f"DELETE FROM eo_DB WHERE eo_code={eo_code};"
+      delete_records_sql = f"DELETE FROM eo_DB WHERE eo_code is null;"
       cursor.execute(delete_records_sql)
       con.commit()
       cursor.close()
     
     
-# delete_eo_records()
+delete_eo_records()
 
 
 def insert_record():
