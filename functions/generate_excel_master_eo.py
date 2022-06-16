@@ -37,6 +37,7 @@ def sql_to_eo_master():
   LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code"
   
   excel_master_eo_df = pd.read_sql_query(sql, con)
+  excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
   date_time_plug = '31/12/2199 23:59:59'
   date_time_plug = datetime.strptime(date_time_plug, '%d/%m/%Y %H:%M:%S')
   excel_master_eo_df['expected_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_finish_date'])
@@ -110,10 +111,12 @@ def generate_excel_master_eo():
       
       result_data.append(temp_dict)
     excel_master_eo_df = pd.DataFrame(result_data)
-    excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
+    
   else:
     excel_master_eo_df = pd.DataFrame(columns=['be_code', 'be_description', 'eo_class_code', 'eo_class_description', 'eo_code', 'eo_description', 'eo_model_id', 'eo_model_name', 'teh_mesto', 'gar_no', 'head_type', 'operation_start_date', 'expected_operation_finish_date'])
-  
+    
+  # excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
+  # excel_master_eo_df.sort_values(['be_code'], inplace=True)
   excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)  
 
 									

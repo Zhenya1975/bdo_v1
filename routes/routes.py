@@ -176,13 +176,11 @@ def clean_candidates():
     
     return redirect(url_for('home.home_view'))
 
-@home.route('/clean_conflicts')
+@home.route('/clean_conflicts', methods=['GET', 'POST'])
 def clean_conflicts():
-  
-  Eo_data_conflicts.query.delete()
-  
-  db.session.commit()
-  
-  return redirect(url_for('home.home_view'))    
+  if request.method == 'POST':
+    Eo_data_conflicts.query.delete()
+    db.session.commit()
+    return redirect(url_for('home.home_view'))    
 
 
