@@ -52,6 +52,9 @@ class Eo_DB(db.Model):
   reported_operation_finish_date = db.Column(db.DateTime)
   reported_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code'))
   reported_operation_status_date = db.Column(db.DateTime)
+
+  evaluated_operation_finish_date = db.Column(db.DateTime)
+  
   sap_system_status = db.Column(db.String)
   sap_user_status = db.Column(db.String)
   sap_model_name = db.Column(db.String)

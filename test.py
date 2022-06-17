@@ -36,7 +36,7 @@ def delete_record():
     # sql = "SELECT * FROM eo_DB JOIN be_DB"
     # sql = "SELECT eo_DB.be_code, models_DB.eo_model_name  FROM eo_DB JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id"
     cursor = con.cursor()
-    delete_records_sql = "DELETE FROM eo_DB WHERE eo_code='не присвоен';"
+    delete_records_sql = "DELETE FROM eo_DB WHERE eo_code='100000067190';"
     cursor.execute(delete_records_sql)
     con.commit()
     cursor.close()
@@ -111,7 +111,7 @@ def update_eo_class_eo():
       con.commit()
       cursor.close()
   
-update_eo_class_eo()    
+# update_eo_class_eo()    
 
 def update_eo_maker():
   eo_master_data_for_update_df = pd.read_csv('temp_data/eo_master_data for update.csv', dtype = str)
@@ -138,3 +138,30 @@ def update_record():
     cursor.execute(update_record_sql)
     con.commit()
     cursor.close()
+
+
+
+
+def update_evaluated_finish_date():
+  eo_master_data_for_update_df = pd.read_csv('temp_data/eo_master_data for update.csv', dtype = str)
+  for row in eo_master_data_for_update_df.itertuples():
+    eo_code = getattr(row, 'eo_code')
+    evaluated_operation_finish_date = getattr(row, 'evaluated_operation_finish_date')
+    try:
+      evaluated_operation_finish_date = datetime.strptime(evaluated_operation_finish_date, '%d.%m.%Y')
+    except Exception as e:
+      print(eo_code, " ", type(evaluated_operation_finish_date), evaluated_operation_finish_date, e)
+      
+    with app.app_context():
+      con = sqlite3.connect("database/datab.db")
+      cursor = con.cursor()
+      update_record_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date ='{evaluated_operation_finish_date}' WHERE eo_code = '{eo_code}';"
+      # print(update_record_sql)
+      try:
+        cursor.execute(update_record_sql)
+        con.commit()
+        cursor.close()
+      except Exception as e:
+        print(eo_code, "exception: ", e)
+  
+update_evaluated_finish_date()    
