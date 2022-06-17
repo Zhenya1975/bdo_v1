@@ -141,12 +141,21 @@ def read_sap_eo_xlsx():
 
       if 'gar_no' in sap_eo_column_list:
         eo_master_data.gar_no = getattr(row, "gar_no")
+
+      if 'sap_gar_no' in sap_eo_column_list:
+        eo_master_data.sap_gar_no = getattr(row, "sap_gar_no")
       
       if 'head_type' in sap_eo_column_list:
         eo_master_data.head_type = getattr(row, "head_type")  
 
       if 'eo_model_id' in sap_eo_column_list:
         eo_master_data.eo_model_id = getattr(row, "eo_model_id")
+
+      if 'sap_model_name' in sap_eo_column_list:
+        eo_master_data.sap_model_name = getattr(row, "sap_model_name")
+      
+      if 'sap_maker' in sap_eo_column_list:
+        eo_master_data.sap_maker = getattr(row, "sap_maker")
       
       operation_start_date = eo_master_data.operation_start_date
       if 'operation_start_date' in sap_eo_column_list:

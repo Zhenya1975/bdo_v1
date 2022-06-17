@@ -17,9 +17,14 @@ def sql_to_eo_master():
   eo_DB.eo_class_code, \
   eo_class_DB.eo_class_description, \
   models_DB.eo_model_name, \
+  eo_DB.eo_model_id, \
+  eo_DB.sap_model_name, \
+  eo_DB.sap_maker, \
   eo_DB.teh_mesto, \
   eo_DB.gar_no, \
+  eo_DB.sap_gar_no, \
   eo_DB.eo_code, \
+  eo_DB.eo_description, \
   eo_DB.head_type, \
   eo_DB.operation_start_date, \
   eo_DB.expected_operation_period_years, \

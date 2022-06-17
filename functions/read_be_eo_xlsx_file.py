@@ -132,6 +132,7 @@ def read_be_eo_xlsx():
   be_eo_data = pd.DataFrame()
   try:
     be_eo_raw_data = pd.read_excel('uploads/be_eo_data.xlsx', sheet_name='be_eo_data', index_col = False)
+    print(len(be_eo_raw_data))
     be_eo_data = be_eo_raw_data.rename(columns=be_data_columns_to_master_columns)
     be_eo_column_list = list(be_eo_data.columns)
     # поля с датами - в формат даты
@@ -172,7 +173,7 @@ def read_be_eo_xlsx():
       be_eo_data_row_no = getattr(row, "be_eo_data_row_no")
     
     be_data_eo_code = getattr(row, "eo_code")
-    print(be_data_eo_code, i, " из ", lenght)
+    # print(be_data_eo_code, i, " из ", lenght)
     be_data_gar_no = 'xyz'
     if 'gar_no' in be_eo_column_list:
       be_data_gar_no = str(getattr(row, "gar_no"))

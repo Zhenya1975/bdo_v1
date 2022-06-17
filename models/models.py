@@ -36,6 +36,7 @@ class Eo_DB(db.Model):
   be_code = db.Column(db.Integer, db.ForeignKey('be_DB.be_code'))
   teh_mesto = db.Column(db.String)
   gar_no = db.Column(db.String)
+  sap_gar_no = db.Column(db.String)
   head_type = db.Column(db.String)
   eo_model_id = db.Column(db.Integer, db.ForeignKey('models_DB.eo_model_id'))
   eo_class_code = db.Column(db.String, db.ForeignKey('eo_class_DB.eo_class_code'))
@@ -47,14 +48,15 @@ class Eo_DB(db.Model):
   
   expected_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code')) # статус в котором должно находиться оборудование на текущую дату
   expected_operation_status_code_date = db.Column(db.DateTime) # текущая дата снятия отчета в котором должно находиться оборудование
-  
   reported_operation_status = db.Column(db.String)
   reported_operation_finish_date = db.Column(db.DateTime)
   reported_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code'))
   reported_operation_status_date = db.Column(db.DateTime)
-  
   sap_system_status = db.Column(db.String)
   sap_user_status = db.Column(db.String)
+  sap_model_name = db.Column(db.String)
+  sap_maker = db.Column(db.String)
+  
   conflict_data = db.relationship('Eo_data_conflicts', backref='conflict_data')
   logs_data = db.relationship('LogsDB', backref='logs_data')
 

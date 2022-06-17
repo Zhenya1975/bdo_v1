@@ -56,7 +56,7 @@ def delete_eo_records():
       cursor.close()
     
     
-delete_eo_records()
+# delete_eo_records()
 
 
 def insert_record():
@@ -95,3 +95,46 @@ def clear_column_records():
 # UPDATE Table1
 # SET    Col1 = NULL
 # WHERE  Col2 = 'USA'
+
+# update eo_model_id
+def update_eo_class_eo():
+  eo_master_data_for_update_df = pd.read_csv('temp_data/eo_master_data for update.csv', dtype = str)
+  for row in eo_master_data_for_update_df.itertuples():
+    eo_code = getattr(row, 'eo_code')
+    eo_class_code = getattr(row, 'eo_class_code')
+    
+    with app.app_context():
+      con = sqlite3.connect("database/datab.db")
+      cursor = con.cursor()
+      update_record_sql = f"UPDATE eo_DB SET eo_class_code ='{eo_class_code}' WHERE eo_code = '{eo_code}';"
+      cursor.execute(update_record_sql)
+      con.commit()
+      cursor.close()
+  
+update_eo_class_eo()    
+
+def update_eo_maker():
+  eo_master_data_for_update_df = pd.read_csv('temp_data/eo_master_data for update.csv', dtype = str)
+  for row in eo_master_data_for_update_df.itertuples():
+    eo_code = getattr(row, 'eo_code')
+    sap_maker = getattr(row, 'sap_maker')
+    with app.app_context():
+      con = sqlite3.connect("database/datab.db")
+      cursor = con.cursor()
+      update_record_sql = f"UPDATE eo_DB SET sap_maker ='{sap_maker}' WHERE eo_code = '{eo_code}';"
+      cursor.execute(update_record_sql)
+      con.commit()
+      cursor.close()
+  
+# update_eo_maker()      
+    
+
+  
+def update_record():
+  with app.app_context():
+    con = sqlite3.connect("database/datab.db")
+    cursor = con.cursor()
+    update_record_sql = "UPDATE operation_statusDB SET sap_operation_status='' WHERE id= 4;"
+    cursor.execute(update_record_sql)
+    con.commit()
+    cursor.close()

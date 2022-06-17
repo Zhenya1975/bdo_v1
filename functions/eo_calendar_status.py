@@ -97,14 +97,81 @@ def sql_to_eo_master():
       
     if eo_code != None:
       # print(eo_code, operation_start_date, expected_operation_finish_date, reported_operation_finish_date)
-      target_date = '31/12/2022'
-      target_date = datetime.strptime(target_date, '%d/%m/%Y')
+      
+      
+      finish_2022_date = '31/12/2022'
+      finish_2022_date = datetime.strptime(finish_2022_date, '%d/%m/%Y')
+      start_2022_date = '01/01/2022'
+      start_2022_date = datetime.strptime(start_2022_date, '%d/%m/%Y')
+
       index_value = getattr(row, 'Index')
-      if operation_start_date < target_date and expected_operation_finish_date > target_date:
-        excel_master_eo_df.loc[index_value, ["31.12.2022"]] = 1
+      if operation_start_date < finish_2022_date and expected_operation_finish_date > finish_2022_date:
+        excel_master_eo_df.loc[index_value, ["qty at 31.12.2022"]] = 1
       else:
-        excel_master_eo_df.loc[index_value, ["31.12.2022"]] = 0
-  excel_master_eo_df["31.12.2022"] =   excel_master_eo_df["31.12.2022"].astype(int)    
+        excel_master_eo_df.loc[index_value, ["qty at 31.12.2022"]] = 0
+
+      # оборудование, зашедшее в 2022 году  
+      if operation_start_date > start_2022_date and operation_start_date < finish_2022_date:
+        excel_master_eo_df.loc[index_value, ["in 2022"]] = 1
+      else:
+        excel_master_eo_df.loc[index_value, ["in 2022"]] = 0
+      
+      if  expected_operation_finish_date >  start_2022_date and expected_operation_finish_date < finish_2022_date:
+        print(eo_code,  "expected_operation_finish_date: ", expected_operation_finish_date, "start_2022_date: ", start_2022_date, "finish_2022_date: ", finish_2022_date)
+        excel_master_eo_df.loc[index_value, ["out 2022"]] = 1
+      else:
+        excel_master_eo_df.loc[index_value, ["out 2022"]] = 0
+      ################################################################################################################  
+      
+      finish_2023_date = '31/12/2023'
+      finish_2023_date = datetime.strptime(finish_2023_date, '%d/%m/%Y')
+      start_2023_date = '01/01/2023'
+      start_2023_date = datetime.strptime(start_2023_date, '%d/%m/%Y')
+
+      if operation_start_date < finish_2023_date and expected_operation_finish_date > finish_2023_date:
+        excel_master_eo_df.loc[index_value, ["qty at 31.12.2023"]] = 1
+      else:
+        excel_master_eo_df.loc[index_value, ["qty at 31.12.2023"]] = 0
+
+      # оборудование, зашедшее в 2023 году  
+      if operation_start_date > start_2023_date and operation_start_date < finish_2023_date:
+        excel_master_eo_df.loc[index_value, ["in 2023"]] = 1
+      else:
+        excel_master_eo_df.loc[index_value, ["in 2023"]] = 0
+      
+      if  expected_operation_finish_date >  start_2022_date and expected_operation_finish_date < finish_2022_date:
+        excel_master_eo_df.loc[index_value, ["out 2023"]] = 1
+      else:
+        excel_master_eo_df.loc[index_value, ["out 2023"]] = 0
+      ################################################################################################################ 
+      
+      finish_2024_date = '31/12/2024'
+      finish_2024_date = datetime.strptime(finish_2024_date, '%d/%m/%Y')
+      start_2024_date = '01/01/2024'
+      start_2024_date = datetime.strptime(start_2024_date, '%d/%m/%Y')
+      
+      finish_2025_date = '31/12/2025'
+      finish_2025_date = datetime.strptime(finish_2025_date, '%d/%m/%Y')
+      start_2025_date = '01/01/2025'
+      start_2025_date = datetime.strptime(start_2025_date, '%d/%m/%Y')
+      
+      finish_2026_date = '31/12/2026'
+      finish_2026_date = datetime.strptime(finish_2026_date, '%d/%m/%Y')
+      start_2026_date = '01/01/2026'
+      start_2026_date = datetime.strptime(start_2026_date, '%d/%m/%Y')
+      
+
+      
+      
+  excel_master_eo_df["qty at 31.12.2022"] = excel_master_eo_df["qty at 31.12.2022"].astype(int)
+  excel_master_eo_df["in 2022"] = excel_master_eo_df["in 2022"].astype(int)
+  excel_master_eo_df["out 2022"] = excel_master_eo_df["out 2022"].astype(int)
+
+  excel_master_eo_df["qty at 31.12.2023"] = excel_master_eo_df["qty at 31.12.2023"].astype(int)
+  excel_master_eo_df["in 2023"] = excel_master_eo_df["in 2023"].astype(int)
+  excel_master_eo_df["out 2023"] = excel_master_eo_df["out 2023"].astype(int)
+
+  
   excel_master_eo_df.to_csv('temp_data/excel_master_eo_df.csv', index = False)      
   # print(excel_master_eo_df.info())
 sql_to_eo_master()
