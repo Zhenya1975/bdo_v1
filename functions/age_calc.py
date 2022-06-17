@@ -1,0 +1,111 @@
+import pandas as pd
+from extensions import extensions
+from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts
+from initial_values.initial_values import sap_columns_to_master_columns
+from datetime import datetime
+# from app import app
+import sqlite3
+
+db = extensions.db
+
+def read_date(date_input, eo_code):  
+
+  if "timestamp" in str(type(date_input)) or 'datetime' in str(type(date_input)):
+    date_output = date_input
+    return date_output
+  elif "str" in str(type(date_input)):
+    try:
+      date_output = datetime.strptime(date_input, '%d.%m.%Y')
+      return date_output
+    except:
+      pass
+    try:
+      date_output = datetime.strptime(date_input, '%Y-%m-%d %H:%M:%S')
+      return date_output
+    except:
+      pass  
+    try:
+      date_output = datetime.strptime(date_input, '%Y-%m-%d')
+      return date_output
+    except Exception as e:
+      print(f"eo_code: {eo_code}. Не удалось сохранить в дату '{date_input}, тип: {type(date_input)}'. Ошибка: ", e)
+      date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+      return date_output
+  
+  elif "nat" in str(type(date_input)) or "NaT" in str(type(date_input)) or "float" in str(type(date_input)):
+    date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+    return date_output
+  else:
+    print(eo_code, "не покрыто типами данных дат", type(date_input), date_input)
+    date_output = datetime.strptime('1.1.2199', '%d.%m.%Y')
+    return date_output
+
+    
+def age_calc(age_date):
+  con = sqlite3.connect("database/datab.db")
+  cursor = con.cursor()
+  # sql = "SELECT * FROM eo_DB JOIN be_DB"
+  sql = "SELECT \
+  eo_DB.be_code, \
+  be_DB.be_description, \
+  eo_DB.eo_class_code, \
+  eo_class_DB.eo_class_description, \
+  models_DB.eo_model_name, \
+  eo_DB.teh_mesto, \
+  eo_DB.gar_no, \
+  eo_DB.eo_code, \
+  eo_DB.head_type, \
+  eo_DB.operation_start_date, \
+  eo_DB.expected_operation_period_years, \
+  eo_DB.expected_operation_finish_date, \
+  eo_DB.sap_planned_finish_operation_date, \
+  eo_DB.expected_operation_status_code, \
+  eo_DB.expected_operation_status_code_date, \
+  eo_DB.sap_system_status, \
+  eo_DB.sap_user_status, \
+  eo_DB.reported_operation_finish_date, \
+  eo_DB.reported_operation_status, \
+  eo_DB.evaluated_operation_finish_date, \
+  eo_DB.age, \
+  eo_DB.age_date \
+  FROM eo_DB \
+  LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
+  LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
+  LEFT JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code \
+  LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code"
+  
+  master_eo_df = pd.read_sql_query(sql, con)
+  master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
+
+  master_eo_df['operation_start_date'] = pd.to_datetime(master_eo_df['operation_start_date'])
+  master_eo_df['evaluated_operation_finish_date'] = pd.to_datetime(master_eo_df['evaluated_operation_finish_date'])
+  master_eo_df['sap_system_status'].fillna("plug", inplace = True)
+  master_eo_df['sap_user_status'].fillna("plug", inplace = True)
+  
+  for row in master_eo_df.itertuples():
+    index_value = getattr(row, 'Index')
+    eo_code = getattr(row, "eo_code")
+    operation_start_date = getattr(row, "operation_start_date") 
+    evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
+    age_date = age_date
+    sap_system_status = getattr(row, "sap_system_status")
+    sap_user_status = getattr(row, "sap_user_status")
+   
+    
+    # operation_start_date = read_date(getattr(row, "operation_start_date"), eo_code) 
+    # evaluated_operation_finish_date = read_date(getattr(row, "evaluated_operation_finish_date"), eo_code)
+    # if 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
+      # print('good')
+      
+    if age_date > operation_start_date and age_date < evaluated_operation_finish_date and 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
+      age_years = (age_date - operation_start_date).days / 365.25
+      
+      update_record_sql = f"UPDATE eo_DB SET age='{age_years}', age_date = '{age_date}', age_calc_operation_status = 1  WHERE eo_code='{eo_code}';"
+    else:
+      update_record_sql = f"UPDATE eo_DB SET age=0, age_date = '{age_date}', age_calc_operation_status = 0  WHERE eo_code='{eo_code}';"
+    
+    cursor.execute(update_record_sql)
+    con.commit()
+  cursor.close()
+      
+      

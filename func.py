@@ -1,6 +1,7 @@
-from functions import eo_calendar_status
+from functions import age_calc
+from datetime import datetime
 
-
-eo_calendar_status.sql_to_eo_master()
+today = datetime.now()
+age_calc.age_calc(today)
 
 

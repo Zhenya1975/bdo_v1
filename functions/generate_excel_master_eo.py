@@ -36,7 +36,10 @@ def sql_to_eo_master():
   eo_DB.sap_user_status, \
   eo_DB.reported_operation_finish_date, \
   eo_DB.reported_operation_status, \
-  eo_DB.evaluated_operation_finish_date \
+  eo_DB.evaluated_operation_finish_date, \
+  eo_DB.age, \
+  eo_DB.age_date, \
+  eo_DB.age_calc_operation_status \
   FROM eo_DB \
   LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
   LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
@@ -74,6 +77,8 @@ def sql_to_eo_master():
   excel_master_eo_df["expected_operation_finish_date"] = excel_master_eo_df["expected_operation_finish_date"].dt.strftime("%d.%m.%Y")
 
   excel_master_eo_df["evaluated_operation_finish_date"] = excel_master_eo_df["evaluated_operation_finish_date"].dt.strftime("%d.%m.%Y")
+
+  # excel_master_eo_df["age_date"] = excel_master_eo_df["age_date"].dt.strftime("%d.%m.%Y")
   
   excel_master_eo_df["sap_planned_finish_operation_date"] = excel_master_eo_df["sap_planned_finish_operation_date"].dt.strftime("%d.%m.%Y")
   
