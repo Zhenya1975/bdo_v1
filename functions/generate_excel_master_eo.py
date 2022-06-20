@@ -27,6 +27,7 @@ def sql_to_eo_master():
   eo_DB.eo_description, \
   eo_DB.head_type, \
   eo_DB.operation_start_date, \
+  eo_DB.reported_operation_start_date, \
   eo_DB.expected_operation_period_years, \
   eo_DB.expected_operation_finish_date, \
   eo_DB.sap_planned_finish_operation_date, \
@@ -36,6 +37,7 @@ def sql_to_eo_master():
   eo_DB.sap_user_status, \
   eo_DB.reported_operation_finish_date, \
   eo_DB.reported_operation_status, \
+  eo_DB.reported_operation_status_date, \
   eo_DB.evaluated_operation_finish_date, \
   eo_DB.age, \
   eo_DB.age_date, \
@@ -57,6 +59,9 @@ def sql_to_eo_master():
   excel_master_eo_df['evaluated_operation_finish_date'] = pd.to_datetime(excel_master_eo_df['evaluated_operation_finish_date'])
   
   excel_master_eo_df['operation_start_date'] = pd.to_datetime(excel_master_eo_df['operation_start_date'])
+  excel_master_eo_df['reported_operation_start_date'] = pd.to_datetime(excel_master_eo_df['reported_operation_start_date'])
+
+  excel_master_eo_df['reported_operation_status_date'] = pd.to_datetime(excel_master_eo_df['reported_operation_status_date'])
   
   excel_master_eo_df['expected_operation_status_code_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_status_code_date'])
   
@@ -74,6 +79,8 @@ def sql_to_eo_master():
 
   excel_master_eo_df["operation_start_date"] = excel_master_eo_df["operation_start_date"].dt.strftime("%d.%m.%Y")
 
+  excel_master_eo_df["reported_operation_start_date"] = excel_master_eo_df["reported_operation_start_date"].dt.strftime("%d.%m.%Y")
+  
   excel_master_eo_df["expected_operation_finish_date"] = excel_master_eo_df["expected_operation_finish_date"].dt.strftime("%d.%m.%Y")
 
   excel_master_eo_df["evaluated_operation_finish_date"] = excel_master_eo_df["evaluated_operation_finish_date"].dt.strftime("%d.%m.%Y")
@@ -85,7 +92,8 @@ def sql_to_eo_master():
   excel_master_eo_df["expected_operation_status_code_date"] = excel_master_eo_df["expected_operation_status_code_date"].dt.strftime("%d.%m.%Y")
 
   excel_master_eo_df["reported_operation_finish_date"] = excel_master_eo_df["reported_operation_finish_date"].dt.strftime("%d.%m.%Y")
-
+  
+  excel_master_eo_df["reported_operation_status_date"] = excel_master_eo_df["reported_operation_status_date"].dt.strftime("%d.%m.%Y")
 
   
   excel_master_eo_df.to_excel('downloads/eo_master_data.xlsx', index = False)  

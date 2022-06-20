@@ -78,27 +78,52 @@ def age_calc(age_date):
   master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
 
   master_eo_df['operation_start_date'] = pd.to_datetime(master_eo_df['operation_start_date'])
+  master_eo_df['sap_planned_finish_operation_date'] = pd.to_datetime(master_eo_df['sap_planned_finish_operation_date'])
   master_eo_df['evaluated_operation_finish_date'] = pd.to_datetime(master_eo_df['evaluated_operation_finish_date'])
+  master_eo_df['reported_operation_finish_date'] = pd.to_datetime(master_eo_df['reported_operation_finish_date'])
   master_eo_df['sap_system_status'].fillna("plug", inplace = True)
   master_eo_df['sap_user_status'].fillna("plug", inplace = True)
+  
+  update_expected_operation_status_code_date_sql = f"UPDATE eo_DB SET expected_operation_status_code_date ='{age_date}';"
+  cursor.execute(update_expected_operation_status_code_date_sql)
+  con.commit()
   
   for row in master_eo_df.itertuples():
     index_value = getattr(row, 'Index')
     eo_code = getattr(row, "eo_code")
     operation_start_date = getattr(row, "operation_start_date") 
+    sap_planned_finish_operation_date = getattr(row, "sap_planned_finish_operation_date") 
     evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
     age_date = age_date
     sap_system_status = getattr(row, "sap_system_status")
     sap_user_status = getattr(row, "sap_user_status")
-   
+    reported_operation_finish_date = getattr(row, "reported_operation_finish_date")
+    # print(eo_code, "reported_operation_finish_date: ", reported_operation_finish_date, "evaluated_operation_finish_date: ", evaluated_operation_finish_date)
+
+    if 'nat' not in str(type(sap_planned_finish_operation_date)):
+      evaluated_operation_finish_date = sap_planned_finish_operation_date
+      update_evaluated_operation_finish_date_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date='{evaluated_operation_finish_date}' WHERE eo_code='{eo_code}';"
+      # print(update_evaluated_operation_finish_date_sql)
+      cursor.execute(update_evaluated_operation_finish_date_sql)
+      con.commit()
+    
+    if 'nat' not in str(type(reported_operation_finish_date)):
+      # print(reported_operation_finish_date)
+      evaluated_operation_finish_date = reported_operation_finish_date
+      update_evaluated_operation_finish_date_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date='{evaluated_operation_finish_date}' WHERE eo_code='{eo_code}';"
+      # print(update_evaluated_operation_finish_date_sql)
+      cursor.execute(update_evaluated_operation_finish_date_sql)
+      con.commit()
+
     
     # operation_start_date = read_date(getattr(row, "operation_start_date"), eo_code) 
     # evaluated_operation_finish_date = read_date(getattr(row, "evaluated_operation_finish_date"), eo_code)
     # if 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
       # print('good')
-      
+    
     if age_date > operation_start_date and age_date < evaluated_operation_finish_date and 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
       age_years = (age_date - operation_start_date).days / 365.25
+      
       
       update_record_sql = f"UPDATE eo_DB SET age='{age_years}', age_date = '{age_date}', age_calc_operation_status = 1  WHERE eo_code='{eo_code}';"
     else:

@@ -41,6 +41,7 @@ class Eo_DB(db.Model):
   eo_model_id = db.Column(db.Integer, db.ForeignKey('models_DB.eo_model_id'))
   eo_class_code = db.Column(db.String, db.ForeignKey('eo_class_DB.eo_class_code'))
   operation_start_date=db.Column(db.DateTime)
+  reported_operation_start_date=db.Column(db.DateTime)
   expected_operation_period_years = db.Column(db.Integer) # расчетый период эксплуатации.
   expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug) # расчетный срок завершения эксплуатации
   

@@ -6,7 +6,7 @@ from extensions import extensions
 from initial_values.initial_values import sap_columns_to_master_columns
 from werkzeug.utils import secure_filename
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, read_be_eo_xlsx_file_v2, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -66,7 +66,8 @@ def upload_be_eo_file():
       uploaded_file.save(os.path.join('uploads', "be_eo_data.xlsx"))
       message = f"файл {uploaded_file.filename} загружен"
       print(f"файл {uploaded_file.filename} загружен")
-      read_be_eo_xlsx_file.read_be_eo_xlsx()
+      # read_be_eo_xlsx_file.read_be_eo_xlsx()
+      read_be_eo_xlsx_file_v2.read_be_eo_xlsx()
       flash(message, 'alert-success')
       return redirect(url_for('home.home_view'))
 
