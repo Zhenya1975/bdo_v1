@@ -80,7 +80,6 @@ def calendar_operation_status_calc():
     master_eo_df['evaluated_operation_finish_date'] = pd.to_datetime(master_eo_df['evaluated_operation_finish_date'])
     master_eo_df['reported_operation_finish_date'] = pd.to_datetime(master_eo_df['reported_operation_finish_date'])
     date_plug = datetime.strptime('1.1.2199', '%d.%m.%Y')
-    
     master_eo_df['sap_planned_finish_operation_date'].fillna(date_plug, inplace = True)
     master_eo_df['reported_operation_finish_date'].fillna(date_plug, inplace = True)
     master_eo_df['evaluated_operation_finish_date'].fillna(date_plug, inplace = True)
@@ -102,8 +101,6 @@ def calendar_operation_status_calc():
         con.commit() 
 
     # В поле  evaluated_operation_finish_date  указываем значение из expected_operation_finish_date
-    # print(master_eo_df.loc[0, ['evaluated_operation_finish_date']])    
-    # print(date_plug)
     master_eo_filtered_df = master_eo_df.loc[master_eo_df['evaluated_operation_finish_date'] ==date_plug]
     indexes = list(master_eo_filtered_df.index.values)
     master_eo_df.loc[indexes, ['evaluated_operation_finish_date']] = master_eo_df['expected_operation_finish_date']
@@ -119,6 +116,16 @@ def calendar_operation_status_calc():
     indexes_3 = list(master_eo_filtered_df_3.index.values)
     dates_list_df_3 = master_eo_df.loc[indexes_3, ['reported_operation_finish_date']]
     master_eo_df.loc[indexes_3, ['evaluated_operation_finish_date']] = list(dates_list_df_3['reported_operation_finish_date'])
+
+ 
+
+    # update_calendar_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date =  WHERE eo_code = '{eo_code}';"
+    # for row in master_eo_df.itertuples():
+    #   evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
+    #   eo_code = getattr(row, "eo_code")
+    #   update_calendar_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date = '{evaluated_operation_finish_date}' WHERE eo_code = '{eo_code}';"
+    #   cursor.execute(update_calendar_sql)
+    #   con.commit() 
 
     
     master_eo_df.to_csv('temp_data/master_eo_df.csv')
@@ -146,11 +153,15 @@ def calendar_operation_status_calc():
 
       eo_master_temp_df = master_eo_df.loc[master_eo_df['operation_start_date'] < age_date] 
       eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] > age_date]
-      eo_list = tuple(eo_master_temp_df['eo_code'])
- 
-      update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=1 WHERE eo_code IN {eo_list};"
-      cursor.execute(update_calendar_sql)
-      con.commit() 
+      
+
+      for row in eo_master_temp_df.itertuples():
+        eo = getattr(row, 'eo_code')
+        evaluated_operation_finish_date = getattr(row, 'evaluated_operation_finish_date')
+        
+        update_calendar_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date = '{evaluated_operation_finish_date}' WHERE eo_code = '{eo}';"
+        cursor.execute(update_calendar_sql)
+        con.commit() 
 
       # if age_date > operation_start_date and age_date < evaluated_operation_finish_date and 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
       #   calendar_record = Eo_calendar_operation_status_DB.query.filter_by(eo_code = eo_code).first()

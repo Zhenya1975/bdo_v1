@@ -32,7 +32,6 @@ def sql_to_eo_master():
   eo_DB.expected_operation_finish_date, \
   eo_DB.sap_planned_finish_operation_date, \
   eo_DB.expected_operation_status_code, \
-  eo_DB.expected_operation_status_code_date, \
   eo_DB.sap_system_status, \
   eo_DB.sap_user_status, \
   eo_DB.reported_operation_finish_date, \
@@ -103,7 +102,7 @@ def sql_to_eo_master():
 
   excel_master_eo_df['reported_operation_status_date'] = pd.to_datetime(excel_master_eo_df['reported_operation_status_date'])
   
-  excel_master_eo_df['expected_operation_status_code_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_status_code_date'])
+  # excel_master_eo_df['expected_operation_status_code_date'] = pd.to_datetime(excel_master_eo_df['expected_operation_status_code_date'])
   
   excel_master_eo_df['sap_planned_finish_operation_date'] = pd.to_datetime(excel_master_eo_df['sap_planned_finish_operation_date'])
   
@@ -124,12 +123,12 @@ def sql_to_eo_master():
   excel_master_eo_df["expected_operation_finish_date"] = excel_master_eo_df["expected_operation_finish_date"].dt.strftime("%d.%m.%Y")
 
   excel_master_eo_df["evaluated_operation_finish_date"] = excel_master_eo_df["evaluated_operation_finish_date"].dt.strftime("%d.%m.%Y")
-
+  # print(excel_master_eo_df["evaluated_operation_finish_date"])
   # excel_master_eo_df["age_date"] = excel_master_eo_df["age_date"].dt.strftime("%d.%m.%Y")
   
   excel_master_eo_df["sap_planned_finish_operation_date"] = excel_master_eo_df["sap_planned_finish_operation_date"].dt.strftime("%d.%m.%Y")
   
-  excel_master_eo_df["expected_operation_status_code_date"] = excel_master_eo_df["expected_operation_status_code_date"].dt.strftime("%d.%m.%Y")
+  # excel_master_eo_df["expected_operation_status_code_date"] = excel_master_eo_df["expected_operation_status_code_date"].dt.strftime("%d.%m.%Y")
 
   excel_master_eo_df["reported_operation_finish_date"] = excel_master_eo_df["reported_operation_finish_date"].dt.strftime("%d.%m.%Y")
   
