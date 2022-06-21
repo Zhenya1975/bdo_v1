@@ -6,7 +6,7 @@ from extensions import extensions
 from initial_values.initial_values import sap_columns_to_master_columns
 from werkzeug.utils import secure_filename
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, read_be_eo_xlsx_file_v2, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, read_be_eo_xlsx_file_v2, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -107,26 +107,25 @@ def upload_sap_eo_file():
   return 'not uploaded'
 
 
+@home.route('/download_calendar_eo_file', methods=['GET', 'POST'])
+def download_calendar_eo_file():
+  if request.method == 'POST': 
+    generate_excel_calendar_status_eo.sql_to_eo_calendar_master()
+    return send_file("downloads/calendar_eo.xlsx", as_attachment=True) 
+  return 'not downloaded be_eo_data_template'
+
 
 @home.route('/download_be_data_template', methods=['GET', 'POST'])
 def download_be_data_template():
-  if request.method == 'POST':    
-    return send_file("downloads/be_eo_data_template.xlsx", as_attachment=True) 
+  if request.method == 'POST':   
+    
+    return send_file("downloads/calendar_eo.xlsx", as_attachment=True) 
   return 'not downloaded be_eo_data_template'
 
 
 @home.route('/download_master_eo_file', methods=['GET', 'POST'])
 def download_master_eo_file():
   if request.method == 'POST':
-    
-    # выпекаем excel-файл из базы данных
-    # try:
-    #   try:
-    #     os.remove("downloads/eo_master_data.xlsx")
-    #   except:
-    #     pass
-      
-      # generate_excel_master_eo.generate_excel_master_eo()
     generate_excel_master_eo.sql_to_eo_master()
     return send_file("downloads/eo_master_data.xlsx", as_attachment=True) 
     # except Exception as e:
