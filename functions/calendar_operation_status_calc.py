@@ -81,10 +81,32 @@ def calendar_operation_status_calc():
     master_eo_df['reported_operation_finish_date'] = pd.to_datetime(master_eo_df['reported_operation_finish_date'])
     master_eo_df['sap_system_status'].fillna("plug", inplace = True)
     master_eo_df['sap_user_status'].fillna("plug", inplace = True)
-  
+
+    sql_calendar_operation_status = "SELECT eo_calendar_operation_status_DB.eo_code FROM eo_calendar_operation_status_DB"
+    calendar_operation_status_df = pd.read_sql_query(sql_calendar_operation_status, con)
+    calendar_operation_status_eo_list = list(calendar_operation_status_df['eo_code'])
+
+    calendar_operation_status_eo_list_add_df = master_eo_df.loc[~master_eo_df['eo_code'].isin(calendar_operation_status_eo_list)]
+    calendar_operation_status_eo_list_add = list(calendar_operation_status_eo_list_add_df['eo_code'])
+    if len(calendar_operation_status_eo_list_add)>0:
+      for eo_to_add in calendar_operation_status_eo_list_add:
+        insert_calendar_sql = f"INSERT INTO eo_calendar_operation_status_DB (eo_code) VALUES ({eo_to_add});"
+        cursor.execute(insert_calendar_sql)
+        con.commit() 
+    
+    
     for row in master_eo_df.itertuples():
       index_value = getattr(row, 'Index')
       eo_code = getattr(row, "eo_code")
+      # запись в таблице календарного плана
+      calendar_plan_record = Eo_calendar_operation_status_DB.query.filter_by(eo_code = eo_code).first()
+      if calendar_plan_record == False:
+        new_record = Eo_calendar_operation_status_DB(eo_code = eo_code)
+        db.session.add(new_record)
+        db.session.commit()
+        print("в календарный план добавлен ео: ", eo_code)
+
+      
       operation_start_date = getattr(row, "operation_start_date") 
       sap_planned_finish_operation_date = getattr(row, "sap_planned_finish_operation_date") 
       evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
