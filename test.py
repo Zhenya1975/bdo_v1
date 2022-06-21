@@ -40,7 +40,7 @@ def delete_record():
     cursor.execute(delete_records_sql)
     con.commit()
     cursor.close()
-delete_record()    
+# delete_record()    
 
 def delete_eo_records():
   eo_to_delete_df = pd.read_excel('temp_data/delete_eo.xlsx', index_col = False, dtype=str)
@@ -73,12 +73,12 @@ def update_record():
   with app.app_context():
     con = sqlite3.connect("database/datab.db")
     cursor = con.cursor()
-    update_record_sql = "UPDATE operation_statusDB SET sap_operation_status='' WHERE id= 4;"
+    update_record_sql = "UPDATE eo_DB SET evaluated_operation_finish_date=Null;"
     cursor.execute(update_record_sql)
     con.commit()
     cursor.close()
 
-# update_record()
+update_record()
 
 def clear_column_records():
   with app.app_context():

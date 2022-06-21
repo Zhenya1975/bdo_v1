@@ -79,8 +79,11 @@ def calendar_operation_status_calc():
     master_eo_df['sap_planned_finish_operation_date'] = pd.to_datetime(master_eo_df['sap_planned_finish_operation_date'])
     master_eo_df['evaluated_operation_finish_date'] = pd.to_datetime(master_eo_df['evaluated_operation_finish_date'])
     master_eo_df['reported_operation_finish_date'] = pd.to_datetime(master_eo_df['reported_operation_finish_date'])
-    master_eo_df['sap_planned_finish_operation_date'].fillna(0, inplace = True)
-    master_eo_df['reported_operation_finish_date'].fillna(0, inplace = True)
+    date_plug = datetime.strptime('1.1.2199', '%d.%m.%Y')
+    
+    master_eo_df['sap_planned_finish_operation_date'].fillna(date_plug, inplace = True)
+    master_eo_df['reported_operation_finish_date'].fillna(date_plug, inplace = True)
+    master_eo_df['evaluated_operation_finish_date'].fillna(date_plug, inplace = True)
     master_eo_df['sap_system_status'].fillna("plug", inplace = True)
     master_eo_df['sap_user_status'].fillna("plug", inplace = True)
 
@@ -99,46 +102,26 @@ def calendar_operation_status_calc():
         con.commit() 
 
     # В поле  evaluated_operation_finish_date  указываем значение из expected_operation_finish_date
-    master_eo_filtered_df = master_eo_df.loc[master_eo_df['evaluated_operation_finish_date'] !=0]
+    # print(master_eo_df.loc[0, ['evaluated_operation_finish_date']])    
+    # print(date_plug)
+    master_eo_filtered_df = master_eo_df.loc[master_eo_df['evaluated_operation_finish_date'] ==date_plug]
     indexes = list(master_eo_filtered_df.index.values)
     master_eo_df.loc[indexes, ['evaluated_operation_finish_date']] = master_eo_df['expected_operation_finish_date']
     
     # выборка в которой пусто в колонке sap_planned_finish_operation_date
-    master_eo_filtered_df = master_eo_df.loc[master_eo_df['sap_planned_finish_operation_date'] != 0]
-    indexes = list(master_eo_filtered_df.index.values)
-    master_eo_df.loc[indexes, ['evaluated_operation_finish_date']] = master_eo_df['sap_planned_finish_operation_date']
+    master_eo_filtered_df_2 = master_eo_df.loc[master_eo_df['sap_planned_finish_operation_date'] != date_plug]
+    # print(master_eo_filtered_df_2['sap_planned_finish_operation_date'])
+    indexes = list(master_eo_filtered_df_2.index.values)
+    dates_list_df = master_eo_df.loc[indexes, ['sap_planned_finish_operation_date']]
+    master_eo_df.loc[indexes, ['evaluated_operation_finish_date']] = list(dates_list_df['sap_planned_finish_operation_date'])
 
-    master_eo_filtered_df = master_eo_df.loc[master_eo_df['reported_operation_finish_date'] != 0]
-    indexes = list(master_eo_filtered_df.index.values)
-    master_eo_df.loc[indexes, ['evaluated_operation_finish_date']] = master_eo_df['reported_operation_finish_date']
+    master_eo_filtered_df_3 = master_eo_df.loc[master_eo_df['reported_operation_finish_date'] != date_plug]
+    indexes_3 = list(master_eo_filtered_df_3.index.values)
+    dates_list_df_3 = master_eo_df.loc[indexes_3, ['reported_operation_finish_date']]
+    master_eo_df.loc[indexes_3, ['evaluated_operation_finish_date']] = list(dates_list_df_3['reported_operation_finish_date'])
+
     
     master_eo_df.to_csv('temp_data/master_eo_df.csv')
-    # print(master_eo_filtered_df)   
-    
-    for row in master_eo_df.itertuples():
-      index_value = getattr(row, 'Index')
-      eo_code = getattr(row, "eo_code")
-
-      
-      operation_start_date = getattr(row, "operation_start_date") 
-      sap_planned_finish_operation_date = getattr(row, "sap_planned_finish_operation_date") 
-      evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
-      sap_system_status = getattr(row, "sap_system_status")
-      sap_user_status = getattr(row, "sap_user_status")
-      reported_operation_finish_date = getattr(row, "reported_operation_finish_date")
-      # print(eo_code, "reported_operation_finish_date: ", reported_operation_finish_date, "evaluated_operation_finish_date: ", evaluated_operation_finish_date)
-
-      
-      if 'nat' not in str(type(reported_operation_finish_date)):
-        # print(reported_operation_finish_date)
-        evaluated_operation_finish_date = reported_operation_finish_date
-        update_evaluated_operation_finish_date_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date='{evaluated_operation_finish_date}' WHERE eo_code='{eo_code}';"
-        # print(update_evaluated_operation_finish_date_sql)
-        cursor.execute(update_evaluated_operation_finish_date_sql)
-        con.commit()
-
-
-
 
     # обработка данных без итераций
         
