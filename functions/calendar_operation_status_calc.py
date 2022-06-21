@@ -107,23 +107,40 @@ def calendar_operation_status_calc():
         # print(update_evaluated_operation_finish_date_sql)
         cursor.execute(update_evaluated_operation_finish_date_sql)
         con.commit()
-      age_date = datetime.strptime('01.07.2022', '%d.%m.%Y')
+
+      calendar_list = ['july_2022', 'august_2022']
+      for calendar_point in calendar_list:
+        if calendar_point == 'july_2022':
+          age_date = datetime.strptime('31.07.2022', '%d.%m.%Y')
+          period_begin = datetime.strptime('01.07.2022', '%d.%m.%Y')
+          qty_column_name = 'july_2022_qty'
+          qty_in_coluumn_name = 'july_2022_in'
+          qty_out_coluumn_name = 'july_2022_in'
+          
+        
       if age_date > operation_start_date and age_date < evaluated_operation_finish_date and 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
         calendar_record = Eo_calendar_operation_status_DB.query.filter_by(eo_code = eo_code).first()
         if calendar_record:
-          calendar_record.july_2022_qty = 1
-          db.session.commit()
+          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=1 WHERE eo_code='{eo_code}';"
+          cursor.execute(update_calendar_sql)
+          con.commit()  
         else:
-          new_eo_record = Eo_calendar_operation_status_DB(eo_code = eo_code, july_2022_qty = 1)
-          db.session.add(new_eo_record)
-          db.session.commit()
+          update_calendar_sql = f"INSERT INTO eo_calendar_operation_status_DB SET (eo_code, '{qty_column_name}') VALUES ({eo_code}, 1);"
+          cursor.execute(update_calendar_sql)
+          con.commit() 
+        
+      # ЕСЛИ ДАТА НЕ ПОПАЛА МЕЖДУ НАЧАЛОМ И КОНЦОМ ЭКСПЛУАТАЦИИ
       else:
         calendar_record = Eo_calendar_operation_status_DB.query.filter_by(eo_code = eo_code).first()
         if calendar_record:
-          calendar_record.july_2022_qty = 0
-          db.session.commit()
+          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=0 WHERE eo_code='{eo_code}';"
+          cursor.execute(update_calendar_sql)
+          con.commit() 
         else:
-          new_eo_record = Eo_calendar_operation_status_DB(eo_code = eo_code, july_2022_qty = 0)
-          db.session.add(new_eo_record)
-          db.session.commit()
-        
+          update_calendar_sql = f"INSERT INTO eo_calendar_operation_status_DB SET \
+          (eo_code, '{qty_column_name}') VALUES \
+          ({eo_code}, 0);"
+          cursor.execute(update_calendar_sql)
+          con.commit() 
+      
+          
