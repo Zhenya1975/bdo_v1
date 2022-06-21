@@ -80,6 +80,7 @@ def calendar_operation_status_calc():
     master_eo_df['evaluated_operation_finish_date'] = pd.to_datetime(master_eo_df['evaluated_operation_finish_date'])
     master_eo_df['reported_operation_finish_date'] = pd.to_datetime(master_eo_df['reported_operation_finish_date'])
     master_eo_df['sap_planned_finish_operation_date'].fillna(0, inplace = True)
+    master_eo_df['reported_operation_finish_date'].fillna(0, inplace = True)
     master_eo_df['sap_system_status'].fillna("plug", inplace = True)
     master_eo_df['sap_user_status'].fillna("plug", inplace = True)
 
@@ -97,11 +98,19 @@ def calendar_operation_status_calc():
         cursor.execute(insert_calendar_sql)
         con.commit() 
 
+    # В поле  evaluated_operation_finish_date  указываем значение из expected_operation_finish_date
+    master_eo_filtered_df = master_eo_df.loc[master_eo_df['evaluated_operation_finish_date'] !=0]
+    indexes = list(master_eo_filtered_df.index.values)
+    master_eo_df.loc[indexes, ['evaluated_operation_finish_date']] = master_eo_df['expected_operation_finish_date']
+    
     # выборка в которой пусто в колонке sap_planned_finish_operation_date
     master_eo_filtered_df = master_eo_df.loc[master_eo_df['sap_planned_finish_operation_date'] != 0]
     indexes = list(master_eo_filtered_df.index.values)
-    
     master_eo_df.loc[indexes, ['evaluated_operation_finish_date']] = master_eo_df['sap_planned_finish_operation_date']
+
+    master_eo_filtered_df = master_eo_df.loc[master_eo_df['reported_operation_finish_date'] != 0]
+    indexes = list(master_eo_filtered_df.index.values)
+    master_eo_df.loc[indexes, ['evaluated_operation_finish_date']] = master_eo_df['reported_operation_finish_date']
     
     master_eo_df.to_csv('temp_data/master_eo_df.csv')
     # print(master_eo_filtered_df)   
