@@ -117,15 +117,14 @@ def calendar_operation_status_calc():
     dates_list_df_3 = master_eo_df.loc[indexes_3, ['reported_operation_finish_date']]
     master_eo_df.loc[indexes_3, ['evaluated_operation_finish_date']] = list(dates_list_df_3['reported_operation_finish_date'])
 
- 
 
-    # update_calendar_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date =  WHERE eo_code = '{eo_code}';"
-    # for row in master_eo_df.itertuples():
-    #   evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
-    #   eo_code = getattr(row, "eo_code")
-    #   update_calendar_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date = '{evaluated_operation_finish_date}' WHERE eo_code = '{eo_code}';"
-    #   cursor.execute(update_calendar_sql)
-    #   con.commit() 
+    
+    for row in master_eo_df.itertuples():
+      evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
+      eo_code = getattr(row, "eo_code")
+      update_calendar_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date = '{evaluated_operation_finish_date}' WHERE eo_code = '{eo_code}';"
+      cursor.execute(update_calendar_sql)
+      con.commit() 
 
     
     master_eo_df.to_csv('temp_data/master_eo_df.csv')
