@@ -39,13 +39,49 @@ def sql_to_eo_calendar_master():
   eo_DB.reported_operation_status, \
   eo_DB.reported_operation_status_date, \
   eo_DB.evaluated_operation_finish_date, \
-  Eo_calendar_operation_status_DB.july_2022 \
+  Eo_calendar_operation_status_DB.july_2022_qty, \
+  Eo_calendar_operation_status_DB.july_2022_in, \
+  Eo_calendar_operation_status_DB.july_2022_out, \
+  Eo_calendar_operation_status_DB.august_2022_qty, \
+  Eo_calendar_operation_status_DB.august_2022_in, \
+  Eo_calendar_operation_status_DB.august_2022_out, \
+  Eo_calendar_operation_status_DB.sep_2022_qty, \
+  Eo_calendar_operation_status_DB.sep_2022_in, \
+  Eo_calendar_operation_status_DB.sep_2022_out, \
+  Eo_calendar_operation_status_DB.oct_2022_qty, \
+  Eo_calendar_operation_status_DB.oct_2022_in, \
+  Eo_calendar_operation_status_DB.oct_2022_out, \
+  Eo_calendar_operation_status_DB.nov_2022_qty, \
+  Eo_calendar_operation_status_DB.nov_2022_in, \
+  Eo_calendar_operation_status_DB.nov_2022_out, \
+  Eo_calendar_operation_status_DB.dec_2022_qty, \
+  Eo_calendar_operation_status_DB.dec_2022_in, \
+  Eo_calendar_operation_status_DB.dec_2022_out, \
+  Eo_calendar_operation_status_DB.year_2022_qty, \
+  Eo_calendar_operation_status_DB.year_2022_in, \
+  Eo_calendar_operation_status_DB.year_2022_out, \
+  Eo_calendar_operation_status_DB.year_2023_qty, \
+  Eo_calendar_operation_status_DB.year_2023_in, \
+  Eo_calendar_operation_status_DB.year_2023_out, \
+  Eo_calendar_operation_status_DB.year_2024_qty, \
+  Eo_calendar_operation_status_DB.year_2024_in, \
+  Eo_calendar_operation_status_DB.year_2024_out, \
+  Eo_calendar_operation_status_DB.year_2025_qty, \
+  Eo_calendar_operation_status_DB.year_2025_in, \
+  Eo_calendar_operation_status_DB.year_2025_out, \
+  Eo_calendar_operation_status_DB.year_2026_qty, \
+  Eo_calendar_operation_status_DB.year_2026_in, \
+  Eo_calendar_operation_status_DB.year_2026_out, \
+  Eo_calendar_operation_status_DB.year_2027_qty, \
+  Eo_calendar_operation_status_DB.year_2027_in, \
+  Eo_calendar_operation_status_DB.year_2027_out \
   FROM eo_DB \
   LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
   LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
   LEFT JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code \
   LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code \
   LEFT JOIN Eo_calendar_operation_status_DB ON eo_DB.eo_code = Eo_calendar_operation_status_DB.eo_code"
+
 
 
   excel_master_eo_df = pd.read_sql_query(sql, con)

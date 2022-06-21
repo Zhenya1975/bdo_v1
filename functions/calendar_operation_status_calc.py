@@ -111,19 +111,19 @@ def calendar_operation_status_calc():
       if age_date > operation_start_date and age_date < evaluated_operation_finish_date and 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
         calendar_record = Eo_calendar_operation_status_DB.query.filter_by(eo_code = eo_code).first()
         if calendar_record:
-          calendar_record.july_2022 = 1
+          calendar_record.july_2022_qty = 1
           db.session.commit()
         else:
-          new_eo_record = Eo_calendar_operation_status_DB(eo_code = eo_code, july_2022 = 1)
+          new_eo_record = Eo_calendar_operation_status_DB(eo_code = eo_code, july_2022_qty = 1)
           db.session.add(new_eo_record)
           db.session.commit()
       else:
         calendar_record = Eo_calendar_operation_status_DB.query.filter_by(eo_code = eo_code).first()
         if calendar_record:
-          calendar_record.july_2022 = 0
+          calendar_record.july_2022_qty = 0
           db.session.commit()
         else:
-          new_eo_record = Eo_calendar_operation_status_DB(eo_code = eo_code, july_2022 = 0)
+          new_eo_record = Eo_calendar_operation_status_DB(eo_code = eo_code, july_2022_qty = 0)
           db.session.add(new_eo_record)
           db.session.commit()
         
