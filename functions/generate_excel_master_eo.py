@@ -41,12 +41,52 @@ def sql_to_eo_master():
   eo_DB.evaluated_operation_finish_date, \
   eo_DB.age, \
   eo_DB.age_date, \
-  eo_DB.age_calc_operation_status \
+  eo_DB.age_calc_operation_status, \
+  eo_DB.age_31122022, \
+  eo_DB.age_date_31122022, \
+  eo_DB.age_31122022_calc_operation_status, \
+  eo_DB.age_31122023, \
+  eo_DB.age_date_31122023, \
+  eo_DB.age_31122023_calc_operation_status, \
+  eo_DB.age_31122024, \
+  eo_DB.age_date_31122024, \
+  eo_DB.age_31122024_calc_operation_status, \
+  eo_DB.age_31122025, \
+  eo_DB.age_date_31122025, \
+  eo_DB.age_31122025_calc_operation_status, \
+  eo_DB.age_31122026, \
+  eo_DB.age_date_31122026, \
+  eo_DB.age_31122026_calc_operation_status, \
+  eo_DB.age_31122027, \
+  eo_DB.age_date_31122027, \
+  eo_DB.age_31122027_calc_operation_status \
   FROM eo_DB \
   LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
   LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
   LEFT JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code \
   LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code"
+
+
+  age_31122023 = db.Column(db.Float)
+  age_date_31122023 = db.Column(db.DateTime)
+  age_31122023_calc_operation_status = db.Column(db.Integer)
+
+  age_31122024 = db.Column(db.Float)
+  age_date_31122024 = db.Column(db.DateTime)
+  age_31122024_calc_operation_status = db.Column(db.Integer)
+
+  age_31122025 = db.Column(db.Float)
+  age_date_31122025 = db.Column(db.DateTime)
+  age_31122025_calc_operation_status = db.Column(db.Integer)
+
+  age_31122026 = db.Column(db.Float)
+  age_date_31122026 = db.Column(db.DateTime)
+  age_31122026_calc_operation_status = db.Column(db.Integer)
+
+  age_31122027 = db.Column(db.Float)
+  age_date_31122027 = db.Column(db.DateTime)
+  age_31122027_calc_operation_status = db.Column(db.Integer)
+
   
   excel_master_eo_df = pd.read_sql_query(sql, con)
   excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)

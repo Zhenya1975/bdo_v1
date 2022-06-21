@@ -83,7 +83,42 @@ def age_calc(age_date):
   master_eo_df['reported_operation_finish_date'] = pd.to_datetime(master_eo_df['reported_operation_finish_date'])
   master_eo_df['sap_system_status'].fillna("plug", inplace = True)
   master_eo_df['sap_user_status'].fillna("plug", inplace = True)
+
   
+  
+  age_column_name = 'age'
+  age_date_column_name = 'age_date'
+  age_calc_operation_status_column_name = 'age_calc_operation_status'
+  if age_date == datetime.now():
+    age_column_name = 'age'
+    age_date_column_name = 'age_date'
+    age_calc_operation_status_column_name = 'age_calc_operation_status'
+  elif age_date == datetime.strptime('31.12.2022', '%d.%m.%Y'):
+    age_column_name = 'age_31122022'
+    age_date_column_name = 'age_date_31122022'
+    age_calc_operation_status_column_name = 'age_31122022_calc_operation_status'
+  elif age_date == datetime.strptime('31.12.2023', '%d.%m.%Y'):
+    age_column_name = 'age_31122023'
+    age_date_column_name = 'age_date_31122023'
+    age_calc_operation_status_column_name = 'age_31122023_calc_operation_status' 
+  elif age_date == datetime.strptime('31.12.2024', '%d.%m.%Y'):
+    age_column_name = 'age_31122024'
+    age_date_column_name = 'age_date_31122024'
+    age_calc_operation_status_column_name = 'age_31122024_calc_operation_status'  
+  elif age_date == datetime.strptime('31.12.2025', '%d.%m.%Y'):
+    age_column_name = 'age_31122025'
+    age_date_column_name = 'age_date_31122025'
+    age_calc_operation_status_column_name = 'age_31122025_calc_operation_status' 
+  elif age_date == datetime.strptime('31.12.2026', '%d.%m.%Y'):
+    age_column_name = 'age_31122026'
+    age_date_column_name = 'age_date_31122026'
+    age_calc_operation_status_column_name = 'age_31122026_calc_operation_status' 
+  elif age_date == datetime.strptime('31.12.2027', '%d.%m.%Y'):
+    age_column_name = 'age_31122027'
+    age_date_column_name = 'age_date_31122027'
+    age_calc_operation_status_column_name = 'age_31122027_calc_operation_status' 
+  
+ 
   update_expected_operation_status_code_date_sql = f"UPDATE eo_DB SET expected_operation_status_code_date ='{age_date}';"
   cursor.execute(update_expected_operation_status_code_date_sql)
   con.commit()
@@ -120,14 +155,21 @@ def age_calc(age_date):
     # evaluated_operation_finish_date = read_date(getattr(row, "evaluated_operation_finish_date"), eo_code)
     # if 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
       # print('good')
-    
+    # try:
+    #   con.execute('ALTER TABLE eo_DB ADD COLUMN today_age;')
+    #   con.commit()
+    #   print("должна быть добавлена колонка today_age")
+    # except:
+    #   print("уже есть колонка today_age")
+    #   pass # handle the error
+
     if age_date > operation_start_date and age_date < evaluated_operation_finish_date and 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
       age_years = (age_date - operation_start_date).days / 365.25
       
       
-      update_record_sql = f"UPDATE eo_DB SET age='{age_years}', age_date = '{age_date}', age_calc_operation_status = 1  WHERE eo_code='{eo_code}';"
+      update_record_sql = f"UPDATE eo_DB SET '{age_column_name}'='{age_years}', '{age_date_column_name}' = '{age_date}', '{age_calc_operation_status_column_name}' = 1  WHERE eo_code='{eo_code}';"
     else:
-      update_record_sql = f"UPDATE eo_DB SET age=0, age_date = '{age_date}', age_calc_operation_status = 0  WHERE eo_code='{eo_code}';"
+      update_record_sql = f"UPDATE eo_DB SET '{age_column_name}'=0, '{age_date_column_name}' = '{age_date}', '{age_calc_operation_status_column_name}' = 0  WHERE eo_code='{eo_code}';"
     
     cursor.execute(update_record_sql)
     con.commit()

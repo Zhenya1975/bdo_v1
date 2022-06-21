@@ -26,7 +26,13 @@ class Eo_candidatesDB(db.Model):
   eo_class_description = db.Column(db.String)
   operation_start_date=db.Column(db.DateTime)
   expected_operation_finish_date = db.Column(db.DateTime)
-  
+
+class Eo_calendar_operation_status_DB(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  eo_code = db.Column(db.String, db.ForeignKey('eo_DB.eo_code'))
+  july_2022 = db.Column(db.Integer)
+  august_2022 = db.Column(db.Integer)
+
 
 class Eo_DB(db.Model):
   eo_id = db.Column(db.Integer, primary_key=True)
@@ -61,9 +67,34 @@ class Eo_DB(db.Model):
   age = db.Column(db.Float)
   age_date = db.Column(db.DateTime)
   age_calc_operation_status = db.Column(db.Integer)
+
+  age_31122022 = db.Column(db.Float)
+  age_date_31122022 = db.Column(db.DateTime)
+  age_31122022_calc_operation_status = db.Column(db.Integer)
+
+  age_31122023 = db.Column(db.Float)
+  age_date_31122023 = db.Column(db.DateTime)
+  age_31122023_calc_operation_status = db.Column(db.Integer)
+
+  age_31122024 = db.Column(db.Float)
+  age_date_31122024 = db.Column(db.DateTime)
+  age_31122024_calc_operation_status = db.Column(db.Integer)
+
+  age_31122025 = db.Column(db.Float)
+  age_date_31122025 = db.Column(db.DateTime)
+  age_31122025_calc_operation_status = db.Column(db.Integer)
+
+  age_31122026 = db.Column(db.Float)
+  age_date_31122026 = db.Column(db.DateTime)
+  age_31122026_calc_operation_status = db.Column(db.Integer)
+
+  age_31122027 = db.Column(db.Float)
+  age_date_31122027 = db.Column(db.DateTime)
+  age_31122027_calc_operation_status = db.Column(db.Integer)
   
   conflict_data = db.relationship('Eo_data_conflicts', backref='conflict_data')
   logs_data = db.relationship('LogsDB', backref='logs_data')
+  calendar_status = db.relationship('Eo_calendar_operation_status_DB', backref='calendar_status')
 
 class Operation_statusDB(db.Model):
   id = db.Column(db.Integer, primary_key=True)
