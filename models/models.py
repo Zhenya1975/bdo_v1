@@ -31,6 +31,7 @@ class Eo_calendar_operation_status_DB(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   eo_code = db.Column(db.String, db.ForeignKey('eo_DB.eo_code'))
   july_2022_qty = db.Column(db.Integer)
+  july_2022_age = db.Column(db.Float)
   july_2022_in = db.Column(db.Integer)
   july_2022_out = db.Column(db.Integer)
   august_2022_qty = db.Column(db.Integer)

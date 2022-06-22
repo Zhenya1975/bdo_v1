@@ -39,6 +39,7 @@ def sql_to_eo_calendar_master():
   eo_DB.reported_operation_status_date, \
   eo_DB.evaluated_operation_finish_date, \
   eo_calendar_operation_status_DB.july_2022_qty, \
+  eo_calendar_operation_status_DB.july_2022_age, \
   eo_calendar_operation_status_DB.july_2022_in, \
   eo_calendar_operation_status_DB.july_2022_out, \
   eo_calendar_operation_status_DB.august_2022_qty, \

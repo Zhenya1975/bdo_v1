@@ -1,6 +1,7 @@
 import pandas as pd
 from extensions import extensions
 from models.models import Eo_DB, Eo_calendar_operation_status_DB
+from initial_values.initial_values import sap_system_status_ban_list, sap_user_status_ban_list
 from datetime import datetime
 from app import app
 import sqlite3
@@ -65,12 +66,14 @@ def calendar_operation_status_calc():
     eo_DB.sap_user_status, \
     eo_DB.reported_operation_finish_date, \
     eo_DB.reported_operation_status, \
-    eo_DB.evaluated_operation_finish_date \
+    eo_DB.evaluated_operation_finish_date, \
+    eo_calendar_operation_status_DB.id \
     FROM eo_DB \
     LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
     LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \
     LEFT JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code \
-    LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code"
+    LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code \
+    LEFT JOIN eo_calendar_operation_status_DB ON eo_DB.eo_code = eo_calendar_operation_status_DB.eo_code"
     
     master_eo_df = pd.read_sql_query(sql, con)
     master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
@@ -126,7 +129,7 @@ def calendar_operation_status_calc():
       con.commit() 
 
     
-    # master_eo_df.to_csv('temp_data/master_eo_df.csv')
+    
 
 
         
@@ -140,6 +143,7 @@ def calendar_operation_status_calc():
         age_date = datetime.strptime('31.07.2022', '%d.%m.%Y')
         period_begin = datetime.strptime('01.07.2022', '%d.%m.%Y')
         qty_column_name = 'july_2022_qty'
+        age_column_name = 'july_2022_age'
         qty_in_column_name = 'july_2022_in'
         qty_out_column_name = 'july_2022_out'
       elif  calendar_point == 'august_2022': 
@@ -149,20 +153,30 @@ def calendar_operation_status_calc():
         qty_in_column_name = 'august_2022_in'
         qty_out_column_name = 'august_2022_out'
 
-      sap_system_status_ban_list = ['МТКУ НЕАК УСТН', 'МТКУ ПВЕО', 'МТКУ УСТН']
-      sap_user_status_ban_list = ['КОНС СИНХ', 'КОНС']
+      
       eo_master_temp_df = master_eo_df.loc[master_eo_df['operation_start_date'] < age_date] 
       eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] > age_date]
       eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_system_status'].isin(sap_system_status_ban_list)]
       eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_user_status'].isin(sap_user_status_ban_list)]
+      eo_master_temp_df[age_column_name] = (age_date - eo_master_temp_df['operation_start_date']).dt.days / 365.25
+
+
+      eo_master_temp_df.to_csv('temp_data/eo_master_temp_df.csv')
+      
       update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=0;"
       cursor.execute(update_calendar_sql)
       con.commit() 
+
+      update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{age_column_name}'=0;"
+      cursor.execute(update_calendar_sql)
+      con.commit() 
+
       if len(eo_master_temp_df) > 0:
         # итерируемся по eo_master_temp_df
         for row in eo_master_temp_df.itertuples():
           eo_code = getattr(row, 'eo_code')
-          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=1 WHERE eo_code='{eo_code}';"
+          age = getattr(row, age_column_name)
+          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=1, '{age_column_name}' = {age} WHERE eo_code='{eo_code}';"
           cursor.execute(update_calendar_sql)
           con.commit()  
           
@@ -244,3 +258,5 @@ def calendar_operation_status_calc():
       #     update_calendar_sql = f"INSERT INTO eo_calendar_operation_status_DB SET (eo_code, '{qty_out_column_name}') VALUES ({eo_code}, 0);"
       #     cursor.execute(update_calendar_sql)
       #     con.commit() 
+
+    

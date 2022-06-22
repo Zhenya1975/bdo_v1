@@ -2,4 +2,5 @@ sap_columns_to_master_columns = {'Планирующий завод':'be_code', 
 
 be_data_columns_to_master_columns = {"№пп": "be_eo_data_row_no", "ЕО SAP": "eo_code", "Гаражный №": "gar_no", 'Дата ввода в экспл.(полностью включая день) ': 'reported_operation_start_date', 'Дата ввода в экспл': 'reported_operation_start_date', 'Плановая дата вывода из эксплуат': 'reported_operation_finish_date', 'Статус эксплуатации': 'operation_status', 'Дата статуса эксплуатации': 'operation_status_date'}
 
-# eo_calendar_columns = {"july_2022_qty"}
+sap_system_status_ban_list = ['МТКУ НЕАК УСТН', 'МТКУ ПВЕО', 'МТКУ УСТН']
+sap_user_status_ban_list = ['КОНС СИНХ', 'КОНС']
