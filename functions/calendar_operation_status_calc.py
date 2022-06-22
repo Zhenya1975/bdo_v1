@@ -117,7 +117,6 @@ def calendar_operation_status_calc():
     dates_list_df_3 = master_eo_df.loc[indexes_3, ['reported_operation_finish_date']]
     master_eo_df.loc[indexes_3, ['evaluated_operation_finish_date']] = list(dates_list_df_3['reported_operation_finish_date'])
 
-
     
     for row in master_eo_df.itertuples():
       evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
@@ -129,7 +128,7 @@ def calendar_operation_status_calc():
     
     # master_eo_df.to_csv('temp_data/master_eo_df.csv')
 
-    # обработка данных без итераций
+
         
     
     calendar_list = ['july_2022', 'august_2022']
@@ -150,11 +149,18 @@ def calendar_operation_status_calc():
         qty_in_column_name = 'august_2022_in'
         qty_out_column_name = 'august_2022_out'
 
+      sap_system_status_ban_list = ['МТКУ НЕАК УСТН', 'МТКУ ПВЕО', 'МТКУ УСТН']
+      sap_user_status_ban_list = ['КОНС СИНХ', 'КОНС']
       eo_master_temp_df = master_eo_df.loc[master_eo_df['operation_start_date'] < age_date] 
       eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] > age_date]
+      eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_system_status'].isin(sap_system_status_ban_list)]
+      eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_user_status'].isin(sap_user_status_ban_list)]
+      update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=0;"
+      cursor.execute(update_calendar_sql)
+      con.commit() 
       if len(eo_master_temp_df) > 0:
         # итерируемся по eo_master_temp_df
-        for row in eo_master_temp_df.iterrows():
+        for row in eo_master_temp_df.itertuples():
           eo_code = getattr(row, 'eo_code')
           update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=1 WHERE eo_code='{eo_code}';"
           cursor.execute(update_calendar_sql)
