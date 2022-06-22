@@ -127,7 +127,7 @@ def calendar_operation_status_calc():
       con.commit() 
 
     
-    master_eo_df.to_csv('temp_data/master_eo_df.csv')
+    # master_eo_df.to_csv('temp_data/master_eo_df.csv')
 
     # обработка данных без итераций
         
@@ -152,16 +152,19 @@ def calendar_operation_status_calc():
 
       eo_master_temp_df = master_eo_df.loc[master_eo_df['operation_start_date'] < age_date] 
       eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] > age_date]
+      if len(eo_master_temp_df) > 0:
+        # итерируемся по eo_master_temp_df
+        for row in eo_master_temp_df.iterrows():
+          eo_code = getattr(row, 'eo_code')
+          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=1 WHERE eo_code='{eo_code}';"
+          cursor.execute(update_calendar_sql)
+          con.commit()  
+          
+          
+
       
 
-      for row in eo_master_temp_df.itertuples():
-        eo = getattr(row, 'eo_code')
-        evaluated_operation_finish_date = getattr(row, 'evaluated_operation_finish_date')
-        
-        update_calendar_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date = '{evaluated_operation_finish_date}' WHERE eo_code = '{eo}';"
-        cursor.execute(update_calendar_sql)
-        con.commit() 
-
+    
       # if age_date > operation_start_date and age_date < evaluated_operation_finish_date and 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
       #   calendar_record = Eo_calendar_operation_status_DB.query.filter_by(eo_code = eo_code).first()
       #   if calendar_record:
