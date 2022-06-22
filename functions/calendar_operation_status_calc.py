@@ -120,19 +120,13 @@ def calendar_operation_status_calc():
     dates_list_df_3 = master_eo_df.loc[indexes_3, ['reported_operation_finish_date']]
     master_eo_df.loc[indexes_3, ['evaluated_operation_finish_date']] = list(dates_list_df_3['reported_operation_finish_date'])
 
-    
+    # обновление evaluated_operation_finish_date
     for row in master_eo_df.itertuples():
       evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
       eo_code = getattr(row, "eo_code")
       update_calendar_sql = f"UPDATE eo_DB SET evaluated_operation_finish_date = '{evaluated_operation_finish_date}' WHERE eo_code = '{eo_code}';"
       cursor.execute(update_calendar_sql)
-      con.commit() 
-
-    
-    
-
-
-        
+      con.commit()     
     
     calendar_list = ['july_2022', 'august_2022']
     qty_column_name = 'july_2022_qty'
@@ -160,7 +154,21 @@ def calendar_operation_status_calc():
       eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_user_status'].isin(sap_user_status_ban_list)]
       eo_master_temp_df[age_column_name] = (age_date - eo_master_temp_df['operation_start_date']).dt.days / 365.25
 
-
+      # выборка в которой в указанный период было поступление
+      update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_in_column_name}'=0;"
+      cursor.execute(update_calendar_sql)
+      con.commit() 
+      eo_master_temp_in_df = eo_master_temp_df.loc[eo_master_temp_df['operation_start_date'] > period_begin]
+      eo_master_temp_in_df = eo_master_temp_in_df.loc[eo_master_temp_in_df['operation_start_date'] < age_date]
+      if len(eo_master_temp_in_df) > 0:
+        for row in eo_master_temp_in_df.itertuples():
+          eo_code = getattr(row, 'eo_code')
+          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_in_column_name}'=1 WHERE eo_code='{eo_code}';"
+          cursor.execute(update_calendar_sql)
+          con.commit()  
+          
+        
+      
       eo_master_temp_df.to_csv('temp_data/eo_master_temp_df.csv')
       
       update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=0;"
