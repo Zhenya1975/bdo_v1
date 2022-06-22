@@ -43,36 +43,47 @@ def sql_to_eo_calendar_master():
   eo_calendar_operation_status_DB.july_2022_in, \
   eo_calendar_operation_status_DB.july_2022_out, \
   eo_calendar_operation_status_DB.august_2022_qty, \
+  eo_calendar_operation_status_DB.august_2022_age, \
   eo_calendar_operation_status_DB.august_2022_in, \
   eo_calendar_operation_status_DB.august_2022_out, \
   eo_calendar_operation_status_DB.sep_2022_qty, \
+  eo_calendar_operation_status_DB.sep_2022_age, \
   eo_calendar_operation_status_DB.sep_2022_in, \
   eo_calendar_operation_status_DB.sep_2022_out, \
   eo_calendar_operation_status_DB.oct_2022_qty, \
+  eo_calendar_operation_status_DB.oct_2022_age, \
   eo_calendar_operation_status_DB.oct_2022_in, \
   eo_calendar_operation_status_DB.oct_2022_out, \
   eo_calendar_operation_status_DB.nov_2022_qty, \
+  eo_calendar_operation_status_DB.nov_2022_age, \
   eo_calendar_operation_status_DB.nov_2022_in, \
   eo_calendar_operation_status_DB.nov_2022_out, \
   eo_calendar_operation_status_DB.dec_2022_qty, \
+  eo_calendar_operation_status_DB.dec_2022_age, \
   eo_calendar_operation_status_DB.dec_2022_in, \
   eo_calendar_operation_status_DB.dec_2022_out, \
   eo_calendar_operation_status_DB.year_2022_qty, \
+  eo_calendar_operation_status_DB.year_2022_age, \
   eo_calendar_operation_status_DB.year_2022_in, \
   eo_calendar_operation_status_DB.year_2022_out, \
   eo_calendar_operation_status_DB.year_2023_qty, \
+  eo_calendar_operation_status_DB.year_2023_age, \
   eo_calendar_operation_status_DB.year_2023_in, \
   eo_calendar_operation_status_DB.year_2023_out, \
   eo_calendar_operation_status_DB.year_2024_qty, \
+  eo_calendar_operation_status_DB.year_2024_age, \
   eo_calendar_operation_status_DB.year_2024_in, \
   eo_calendar_operation_status_DB.year_2024_out, \
   eo_calendar_operation_status_DB.year_2025_qty, \
+  eo_calendar_operation_status_DB.year_2025_age, \
   eo_calendar_operation_status_DB.year_2025_in, \
   eo_calendar_operation_status_DB.year_2025_out, \
   eo_calendar_operation_status_DB.year_2026_qty, \
+  eo_calendar_operation_status_DB.year_2026_age, \
   eo_calendar_operation_status_DB.year_2026_in, \
   eo_calendar_operation_status_DB.year_2026_out, \
   eo_calendar_operation_status_DB.year_2027_qty, \
+  eo_calendar_operation_status_DB.year_2027_age, \
   eo_calendar_operation_status_DB.year_2027_in, \
   eo_calendar_operation_status_DB.year_2027_out \
   FROM eo_DB \

@@ -74,7 +74,7 @@ def calendar_operation_status_calc():
     LEFT JOIN eo_class_DB ON eo_DB.eo_class_code = eo_class_DB.eo_class_code \
     LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code \
     LEFT JOIN eo_calendar_operation_status_DB ON eo_DB.eo_code = eo_calendar_operation_status_DB.eo_code"
-    
+
     master_eo_df = pd.read_sql_query(sql, con)
     master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
   
@@ -90,7 +90,7 @@ def calendar_operation_status_calc():
     master_eo_df['sap_user_status'].fillna("plug", inplace = True)
 
 
-    ###################### Обновление списке ео в calendar_operation_status_eo ###########################
+    ###################### Обновление списка ео в calendar_operation_status_eo ###########################
     sql_calendar_operation_status = "SELECT eo_calendar_operation_status_DB.eo_code FROM eo_calendar_operation_status_DB"
     calendar_operation_status_df = pd.read_sql_query(sql_calendar_operation_status, con)
     calendar_operation_status_eo_list = list(calendar_operation_status_df['eo_code'])
@@ -120,6 +120,11 @@ def calendar_operation_status_calc():
     dates_list_df_3 = master_eo_df.loc[indexes_3, ['reported_operation_finish_date']]
     master_eo_df.loc[indexes_3, ['evaluated_operation_finish_date']] = list(dates_list_df_3['reported_operation_finish_date'])
 
+
+    
+
+    master_eo_df.to_sql('calendar_operation_status_calc_temp', con=con, if_exists='replace', index = False)
+
     # обновление evaluated_operation_finish_date
     for row in master_eo_df.itertuples():
       evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
@@ -128,11 +133,12 @@ def calendar_operation_status_calc():
       cursor.execute(update_calendar_sql)
       con.commit()     
     
-    calendar_list = ['july_2022', 'august_2022']
+    calendar_list = ['july_2022', 'august_2022', 'september_2022', 'october_2022', 'november_2022', 'december_2022', 'year_2022', 'year_2023', 'year_2024', 'year_2025', 'year_2026', 'year_2027']
     qty_column_name = 'july_2022_qty'
     qty_in_column_name = 'july_2022_in'
     qty_out_column_name = 'july_2022_out'
     for calendar_point in calendar_list:
+      print(calendar_point)
       if calendar_point == 'july_2022':
         age_date = datetime.strptime('31.07.2022', '%d.%m.%Y')
         period_begin = datetime.strptime('01.07.2022', '%d.%m.%Y')
@@ -144,22 +150,109 @@ def calendar_operation_status_calc():
         age_date = datetime.strptime('31.08.2022', '%d.%m.%Y')
         period_begin = datetime.strptime('01.08.2022', '%d.%m.%Y')
         qty_column_name = 'august_2022_qty'
+        age_column_name = 'august_2022_age'
         qty_in_column_name = 'august_2022_in'
         qty_out_column_name = 'august_2022_out'
+      elif  calendar_point == 'september_2022': 
+        age_date = datetime.strptime('30.09.2022', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.09.2022', '%d.%m.%Y')
+        qty_column_name = 'sep_2022_qty'
+        age_column_name = 'sep_2022_age'
+        qty_in_column_name = 'sep_2022_in'
+        qty_out_column_name = 'sep_2022_out' 
+      elif  calendar_point == 'october_2022': 
+        age_date = datetime.strptime('31.10.2022', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.10.2022', '%d.%m.%Y')
+        qty_column_name = 'oct_2022_qty'
+        age_column_name = 'oct_2022_age'
+        qty_in_column_name = 'oct_2022_in'
+        qty_out_column_name = 'oct_2022_out'   
+      elif  calendar_point == 'november_2022': 
+        age_date = datetime.strptime('30.11.2022', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.11.2022', '%d.%m.%Y')
+        qty_column_name = 'nov_2022_qty'
+        age_column_name = 'nov_2022_age'
+        qty_in_column_name = 'nov_2022_in'
+        qty_out_column_name = 'nov_2022_out'
+      elif  calendar_point == 'december_2022': 
+        age_date = datetime.strptime('31.12.2022', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.12.2022', '%d.%m.%Y')
+        qty_column_name = 'dec_2022_qty'
+        age_column_name = 'dec_2022_age'
+        qty_in_column_name = 'dec_2022_in'
+        qty_out_column_name = 'dec_2022_out' 
+      elif  calendar_point == 'year_2022': 
+        age_date = datetime.strptime('31.12.2022', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2022', '%d.%m.%Y')
+        qty_column_name = 'year_2022_qty'
+        age_column_name = 'year_2022_age'
+        qty_in_column_name = 'year_2022_in'
+        qty_out_column_name = 'year_2022_out'
+        age_column_name = 'year_2022_age' 
+      elif  calendar_point == 'year_2023': 
+        age_date = datetime.strptime('31.12.2023', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2023', '%d.%m.%Y')
+        qty_column_name = 'year_2023_qty'
+        age_column_name = 'year_2023_age'
+        qty_in_column_name = 'year_2023_in'
+        qty_out_column_name = 'year_2023_out'  
+      elif  calendar_point == 'year_2024': 
+        age_date = datetime.strptime('31.12.2024', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2024', '%d.%m.%Y')
+        qty_column_name = 'year_2024_qty'
+        age_column_name = 'year_2024_age'
+        qty_in_column_name = 'year_2024_in'
+        qty_out_column_name = 'year_2024_out'
+      elif  calendar_point == 'year_2025': 
+        age_date = datetime.strptime('31.12.2025', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2025', '%d.%m.%Y')
+        qty_column_name = 'year_2025_qty'
+        age_column_name = 'year_2025_age'
+        qty_in_column_name = 'year_2025_in'
+        qty_out_column_name = 'year_2025_out' 
+      elif  calendar_point == 'year_2026': 
+        age_date = datetime.strptime('31.12.2026', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2026', '%d.%m.%Y')
+        qty_column_name = 'year_2026_qty'
+        age_column_name = 'year_2026_age'
+        qty_in_column_name = 'year_2026_in'
+        qty_out_column_name = 'year_2026_out'  
+      elif  calendar_point == 'year_2027': 
+        age_date = datetime.strptime('31.12.2027', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2027', '%d.%m.%Y')
+        qty_column_name = 'year_2027_qty'
+        age_column_name = 'year_2027_age'
+        qty_in_column_name = 'year_2027_in'
+        qty_out_column_name = 'year_2027_out'    
 
-      
+      # выборка в которую попало то что находится в эксплуатации
+      update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=0;"
+      cursor.execute(update_calendar_sql)
+      con.commit() 
       eo_master_temp_df = master_eo_df.loc[master_eo_df['operation_start_date'] < age_date] 
       eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] > age_date]
       eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_system_status'].isin(sap_system_status_ban_list)]
       eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_user_status'].isin(sap_user_status_ban_list)]
       eo_master_temp_df[age_column_name] = (age_date - eo_master_temp_df['operation_start_date']).dt.days / 365.25
+      if len(eo_master_temp_df) > 0:
+        for row in eo_master_temp_df.itertuples():
+          eo_code = getattr(row, 'eo_code')
+          age = getattr(row, age_column_name)
+          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=1, '{age_column_name}'={age}  WHERE eo_code='{eo_code}';"
+          cursor.execute(update_calendar_sql)
+          con.commit()  
+      
 
       # выборка в которой в указанный период было поступление
       update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_in_column_name}'=0;"
       cursor.execute(update_calendar_sql)
       con.commit() 
-      eo_master_temp_in_df = eo_master_temp_df.loc[eo_master_temp_df['operation_start_date'] > period_begin]
-      eo_master_temp_in_df = eo_master_temp_in_df.loc[eo_master_temp_in_df['operation_start_date'] < age_date]
+      eo_master_temp_in_df = master_eo_df.loc[master_eo_df['operation_start_date'] >= period_begin]
+      eo_master_temp_in_df = eo_master_temp_in_df.loc[eo_master_temp_in_df['operation_start_date'] <= age_date]
+      eo_master_temp_in_df = eo_master_temp_in_df.loc[~eo_master_temp_in_df['sap_system_status'].isin(sap_system_status_ban_list)]
+      eo_master_temp_in_df = eo_master_temp_in_df.loc[~eo_master_temp_in_df['sap_user_status'].isin(sap_user_status_ban_list)]
+      
+      
       if len(eo_master_temp_in_df) > 0:
         for row in eo_master_temp_in_df.itertuples():
           eo_code = getattr(row, 'eo_code')
@@ -167,30 +260,27 @@ def calendar_operation_status_calc():
           cursor.execute(update_calendar_sql)
           con.commit()  
           
-        
-      
-      eo_master_temp_df.to_csv('temp_data/eo_master_temp_df.csv')
-      
-      update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=0;"
+      # выборка в которой в указанный период было выбытие
+      update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_out_column_name}'=0;"
       cursor.execute(update_calendar_sql)
-      con.commit() 
-
-      update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{age_column_name}'=0;"
-      cursor.execute(update_calendar_sql)
-      con.commit() 
-
-      if len(eo_master_temp_df) > 0:
-        # итерируемся по eo_master_temp_df
-        for row in eo_master_temp_df.itertuples():
+      con.commit()
+      eo_master_temp_out_df = master_eo_df.loc[master_eo_df['evaluated_operation_finish_date'] >= period_begin] 
+      eo_master_temp_out_df = eo_master_temp_out_df.loc[eo_master_temp_out_df['evaluated_operation_finish_date']<=age_date]
+      eo_master_temp_out_df = eo_master_temp_out_df.loc[~eo_master_temp_out_df['sap_system_status'].isin(sap_system_status_ban_list)]
+      eo_master_temp_out_df = eo_master_temp_out_df.loc[~eo_master_temp_out_df['sap_user_status'].isin(sap_user_status_ban_list)]
+      if qty_out_column_name == 'year_2023_out':
+        eo_master_temp_out_df.to_csv('temp_data/eo_master_temp_out_df_2023_out.csv')
+      if len(eo_master_temp_out_df) > 0:
+        for row in eo_master_temp_out_df.itertuples():
           eo_code = getattr(row, 'eo_code')
-          age = getattr(row, age_column_name)
-          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=1, '{age_column_name}' = {age} WHERE eo_code='{eo_code}';"
+          update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_out_column_name}'=-1 WHERE eo_code='{eo_code}';"
           cursor.execute(update_calendar_sql)
-          con.commit()  
+          con.commit() 
           
-          
-
       
+      
+      
+      # eo_master_temp_df.to_csv('temp_data/eo_master_temp_df.csv')
 
     
       # if age_date > operation_start_date and age_date < evaluated_operation_finish_date and 'МТКУ' not in sap_system_status and 'КОНС' not in sap_user_status:
