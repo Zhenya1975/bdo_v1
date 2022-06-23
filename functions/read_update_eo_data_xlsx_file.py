@@ -64,9 +64,15 @@ def read_update_eo_data_xlsx():
     eo_code = str(getattr(row, 'eo_code'))
     # проверяем, что запись есть
     eo_master_data=Eo_DB.query.filter_by(eo_code=eo_code).first()
-    print(eo_master_data)
     if eo_master_data:
-      print("запись есть")
+      if 'eo_description' in update_eo_column_list:
+        eo_description = getattr(row, 'eo_description')
+        eo_master_data.eo_description = eo_description
+        db.session.commit()
+        
+
     else:
-      print("записи нет")
+      log_data_new_record = LogsDB(log_text = f"В мастер-данных нет записи с eo_code: {eo_code}", log_status = "new")
+      db.session.add(log_data_new_record)
+      db.session.commit()
   
