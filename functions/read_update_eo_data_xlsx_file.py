@@ -57,9 +57,9 @@ def read_update_eo_data_xlsx():
     db.session.add(log_data_new_record)
   
     ################################################ чтение загруженного файла ###############################################
+  update_eo_data_df['be_code'].fillna('plug', inplace = True)
   i=0
   lenght = len(update_eo_data)
-  print(update_eo_data_df)
   for row in update_eo_data_df.itertuples():
     eo_code = str(getattr(row, 'eo_code'))
     # проверяем, что запись есть
@@ -69,6 +69,13 @@ def read_update_eo_data_xlsx():
         eo_description = getattr(row, 'eo_description')
         eo_master_data.eo_description = eo_description
         db.session.commit()
+      if 'be_code' in update_eo_column_list:
+        be_code = getattr(row, 'be_code')
+        if be_code != 'plug':
+          eo_master_data.be_code = be_code
+          db.session.commit()
+        # eo_master_data.be_code = be_code
+        # db.session.commit()  
         
 
     else:
