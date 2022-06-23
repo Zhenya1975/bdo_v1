@@ -87,6 +87,27 @@
                           </td>    
                         </tr>
                         <tr>
+                          <tr>  
+                          <td>Update Master eo_data</td>
+                          <td>
+                            <p>Загрузка обновления мастер-данных. Имя файла: <strong>"update_eo_data.xlsx"</strong></p>
+                            <form action = "{{url_for( 'home.update_eo_data_file' )}}" method=post enctype=multipart/form-data>
+                            <input type=file name=file>
+                            <button class="btn btn-primary" type="submit">Загрузить</button>
+                          </form>
+                          </td>
+                          <td>
+                        
+                            <form action = "{{url_for( 'home.download_master_eo_file' )}}" method=post enctype=multipart/form-data>
+                              Выгрузка мастер-данных БДО
+                            <button class="btn btn-info" type="submit">Выгрузить</button>
+                          </form>
+                          </td>    
+                        </tr>
+                        <tr>
+
+
+                          
                           <td>
                             Данные из Бизнес-единиц
                           </td>

@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for,
 from models.models import Eo_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
 from extensions import extensions
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, read_be_eo_xlsx_file_v3, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file, read_delete_eo_xlsx_file
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, read_be_eo_xlsx_file_v3, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file, read_delete_eo_xlsx_file, read_update_eo_data_xlsx_file
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -66,6 +66,41 @@ def upload_delete_eo_file():
 
     return 'not uploaded'
 
+
+
+@home.route('/update_eo_data_file', methods=['GET', 'POST'])
+def update_eo_data_file():
+  if request.method == 'POST':
+    uploaded_file = request.files['file']
+    if uploaded_file.filename == '':
+      message = f"файл с пустым именем"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+    
+    elif allowed_file(uploaded_file.filename) == False:
+      message = f"Неразрешенное расширение файла {uploaded_file.filename}"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+
+    elif "update_eo_data" not in uploaded_file.filename:
+      message = "В имени файла нет текста update_eo_data"
+      flash(message, 'alert-danger')    
+      return redirect(url_for('home.home_view'))
+
+    elif "xlsx" not in uploaded_file.filename.lower():
+      message = "В имени файла нет расширения xlsx"
+      flash(message, 'alert-danger')    
+      return redirect(url_for('home.home_view'))
+
+    else:    
+      uploaded_file.save(os.path.join('uploads', "update_eo_data.xlsx"))
+      message = f"файл {uploaded_file.filename} загружен"
+      # read_be_eo_xlsx_file.read_be_eo_xlsx()
+      read_update_eo_data_xlsx_file.read_update_eo_data_xlsx()
+      flash(message, 'alert-success')
+      return redirect(url_for('home.home_view'))
+
+    return 'not uploaded'
 
 
 
