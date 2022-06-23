@@ -39,11 +39,11 @@ def delete_record():
     # sql = "SELECT * FROM eo_DB JOIN be_DB"
     # sql = "SELECT eo_DB.be_code, models_DB.eo_model_name  FROM eo_DB JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id"
     cursor = con.cursor()
-    delete_records_sql = "DELETE FROM eo_calendar_operation_status_DB WHERE eo_code='100000061761';"
+    delete_records_sql = "DELETE FROM models_DB WHERE eo_model_id=142;"
     cursor.execute(delete_records_sql)
     con.commit()
     cursor.close()
-# delete_record()    
+delete_record()    
 
 def delete_eo_records():
   eo_to_delete_df = pd.read_excel('temp_data/delete_eo.xlsx', index_col = False, dtype=str)
@@ -73,7 +73,7 @@ def insert_record():
     cursor.close()
   
 # insert_record()
-def update_record():
+def update_records():
   with app.app_context():
     con = sqlite3.connect("database/datab.db")
     cursor = con.cursor()
@@ -88,7 +88,17 @@ def update_record():
       con.commit()
     cursor.close()
 
-# update_record()
+# update_records()
+
+def update_records():
+  with app.app_context():
+    con = sqlite3.connect("database/datab.db")
+    cursor = con.cursor()
+    update_record_sql = f"UPDATE eo_DB SET eo_model_id=132 WHERE eo_code = '100000099446';"
+    cursor.execute(update_record_sql)
+    con.commit()
+    cursor.close()
+# update_records()
 
 def clear_column_records():
   with app.app_context():

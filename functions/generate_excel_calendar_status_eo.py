@@ -39,30 +39,6 @@ def sql_to_eo_calendar_master():
   eo_DB.reported_operation_status, \
   eo_DB.reported_operation_status_date, \
   eo_DB.evaluated_operation_finish_date, \
-  eo_calendar_operation_status_DB.july_2022_qty, \
-  eo_calendar_operation_status_DB.july_2022_age, \
-  eo_calendar_operation_status_DB.july_2022_in, \
-  eo_calendar_operation_status_DB.july_2022_out, \
-  eo_calendar_operation_status_DB.august_2022_qty, \
-  eo_calendar_operation_status_DB.august_2022_age, \
-  eo_calendar_operation_status_DB.august_2022_in, \
-  eo_calendar_operation_status_DB.august_2022_out, \
-  eo_calendar_operation_status_DB.sep_2022_qty, \
-  eo_calendar_operation_status_DB.sep_2022_age, \
-  eo_calendar_operation_status_DB.sep_2022_in, \
-  eo_calendar_operation_status_DB.sep_2022_out, \
-  eo_calendar_operation_status_DB.oct_2022_qty, \
-  eo_calendar_operation_status_DB.oct_2022_age, \
-  eo_calendar_operation_status_DB.oct_2022_in, \
-  eo_calendar_operation_status_DB.oct_2022_out, \
-  eo_calendar_operation_status_DB.nov_2022_qty, \
-  eo_calendar_operation_status_DB.nov_2022_age, \
-  eo_calendar_operation_status_DB.nov_2022_in, \
-  eo_calendar_operation_status_DB.nov_2022_out, \
-  eo_calendar_operation_status_DB.dec_2022_qty, \
-  eo_calendar_operation_status_DB.dec_2022_age, \
-  eo_calendar_operation_status_DB.dec_2022_in, \
-  eo_calendar_operation_status_DB.dec_2022_out, \
   eo_calendar_operation_status_DB.year_2022_qty, \
   eo_calendar_operation_status_DB.year_2022_age, \
   eo_calendar_operation_status_DB.year_2022_in, \
@@ -86,7 +62,23 @@ def sql_to_eo_calendar_master():
   eo_calendar_operation_status_DB.year_2027_qty, \
   eo_calendar_operation_status_DB.year_2027_age, \
   eo_calendar_operation_status_DB.year_2027_in, \
-  eo_calendar_operation_status_DB.year_2027_out \
+  eo_calendar_operation_status_DB.year_2027_out, \
+  eo_calendar_operation_status_DB.year_2028_qty, \
+  eo_calendar_operation_status_DB.year_2028_age, \
+  eo_calendar_operation_status_DB.year_2028_in, \
+  eo_calendar_operation_status_DB.year_2028_out, \
+  eo_calendar_operation_status_DB.year_2029_qty, \
+  eo_calendar_operation_status_DB.year_2029_age, \
+  eo_calendar_operation_status_DB.year_2029_in, \
+  eo_calendar_operation_status_DB.year_2029_out, \
+  eo_calendar_operation_status_DB.year_2030_qty, \
+  eo_calendar_operation_status_DB.year_2030_age, \
+  eo_calendar_operation_status_DB.year_2030_in, \
+  eo_calendar_operation_status_DB.year_2030_out, \
+  eo_calendar_operation_status_DB.year_2031_qty, \
+  eo_calendar_operation_status_DB.year_2031_age, \
+  eo_calendar_operation_status_DB.year_2031_in, \
+  eo_calendar_operation_status_DB.year_2031_out \
   FROM eo_DB \
   LEFT JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id \
   LEFT JOIN be_DB ON eo_DB.be_code = be_DB.be_code \

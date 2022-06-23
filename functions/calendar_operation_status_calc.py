@@ -133,7 +133,8 @@ def calendar_operation_status_calc():
       cursor.execute(update_calendar_sql)
       con.commit()     
     
-    calendar_list = ['july_2022', 'august_2022', 'september_2022', 'october_2022', 'november_2022', 'december_2022', 'year_2022', 'year_2023', 'year_2024', 'year_2025', 'year_2026', 'year_2027']
+    # calendar_list = ['july_2022', 'august_2022', 'september_2022', 'october_2022', 'november_2022', 'december_2022', 'year_2022', 'year_2023', 'year_2024', 'year_2025', 'year_2026', 'year_2027']
+    calendar_list = ['year_2022', 'year_2023', 'year_2024', 'year_2025', 'year_2026', 'year_2027', 'year_2028', 'year_2029', 'year_2030', 'year_2031']
     qty_column_name = 'july_2022_qty'
     qty_in_column_name = 'july_2022_in'
     qty_out_column_name = 'july_2022_out'
@@ -223,7 +224,35 @@ def calendar_operation_status_calc():
         qty_column_name = 'year_2027_qty'
         age_column_name = 'year_2027_age'
         qty_in_column_name = 'year_2027_in'
-        qty_out_column_name = 'year_2027_out'    
+        qty_out_column_name = 'year_2027_out'
+      elif  calendar_point == 'year_2028': 
+        age_date = datetime.strptime('31.12.2028', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2028', '%d.%m.%Y')
+        qty_column_name = 'year_2028_qty'
+        age_column_name = 'year_2028_age'
+        qty_in_column_name = 'year_2028_in'
+        qty_out_column_name = 'year_2028_out'
+      elif  calendar_point == 'year_2029': 
+        age_date = datetime.strptime('31.12.2029', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2029', '%d.%m.%Y')
+        qty_column_name = 'year_2029_qty'
+        age_column_name = 'year_2029_age'
+        qty_in_column_name = 'year_2029_in'
+        qty_out_column_name = 'year_2029_out'   
+      elif  calendar_point == 'year_2030': 
+        age_date = datetime.strptime('31.12.2030', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2030', '%d.%m.%Y')
+        qty_column_name = 'year_2030_qty'
+        age_column_name = 'year_2030_age'
+        qty_in_column_name = 'year_2030_in'
+        qty_out_column_name = 'year_2030_out'
+      elif  calendar_point == 'year_2031': 
+        age_date = datetime.strptime('31.12.2031', '%d.%m.%Y')
+        period_begin = datetime.strptime('01.01.2031', '%d.%m.%Y')
+        qty_column_name = 'year_2031_qty'
+        age_column_name = 'year_2031_age'
+        qty_in_column_name = 'year_2031_in'
+        qty_out_column_name = 'year_2031_out'  
 
       # выборка в которую попало то что находится в эксплуатации
       update_calendar_sql = f"UPDATE eo_calendar_operation_status_DB SET '{qty_column_name}'=0;"

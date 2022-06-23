@@ -78,6 +78,22 @@ class Eo_calendar_operation_status_DB(db.Model):
   year_2027_age = db.Column(db.Float)
   year_2027_in = db.Column(db.Integer)
   year_2027_out = db.Column(db.Integer)
+  year_2028_qty = db.Column(db.Integer)
+  year_2028_age = db.Column(db.Float)
+  year_2028_in = db.Column(db.Integer)
+  year_2028_out = db.Column(db.Integer)
+  year_2029_qty = db.Column(db.Integer)
+  year_2029_age = db.Column(db.Float)
+  year_2029_in = db.Column(db.Integer)
+  year_2029_out = db.Column(db.Integer)
+  year_2030_qty = db.Column(db.Integer)
+  year_2030_age = db.Column(db.Float)
+  year_2030_in = db.Column(db.Integer)
+  year_2030_out = db.Column(db.Integer)
+  year_2031_qty = db.Column(db.Integer)
+  year_2031_age = db.Column(db.Float)
+  year_2031_in = db.Column(db.Integer)
+  year_2031_out = db.Column(db.Integer)
 
 
 class Eo_DB(db.Model):
