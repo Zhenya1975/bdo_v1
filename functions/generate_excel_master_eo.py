@@ -17,6 +17,7 @@ def sql_to_eo_master():
   eo_DB.eo_class_code, \
   eo_class_DB.eo_class_description, \
   models_DB.eo_model_name, \
+  models_DB.eo_category_spec, \
   eo_DB.eo_model_id, \
   eo_DB.sap_model_name, \
   eo_DB.sap_maker, \
@@ -66,27 +67,7 @@ def sql_to_eo_master():
   LEFT JOIN operation_statusDB ON eo_DB.expected_operation_status_code = operation_statusDB.operation_status_code"
 
 
-  age_31122023 = db.Column(db.Float)
-  age_date_31122023 = db.Column(db.DateTime)
-  age_31122023_calc_operation_status = db.Column(db.Integer)
-
-  age_31122024 = db.Column(db.Float)
-  age_date_31122024 = db.Column(db.DateTime)
-  age_31122024_calc_operation_status = db.Column(db.Integer)
-
-  age_31122025 = db.Column(db.Float)
-  age_date_31122025 = db.Column(db.DateTime)
-  age_31122025_calc_operation_status = db.Column(db.Integer)
-
-  age_31122026 = db.Column(db.Float)
-  age_date_31122026 = db.Column(db.DateTime)
-  age_31122026_calc_operation_status = db.Column(db.Integer)
-
-  age_31122027 = db.Column(db.Float)
-  age_date_31122027 = db.Column(db.DateTime)
-  age_31122027_calc_operation_status = db.Column(db.Integer)
-
-  
+    
   excel_master_eo_df = pd.read_sql_query(sql, con)
   excel_master_eo_df.sort_values(['be_code','teh_mesto'], inplace=True)
   date_time_plug = '31/12/2099 23:59:59'

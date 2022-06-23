@@ -15,6 +15,9 @@ import pytz
 
 db = extensions.db
 
+
+
+
 def delete_alembic_version_table():
   with app.app_context():
     con = sqlite3.connect("database/datab.db")
@@ -63,6 +66,7 @@ def insert_record():
   with app.app_context():
     con = sqlite3.connect("database/datab.db")
     cursor = con.cursor()
+    
     insert_record_sql = "INSERT INTO operation_statusDB (operation_status_code, operation_status_description, sap_operation_status) VALUES ('out_of_operation', 'удалено', 'МТКУ');"
     cursor.execute(insert_record_sql)
     con.commit()
@@ -73,12 +77,18 @@ def update_record():
   with app.app_context():
     con = sqlite3.connect("database/datab.db")
     cursor = con.cursor()
-    update_record_sql = "UPDATE eo_DB SET evaluated_operation_finish_date=Null;"
-    cursor.execute(update_record_sql)
-    con.commit()
+    category_spec_df = pd.read_csv('temp_data/category_spec.csv')
+    for row in category_spec_df.itertuples():
+      id = getattr(row, 'id')
+      eo_category_spec = getattr(row, 'eo_category_spec')
+
+      update_record_sql = f"UPDATE models_DB SET eo_category_spec='{eo_category_spec}' WHERE id = {id};"
+      print(update_record_sql)
+      cursor.execute(update_record_sql)
+      con.commit()
     cursor.close()
 
-update_record()
+# update_record()
 
 def clear_column_records():
   with app.app_context():

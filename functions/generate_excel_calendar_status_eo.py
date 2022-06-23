@@ -17,6 +17,7 @@ def sql_to_eo_calendar_master():
   eo_DB.eo_class_code, \
   eo_class_DB.eo_class_description, \
   models_DB.eo_model_name, \
+  models_DB.eo_category_spec, \
   eo_DB.eo_model_id, \
   eo_DB.sap_model_name, \
   eo_DB.sap_maker, \

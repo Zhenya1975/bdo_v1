@@ -157,6 +157,7 @@ class Models_DB(db.Model):
   eo_model_id = db.Column(db.Integer, unique=True)
   eo_model_name = db.Column(db.String)
   model_data = db.relationship('Eo_DB', backref='model_data')
+  eo_category_spec = db.Column(db.String)
 
 class Eo_class_DB(db.Model):
   id = db.Column(db.Integer, primary_key=True)
