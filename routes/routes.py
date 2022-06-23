@@ -219,6 +219,12 @@ def download_delete_eo():
 
 
 
+@home.route('/download_update_eo_data', methods=['GET', 'POST'])
+def download_update_eo_data():
+  if request.method == 'POST': 
+    return send_file("downloads/update_eo_data.xlsx", as_attachment=True) 
+  return 'not downloaded update_eo_data'
+
 @home.route('/download_models_eo', methods=['GET', 'POST'])
 def download_models_eo():
   if request.method == 'POST': 
