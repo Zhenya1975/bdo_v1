@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for,
 from models.models import Eo_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
 from extensions import extensions
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, read_be_eo_xlsx_file_v3, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, read_be_eo_xlsx_file_v3, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file, read_delete_eo_xlsx_file
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -30,6 +30,43 @@ def home_view():
 def allowed_file(filename):
   ALLOWED_EXTENSIONS = {'xlsx','csv'}  
   return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@home.route('/upload_delete_eo_file', methods=['GET', 'POST'])
+def upload_delete_eo_file():
+  if request.method == 'POST':
+    uploaded_file = request.files['file']
+    if uploaded_file.filename == '':
+      message = f"файл с пустым именем"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+    
+    elif allowed_file(uploaded_file.filename) == False:
+      message = f"Неразрешенное расширение файла {uploaded_file.filename}"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+
+    elif "delete_eo" not in uploaded_file.filename:
+      message = "В имени файла нет текста delete_eo"
+      flash(message, 'alert-danger')    
+      return redirect(url_for('home.home_view'))
+
+    elif "xlsx" not in uploaded_file.filename.lower():
+      message = "В имени файла нет расширения xlsx"
+      flash(message, 'alert-danger')    
+      return redirect(url_for('home.home_view'))
+
+    else:    
+      uploaded_file.save(os.path.join('uploads', "delete_eo.xlsx"))
+      message = f"файл {uploaded_file.filename} загружен"
+      # read_be_eo_xlsx_file.read_be_eo_xlsx()
+      read_delete_eo_xlsx_file.read_delete_eo_xlsx()
+      flash(message, 'alert-success')
+      return redirect(url_for('home.home_view'))
+
+    return 'not uploaded'
+
+
 
 
 
@@ -135,6 +172,15 @@ def upload_sap_eo_file():
     return redirect(url_for('home.home_view'))
   
   return 'not uploaded'
+
+
+
+
+@home.route('/download_delete_eo', methods=['GET', 'POST'])
+def download_delete_eo():
+  if request.method == 'POST': 
+    return send_file("downloads/delete_eo.xlsx", as_attachment=True) 
+  return 'not downloaded delete_eo'
 
 
 
