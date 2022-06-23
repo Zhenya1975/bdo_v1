@@ -99,7 +99,7 @@ def calendar_operation_status_calc():
     calendar_operation_status_eo_list_add = list(calendar_operation_status_eo_list_add_df['eo_code'])
     if len(calendar_operation_status_eo_list_add)>0:
       for eo_to_add in calendar_operation_status_eo_list_add:
-        insert_calendar_sql = f"INSERT INTO eo_calendar_operation_status_DB (eo_code) VALUES ({eo_to_add});"
+        insert_calendar_sql = f"INSERT INTO eo_calendar_operation_status_DB (eo_code) VALUES ('{eo_to_add}');"
         cursor.execute(insert_calendar_sql)
         con.commit() 
 

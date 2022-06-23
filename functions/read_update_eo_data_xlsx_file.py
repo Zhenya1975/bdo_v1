@@ -57,7 +57,11 @@ def read_update_eo_data_xlsx():
     db.session.add(log_data_new_record)
   
     ################################################ чтение загруженного файла ###############################################
+  update_eo_data_df['eo_description'].fillna('plug', inplace = True)
   update_eo_data_df['be_code'].fillna('plug', inplace = True)
+  update_eo_data_df['gar_no'].fillna('plug', inplace = True)
+  update_eo_data_df['head_type'].fillna('plug', inplace = True)
+  update_eo_data_df['eo_model_id'].fillna(0, inplace = True)
   i=0
   lenght = len(update_eo_data)
   for row in update_eo_data_df.itertuples():
@@ -67,15 +71,41 @@ def read_update_eo_data_xlsx():
     if eo_master_data:
       if 'eo_description' in update_eo_column_list:
         eo_description = getattr(row, 'eo_description')
-        eo_master_data.eo_description = eo_description
-        db.session.commit()
+        if eo_description != 'plug':
+          eo_master_data.eo_description = eo_description
+          db.session.commit()
       if 'be_code' in update_eo_column_list:
         be_code = getattr(row, 'be_code')
         if be_code != 'plug':
           eo_master_data.be_code = be_code
           db.session.commit()
-        # eo_master_data.be_code = be_code
-        # db.session.commit()  
+      if 'gar_no' in update_eo_column_list:
+        gar_no = getattr(row, 'gar_no')
+        if gar_no != 'plug':
+          eo_master_data.gar_no = gar_no
+          db.session.commit()   
+      if 'head_type' in update_eo_column_list:
+        head_type = getattr(row, 'head_type')
+        if head_type != 'plug':
+          eo_master_data.head_type = head_type
+          db.session.commit()     
+      if 'eo_model_id' in update_eo_column_list:
+        eo_model_id = getattr(row, 'eo_model_id')
+        if eo_model_id != 0:
+          eo_master_data.eo_model_id = eo_model_id
+          db.session.commit()
+      if 'operation_start_date' in update_eo_column_list:
+        operation_start_date_raw = getattr(row, "operation_start_date")
+        operation_start_datetime = read_date(operation_start_date_raw, eo_code)
+        if operation_start_datetime != datetime.strptime('1.1.2199', '%d.%m.%Y'):
+          eo_master_data.operation_start_date = operation_start_datetime
+          db.session.commit()    
+      if 'expected_operation_finish_date' in update_eo_column_list:
+        expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
+        expected_operation_finish_datetime = read_date(expected_operation_finish_date_raw, eo_code)
+        if expected_operation_finish_datetime != datetime.strptime('1.1.2199', '%d.%m.%Y'):
+          eo_master_data.expected_operation_finish_date = expected_operation_finish_datetime
+          db.session.commit() 
         
 
     else:

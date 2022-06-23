@@ -1,6 +1,6 @@
 import pandas as pd
 from extensions import extensions
-from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
+from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB, Eo_calendar_operation_status_DB
 from initial_values.initial_values import be_data_columns_to_master_columns
 from datetime import datetime
 import sqlite3
@@ -44,6 +44,13 @@ def read_delete_eo_xlsx():
           for add_candidate in add_candidate_records:
             add_candidate_eo_code = add_candidate.eo_code
             delete_records_sql = f"DELETE FROM eo_candidatesDB WHERE eo_code='{add_candidate_eo_code}';"
+            cursor.execute(delete_records_sql)
+            con.commit()
+        calendar_operation_status = Eo_calendar_operation_status_DB.query.filter_by(eo_code = eo_code).all()  
+        if len(list(calendar_operation_status))>0:
+          for calendar_record in calendar_operation_status:
+            calendar_record_eo_code = calendar_record.eo_code
+            delete_records_sql = f"DELETE FROM eo_calendar_operation_status_DB WHERE eo_code='{calendar_record_eo_code}';"
             cursor.execute(delete_records_sql)
             con.commit()
         cursor.close()    
