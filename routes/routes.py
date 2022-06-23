@@ -6,7 +6,7 @@ from extensions import extensions
 from initial_values.initial_values import sap_columns_to_master_columns
 from werkzeug.utils import secure_filename
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, read_be_eo_xlsx_file_v2, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, read_be_eo_xlsx_file_v2, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -36,6 +36,42 @@ def allowed_file(filename):
   ALLOWED_EXTENSIONS = {'xlsx','csv'}  
   return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+
+@home.route('/upload_models_eo_file', methods=['GET', 'POST'])
+def upload_models_eo_file():
+  if request.method == 'POST':
+    uploaded_file = request.files['file']
+    if uploaded_file.filename == '':
+      message = f"файл с пустым именем"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+    
+    elif allowed_file(uploaded_file.filename) == False:
+      message = f"Неразрешенное расширение файла {uploaded_file.filename}"
+      flash(message, 'alert-danger')
+      return redirect(url_for('home.home_view'))
+
+    elif "eo_models" not in uploaded_file.filename:
+      message = "В имени файла нет текста eo_models"
+      flash(message, 'alert-danger')    
+      return redirect(url_for('home.home_view'))
+
+    elif "xlsx" not in uploaded_file.filename.lower():
+      message = "В имени файла нет расширения xlsx"
+      flash(message, 'alert-danger')    
+      return redirect(url_for('home.home_view'))
+
+    else:    
+      uploaded_file.save(os.path.join('uploads', "eo_models.xlsx"))
+      message = f"файл {uploaded_file.filename} загружен"
+      print(f"файл {uploaded_file.filename} загружен")
+      # read_be_eo_xlsx_file.read_be_eo_xlsx()
+      # read_eo_models_xlsx_file.read_eo_models_xlsx()
+      flash(message, 'alert-success')
+      return redirect(url_for('home.home_view'))
+
+    return 'not uploaded'
 
 
 @home.route('/upload_be_eo_file', methods=['GET', 'POST'])
@@ -107,6 +143,15 @@ def upload_sap_eo_file():
   return 'not uploaded'
 
 
+
+@home.route('/download_models_eo', methods=['GET', 'POST'])
+def download_models_eo():
+  if request.method == 'POST': 
+    generate_excel_model_eo.sql_to_model_eo()
+    return send_file("downloads/model_eo.xlsx", as_attachment=True) 
+  return 'not downloaded be_eo_data_template'
+
+
 @home.route('/download_calendar_eo_file', methods=['GET', 'POST'])
 def download_calendar_eo_file():
   if request.method == 'POST': 
@@ -119,7 +164,7 @@ def download_calendar_eo_file():
 def download_be_data_template():
   if request.method == 'POST':   
     
-    return send_file("downloads/calendar_eo.xlsx", as_attachment=True) 
+    return send_file("downloads/be_eo_data_template.xlsx", as_attachment=True) 
   return 'not downloaded be_eo_data_template'
 
 

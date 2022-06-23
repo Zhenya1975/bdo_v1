@@ -121,6 +121,27 @@
                     
                           </td>
                         </tr>
+                        <tr>
+                          <td>
+                            Модели ЕО
+                          </td>
+                          <td>
+                            <p>Загрузка "Модели ЕО". Имя файла: <strong>"eo_models.xlsx"</strong>. Имя листа: <strong>"eo_models"</strong> </p>
+                            
+                            <form action = "{{url_for( 'home.upload_models_eo_file' )}}" method=post enctype=multipart/form-data>
+                            <input type=file name=file>
+                            <button class="btn btn-primary" type="submit">Загрузить</button>
+                          </form>
+                            
+                          </td>
+                          <td>
+                            <form action = "{{url_for( 'home.download_models_eo' )}}" method=post enctype=multipart/form-data>
+                              Выгрузка моделей ЕО
+                            <button class="btn btn-info" type="submit">Выгрузить</button>
+                          </form>
+                    
+                          </td>
+                        </tr>
                           
                     </table>
                   </div> <!--конец дива таблицы -->
