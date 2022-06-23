@@ -1,16 +1,11 @@
-from flask import Blueprint, render_template, flash, request, jsonify, redirect, url_for, abort, send_file
-from sqlalchemy import desc
-import pandas as pd
-from models.models import Eo_DB, Be_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
+from flask import Blueprint, render_template, flash, request, redirect, url_for, send_file
+from models.models import Eo_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
 from extensions import extensions
-from initial_values.initial_values import sap_columns_to_master_columns
-from werkzeug.utils import secure_filename
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file, read_be_eo_xlsx_file_v2, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file
 
 
 UPLOAD_FOLDER = '/uploads'
-ALLOWED_EXTENSIONS = {'csv', 'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 db = extensions.db
 
@@ -30,7 +25,7 @@ def home_view():
   return render_template('home.html', eo_data = eo_data, log_data=log_data, number_of_active_conflicts=number_of_active_conflicts, number_of_add_candidates=number_of_add_candidates)
 
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
 
 def allowed_file(filename):
   ALLOWED_EXTENSIONS = {'xlsx','csv'}  
@@ -52,8 +47,8 @@ def upload_models_eo_file():
       flash(message, 'alert-danger')
       return redirect(url_for('home.home_view'))
 
-    elif "eo_models" not in uploaded_file.filename:
-      message = "В имени файла нет текста eo_models"
+    elif "model_eo" not in uploaded_file.filename:
+      message = "В имени файла нет текста model_eo"
       flash(message, 'alert-danger')    
       return redirect(url_for('home.home_view'))
 
@@ -65,9 +60,8 @@ def upload_models_eo_file():
     else:    
       uploaded_file.save(os.path.join('uploads', "eo_models.xlsx"))
       message = f"файл {uploaded_file.filename} загружен"
-      print(f"файл {uploaded_file.filename} загружен")
       # read_be_eo_xlsx_file.read_be_eo_xlsx()
-      # read_eo_models_xlsx_file.read_eo_models_xlsx()
+      read_eo_models_xlsx_file.read_eo_models_xlsx()
       flash(message, 'alert-success')
       return redirect(url_for('home.home_view'))
 
