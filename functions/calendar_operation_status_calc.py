@@ -297,8 +297,7 @@ def calendar_operation_status_calc():
       eo_master_temp_out_df = eo_master_temp_out_df.loc[eo_master_temp_out_df['evaluated_operation_finish_date']<=age_date]
       eo_master_temp_out_df = eo_master_temp_out_df.loc[~eo_master_temp_out_df['sap_system_status'].isin(sap_system_status_ban_list)]
       eo_master_temp_out_df = eo_master_temp_out_df.loc[~eo_master_temp_out_df['sap_user_status'].isin(sap_user_status_ban_list)]
-      if qty_out_column_name == 'year_2023_out':
-        eo_master_temp_out_df.to_csv('temp_data/eo_master_temp_out_df_2023_out.csv')
+      
       if len(eo_master_temp_out_df) > 0:
         for row in eo_master_temp_out_df.itertuples():
           eo_code = getattr(row, 'eo_code')
