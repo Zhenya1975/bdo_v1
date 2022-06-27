@@ -44,6 +44,11 @@ def read_date(date_input, eo_code):
     return date_output
 
 def read_update_eo_data_xlsx():
+  """
+  Итерируемся по загруженному файлу uploads/update_eo_data.xlsx \n
+  Проверем есть ли искомая колонка в загруженном файле. \n
+  Если есть, то обновляем значение в соответствующей колонке в мастер данных
+  """
   # with app.app_context():
   # читаем excel с данными из бизнес-единиц. Проверяем - если нет нужного листа с данными, то отдаем ошибку
   update_eo_data = pd.DataFrame()

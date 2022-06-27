@@ -10,6 +10,10 @@ be_data_columns_to_master_columns = be_data_columns_to_master_columns
 
 
 def read_eo_models_xlsx():
+  """
+  Итерируемся по загруженному файлу с моделями. \n
+  Обновляем ранее созданные записи или создаем новые, если не находим в мастер-таблице
+  """
   # with app.app_context():
   model_eo_raw_data = pd.read_excel('uploads/eo_models.xlsx', index_col = False)
   con = sqlite3.connect("database/datab.db")
