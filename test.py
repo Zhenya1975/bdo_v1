@@ -8,6 +8,9 @@ import sqlite3
 from sqlalchemy import create_engine
 import os
 import pytz
+import shortuuid
+
+# print(shortuuid.uuid())
 
 # print(pytz.all_timezones)
 # today_datetime = datetime.now(pytz.timezone('Europe/Moscow'))
@@ -39,11 +42,11 @@ def delete_record():
     # sql = "SELECT * FROM eo_DB JOIN be_DB"
     # sql = "SELECT eo_DB.be_code, models_DB.eo_model_name  FROM eo_DB JOIN models_DB ON eo_DB.eo_model_id = models_DB.eo_model_id"
     cursor = con.cursor()
-    delete_records_sql = "DELETE FROM models_DB WHERE eo_model_id=142;"
+    delete_records_sql = "DELETE FROM models_DB WHERE eo_model_id=37;"
     cursor.execute(delete_records_sql)
     con.commit()
     cursor.close()
-delete_record()    
+# delete_record()    
 
 def delete_eo_records():
   eo_to_delete_df = pd.read_excel('temp_data/delete_eo.xlsx', index_col = False, dtype=str)

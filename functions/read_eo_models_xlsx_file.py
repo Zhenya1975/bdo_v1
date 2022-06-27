@@ -28,7 +28,10 @@ def read_eo_models_xlsx():
         eo_model_record.eo_model_name = eo_model_name
         eo_model_record.eo_category_spec = eo_category_spec
         db.session.commit()
-        
+      else:
+        new_model_record = Models_DB(eo_model_id = eo_model_id, eo_model_name = eo_model_name, eo_category_spec = eo_category_spec)
+        db.session.add(new_model_record)
+        db.session.commit()
       
 
     
