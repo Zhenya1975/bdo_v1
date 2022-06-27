@@ -126,6 +126,7 @@ class Eo_DB(db.Model):
   sap_user_status = db.Column(db.String)
   sap_model_name = db.Column(db.String)
   sap_maker = db.Column(db.String)
+  maker = db.Column(db.String)
   age = db.Column(db.Float)
   age_date = db.Column(db.DateTime)
   age_calc_operation_status = db.Column(db.Integer)

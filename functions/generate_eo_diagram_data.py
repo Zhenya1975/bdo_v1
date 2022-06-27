@@ -30,7 +30,7 @@ def generate_eo_diagram_data():
   models_DB.eo_category_spec, \
   eo_DB.eo_model_id, \
   eo_DB.sap_model_name, \
-  eo_DB.sap_maker, \
+  eo_DB.maker, \
   eo_DB.teh_mesto, \
   eo_DB.gar_no, \
   eo_DB.sap_gar_no, \
@@ -86,7 +86,7 @@ def generate_eo_diagram_data():
     year_first_date = datetime.strptime(year_data['period_start'], '%d.%m.%Y')
     year_last_date = datetime.strptime(year_data['period_end'], '%d.%m.%Y')
 
-    eo_diagram_data_df = master_eo_df.loc[:, ['eo_code', 'be_code', 'head_type', 'be_description', 'eo_class_code', 'eo_class_description', 'eo_category_spec', 'eo_model_name', 'operation_start_date', 'evaluated_operation_finish_date', 'sap_system_status', 'sap_user_status']]
+    eo_diagram_data_df = master_eo_df.loc[:, ['eo_code', 'be_code', 'head_type', 'be_description', 'eo_class_code', 'eo_class_description', 'eo_category_spec', 'maker', 'eo_model_name', 'operation_start_date', 'evaluated_operation_finish_date', 'sap_system_status', 'sap_user_status']]
     
     master_eo_df_temp = master_eo_df.loc[:, ['eo_code', 'operation_start_date', 'evaluated_operation_finish_date', 'sap_system_status', 'sap_user_status']]
     
