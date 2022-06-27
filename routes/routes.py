@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for,
 from models.models import Eo_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
 from extensions import extensions
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, read_be_eo_xlsx_file_v3, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file, read_delete_eo_xlsx_file, read_update_eo_data_xlsx_file
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, read_be_eo_xlsx_file_v3, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file, read_delete_eo_xlsx_file, read_update_eo_data_xlsx_file, generate_eo_diagram_data
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -232,6 +232,14 @@ def download_models_eo():
     return send_file("downloads/model_eo.xlsx", as_attachment=True) 
   return 'not downloaded be_eo_data_template'
 
+
+
+@home.route('/download_calendar_eo_v2_file', methods=['GET', 'POST'])
+def download_calendar_eo_v2_file():
+  if request.method == 'POST': 
+    generate_eo_diagram_data.generate_eo_diagram_data()
+    return send_file("downloads/eo_calendar_data_v2.xlsx", as_attachment=True) 
+  return 'not downloaded be_eo_data_template'
 
 @home.route('/download_calendar_eo_file', methods=['GET', 'POST'])
 def download_calendar_eo_file():

@@ -57,13 +57,21 @@ def read_update_eo_data_xlsx():
     db.session.add(log_data_new_record)
   
     ################################################ чтение загруженного файла ###############################################
-  update_eo_data_df['eo_description'].fillna('plug', inplace = True)
-  update_eo_data_df['be_code'].fillna('plug', inplace = True)
-  update_eo_data_df['gar_no'].fillna('plug', inplace = True)
-  update_eo_data_df['head_type'].fillna('plug', inplace = True)
-  update_eo_data_df['eo_model_id'].fillna(0, inplace = True)
+  if 'eo_description' in update_eo_column_list:
+    update_eo_data_df['eo_description'].fillna('plug', inplace = True)
+  if 'be_code' in update_eo_column_list:
+    update_eo_data_df['be_code'].fillna('plug', inplace = True)
+  if 'eo_class_code' in update_eo_column_list:
+    update_eo_data_df['eo_class_code'].fillna('plug', inplace = True)
+  if 'gar_no' in update_eo_column_list:
+    update_eo_data_df['gar_no'].fillna('plug', inplace = True)
+  if 'head_type' in update_eo_column_list:
+    update_eo_data_df['head_type'].fillna('plug', inplace = True)
+  if 'eo_model_id' in update_eo_column_list:
+    update_eo_data_df['eo_model_id'].fillna(0, inplace = True)
   i=0
   lenght = len(update_eo_data)
+  # print(update_eo_data_df)
   for row in update_eo_data_df.itertuples():
     eo_code = str(getattr(row, 'eo_code'))
     # проверяем, что запись есть
@@ -79,6 +87,11 @@ def read_update_eo_data_xlsx():
         if be_code != 'plug':
           eo_master_data.be_code = be_code
           db.session.commit()
+      if 'eo_class_code' in update_eo_column_list:
+        eo_class_code = getattr(row, 'eo_class_code')
+        if eo_class_code != 'plug':
+          eo_master_data.eo_class_code = eo_class_code
+          db.session.commit()    
       if 'gar_no' in update_eo_column_list:
         gar_no = getattr(row, 'gar_no')
         if gar_no != 'plug':
