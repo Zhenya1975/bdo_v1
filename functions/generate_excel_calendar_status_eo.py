@@ -9,6 +9,10 @@ import sqlite3
 db = extensions.db
 
 def sql_to_eo_calendar_master():
+  """
+  Чтение из базы данных из таблицы ео и eo_calendar_operation_status_DB \n
+  приведение полей дат в дату и сохранение в эксель downloads/calendar_eo.xlsx
+  """
   con = sqlite3.connect("database/datab.db")
   # sql = "SELECT * FROM eo_DB JOIN be_DB"
   sql = "SELECT \

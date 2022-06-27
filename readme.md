@@ -20,7 +20,11 @@ generate_eo_diagram_data.generate_eo_diagram_data():
   - создается выборка с записями, которые вышли их эксплуатации в текущем году. Эта выборка мерджится справа от предыдущей.
   результирующий датафрейм конкатинируется снизу к предыдущему году.
 
-generate_excel_calendar_status_eo
+
+generate_excel_calendar_status_eos.ql_to_eo_calendar_master():
+Чтение из базы данных из таблицы ео и eo_calendar_operation_status_DB 
+приведение полей дат в дату и сохранение в эксель downloads/calendar_eo.xlsx
+
 
 generate_excel_conflicts
 
