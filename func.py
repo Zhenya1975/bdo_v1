@@ -6,4 +6,4 @@ from datetime import datetime
 #   age_calc.age_calc(date)
 
 # calendar_operation_status_calc.calendar_operation_status_calc()
-generate_eo_diagram_data.generate_eo_diagram_data()
+# generate_eo_diagram_data.generate_eo_diagram_data()

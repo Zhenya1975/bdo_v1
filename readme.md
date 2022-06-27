@@ -10,6 +10,8 @@
 
 Функции
 
+
+
 generate_eo_diagram_data.generate_eo_diagram_data():
 Основаная цель - сборка result_diagram_data_df.
 Итерируемся по словарю year_dict.
@@ -29,26 +31,26 @@ generate_excel_calendar_status_eos.ql_to_eo_calendar_master():
 generate_excel_conflicts
 
 generate_excel_master_eo
+Чтение из базы данных из таблицы ео. \n 
+Приведение полей дат в дату и сохранение в эксель downloads/eo_master_data.xlsx
 
 generate_excel_model_eo
 
-import_be_data
-
-import_eo_class_data
-
-import_model_data
-
-import_operation_status
-
-import_sap_eo_data
 
 read_be_eo_xlsx_file_v3
+
 
 read_delete_eo_xlsx_file
 
 read_eo_models_xlsx_file
 
-read_sap_eo_xlsx_file
+read_sap_eo_xlsx_file.read_sap_eo_xlsx():
+Итерируемся по файлу uploads/sap_eo_data.xlsx \n
+  Если в мастер-данных нет записи, то создается новая запись в которую добавляется только eo_code. \n
+  Обновление данных: \n
+   - Проверяем по колонкам есть ли такие колонки. Если есть, то изменяем данные. \n
+   - происходит расчет ожидаемого статуса эксплуатации expected_operation_status = expected_operation_status_code(eo_code_excel, operation_start_date, calculated_operation_finish_date, sap_planned_finish_operation_date, today_datetime)
+
 
 
 read_update_eo_data_xlsx_file.read_update_eo_data_xlsx(): 

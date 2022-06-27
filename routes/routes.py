@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for,
 from models.models import Eo_DB, LogsDB, Eo_data_conflicts, Eo_candidatesDB
 from extensions import extensions
 import os
-from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, read_be_eo_xlsx_file_v3, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file, read_delete_eo_xlsx_file, read_update_eo_data_xlsx_file, generate_eo_diagram_data
+from functions import read_sap_eo_xlsx_file, read_be_eo_xlsx_file_v2, read_be_eo_xlsx_file_v3, generate_excel_master_eo, generate_excel_conflicts, generate_excel_add_candidates, generate_excel_calendar_status_eo, generate_excel_model_eo, read_eo_models_xlsx_file, read_delete_eo_xlsx_file, read_update_eo_data_xlsx_file, generate_eo_diagram_data, eo_data_calculation
 
 
 UPLOAD_FOLDER = '/uploads'
@@ -25,6 +25,19 @@ def home_view():
   return render_template('home.html', eo_data = eo_data, log_data=log_data, number_of_active_conflicts=number_of_active_conflicts, number_of_add_candidates=number_of_add_candidates)
 
 
+
+@home.route('/eo_data_calc', methods=['GET', 'POST'])
+def eo_data_calc():
+  if request.method == 'POST': 
+    
+    eo_data_calculation.eo_data_calculation()
+    message = "Данные пересчитаны"
+    
+
+    flash(message, 'alert-success')
+    return redirect(url_for('home.home_view'))
+    
+  redirect(url_for('home.home_view'))
 
 
 def allowed_file(filename):

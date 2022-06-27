@@ -102,6 +102,14 @@ def read_date(date_input, eo_code):
 
 
 def read_sap_eo_xlsx():
+  """
+  Итерируемся по файлу uploads/sap_eo_data.xlsx \n
+  Если в мастер-данных нет записи, то создается новая запись в которую добавляется только eo_code. \n
+  Обновление данных: \n
+   - Проверяем по колонкам есть ли такие колонки. Если есть, то изменяем данные. \n
+   - происходит расчет ожидаемого статуса эксплуатации expected_operation_status = expected_operation_status_code(eo_code_excel, operation_start_date, calculated_operation_finish_date, sap_planned_finish_operation_date, today_datetime)
+  
+  """
   # with app.app_context():
   sap_eo_raw_data = pd.read_excel('uploads/sap_eo_data.xlsx', index_col = False, dtype=str)
   

@@ -92,8 +92,8 @@ def generate_eo_diagram_data():
     
 
     # выборка в которую попало то что находится в эксплуатации
-    eo_master_temp_df = master_eo_df_temp.loc[master_eo_df_temp['operation_start_date'] < year_last_date] 
-    eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] > year_last_date]
+    eo_master_temp_df = master_eo_df_temp.loc[master_eo_df_temp['operation_start_date'] <= year_last_date] 
+    eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] >= year_last_date]
     eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_system_status'].isin(sap_system_status_ban_list)]
     eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_user_status'].isin(sap_user_status_ban_list)]
     eo_master_temp_df['year'] = year
