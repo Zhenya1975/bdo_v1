@@ -66,6 +66,9 @@ def read_update_eo_data_xlsx():
     update_eo_data_df['eo_description'].fillna('plug', inplace = True)
   if 'be_code' in update_eo_column_list:
     update_eo_data_df['be_code'].fillna('plug', inplace = True)
+  if 'temp_eo_code' in update_eo_column_list:
+    update_eo_data_df['temp_eo_code'].fillna('plug', inplace = True)
+    
   if 'eo_class_code' in update_eo_column_list:
     update_eo_data_df['eo_class_code'].fillna('plug', inplace = True)
   if 'maker' in update_eo_column_list:
@@ -94,6 +97,11 @@ def read_update_eo_data_xlsx():
         if be_code != 'plug':
           eo_master_data.be_code = be_code
           db.session.commit()
+      if 'temp_eo_code' in update_eo_column_list:
+        temp_eo_code = getattr(row, 'temp_eo_code')
+        if temp_eo_code != 'plug':
+          eo_master_data.temp_eo_code = temp_eo_code
+          db.session.commit()    
       if 'eo_class_code' in update_eo_column_list:
         eo_class_code = getattr(row, 'eo_class_code')
         if eo_class_code != 'plug':

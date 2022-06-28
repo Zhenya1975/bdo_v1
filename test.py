@@ -10,6 +10,17 @@ import os
 import pytz
 import shortuuid
 
+def create_short_uuid():
+  result_df = []
+  for i in range(72):
+    temp_dict = {}
+    
+    temp_dict['eo_code'] = shortuuid.uuid()
+    result_df.append(temp_dict)
+  result_df_df = pd.DataFrame(result_df)
+  result_df_df.to_excel('temp_data/result_df.xlsx', index = False) 
+# create_short_uuid()  
+  
 # print(shortuuid.uuid())
 
 # print(pytz.all_timezones)

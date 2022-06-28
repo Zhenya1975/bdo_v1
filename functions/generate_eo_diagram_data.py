@@ -86,17 +86,80 @@ def generate_eo_diagram_data():
     year_first_date = datetime.strptime(year_data['period_start'], '%d.%m.%Y')
     year_last_date = datetime.strptime(year_data['period_end'], '%d.%m.%Y')
 
-    eo_diagram_data_df = master_eo_df.loc[:, ['eo_code', 'be_code', 'head_type', 'be_description', 'eo_class_code', 'eo_class_description', 'eo_category_spec', 'maker', 'eo_model_name', 'operation_start_date', 'evaluated_operation_finish_date', 'sap_system_status', 'sap_user_status']]
+    eo_diagram_data_df = master_eo_df.loc[:, ['eo_code', 'eo_description', 'be_code', 'head_type', 'be_description', 'eo_class_code', 'eo_class_description', 'eo_category_spec', 'maker', 'eo_model_name', 'operation_start_date', 'evaluated_operation_finish_date', 'sap_system_status', 'sap_user_status']]
     
     master_eo_df_temp = master_eo_df.loc[:, ['eo_code', 'operation_start_date', 'evaluated_operation_finish_date', 'sap_system_status', 'sap_user_status']]
+    master_eo_df_temp= master_eo_df_temp.loc[~master_eo_df_temp['sap_system_status'].isin(sap_system_status_ban_list)]
+    master_eo_df_temp = master_eo_df_temp.loc[~master_eo_df_temp['sap_user_status'].isin(sap_user_status_ban_list)]
     
 
     # выборка в которую попало то что находится в эксплуатации
+    # дата начала эксплуатации раньше последнего дня года
     eo_master_temp_df = master_eo_df_temp.loc[master_eo_df_temp['operation_start_date'] <= year_last_date] 
-    eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] >= year_last_date]
-    eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_system_status'].isin(sap_system_status_ban_list)]
-    eo_master_temp_df = eo_master_temp_df.loc[~eo_master_temp_df['sap_user_status'].isin(sap_user_status_ban_list)]
+    # дата завершения больше даты начала года
+    eo_master_temp_df = eo_master_temp_df.loc[eo_master_temp_df['evaluated_operation_finish_date'] >= year_first_date]
     eo_master_temp_df['year'] = year
+    # считаем количество в эксплуатации
+    current_year_qty_variants= ['start_operation_year_first_date_finish_date_year_last_date',
+                               'year_first_date_start_operation_finish_date_year_last_date',
+                                'year_first_date_start_operation_year_last_date_finish_date',
+                                'full_year'
+                               ]
+    full_year_period = (year_last_date - year_first_date).total_seconds()
+    # print(full_year_period, type(full_year_period))
+    for variant in current_year_qty_variants:
+       # если дата начала эксплуатации раньше начала года и дата завершения меньше или равно даты конца года
+      if variant == 'start_operation_year_first_date_finish_date_year_last_date':
+        eo_master_temp_df_1 =  master_eo_df_temp.loc[master_eo_df_temp['operation_start_date'] < year_first_date]
+        eo_master_temp_df_1 = eo_master_temp_df_1.loc[eo_master_temp_df_1['evaluated_operation_finish_date']>=year_first_date]
+        # выборка строк с позициями, которые завершили эксплуатацию в текущем году
+        eo_master_temp_df_finished_in_current_year = eo_master_temp_df_1.loc[eo_master_temp_df_1['evaluated_operation_finish_date'] <= year_last_date]
+        # период эксплуатации в текущем году
+        eo_master_temp_df_finished_in_current_year['operation_period_in_current_year'] = (eo_master_temp_df_finished_in_current_year['evaluated_operation_finish_date'] - year_first_date).astype('timedelta64[s]')
+        # количество в текущем году это отношение фактического периода к полному периоду
+        eo_master_temp_df_finished_in_current_year['qty_by_end_of_year'] = eo_master_temp_df_finished_in_current_year['operation_period_in_current_year'] / full_year_period
+        eo_master_temp_df_finished_in_current_year = eo_master_temp_df_finished_in_current_year.loc[:, ['eo_code', 'qty_by_end_of_year']]
+        # прицепляем получившуюся выборку к исходной
+        eo_diagram_data_df = pd.merge(eo_diagram_data_df, eo_master_temp_df_finished_in_current_year, on='eo_code', how='left')
+      # если дата начала эксплуатации позже первого дня года, но дата финиша раньше последнего дня года
+      elif variant == 'year_first_date_start_operation_finish_date_year_last_date':
+        eo_master_temp_df_1 =  master_eo_df_temp.loc[master_eo_df_temp['operation_start_date'] >= year_first_date]
+        eo_master_temp_df_1 = eo_master_temp_df_1.loc[eo_master_temp_df_1['evaluated_operation_finish_date']>=year_first_date]
+        # выборка строк с позициями, которые завершили эксплуатацию в текущем году
+        eo_master_temp_df_finished_in_current_year = eo_master_temp_df_1.loc[eo_master_temp_df_1['evaluated_operation_finish_date'] <= year_last_date]
+        # период эксплуатации в текущем году
+        eo_master_temp_df_finished_in_current_year['operation_period_in_current_year'] = (eo_master_temp_df_finished_in_current_year['evaluated_operation_finish_date'] - eo_master_temp_df_finished_in_current_year['operation_start_date']).astype('timedelta64[s]')
+        # количество в текущем году это отношение фактического периода к полному периоду
+        eo_master_temp_df_finished_in_current_year['qty_by_end_of_year'] = eo_master_temp_df_finished_in_current_year['operation_period_in_current_year'] / full_year_period
+        eo_master_temp_df_finished_in_current_year = eo_master_temp_df_finished_in_current_year.loc[:, ['eo_code', 'qty_by_end_of_year']]
+        # прицепляем получившуюся выборку к исходной
+        eo_diagram_data_df = pd.merge(eo_diagram_data_df, eo_master_temp_df_finished_in_current_year, on='eo_code', how='left')
+      
+      # если дата начала эксплуатации позже первого дня года, дата финиша позже последнего дня года
+      elif variant == 'year_first_date_start_operation_year_last_date_finish_date':  
+        eo_master_temp_df_1 =  master_eo_df_temp.loc[master_eo_df_temp['operation_start_date'] >= year_first_date]
+        eo_master_temp_df_1 = eo_master_temp_df_1.loc[eo_master_temp_df_1['evaluated_operation_finish_date'] > year_last_date]
+        # период эксплуатации в текущем году
+        eo_master_temp_df_1['operation_period_in_current_year'] = (year_last_date - eo_master_temp_df_1['operation_start_date']).astype('timedelta64[s]')
+        # количество в текущем году это отношение фактического периода к полному периоду
+        eo_master_temp_df_1['qty_by_end_of_year'] = eo_master_temp_df_1['operation_period_in_current_year'] / full_year_period
+        eo_master_temp_df_1 = eo_master_temp_df_1.loc[:, ['eo_code', 'qty_by_end_of_year']]
+        # прицепляем получившуюся выборку к исходной
+        eo_diagram_data_df = pd.merge(eo_diagram_data_df, eo_master_temp_df_1, on='eo_code', how='left')
+      # если эксплуатируется полный год
+      elif variant == 'full_year':
+        eo_master_temp_df_1 =  master_eo_df_temp.loc[master_eo_df_temp['operation_start_date'] < year_first_date]
+        eo_master_temp_df_1 = eo_master_temp_df_1.loc[eo_master_temp_df_1['evaluated_operation_finish_date'] > year_last_date]
+        eo_master_temp_df_1['qty_by_end_of_year'] = 1
+        # прицепляем получившуюся выборку к исходной
+        eo_diagram_data_df = pd.merge(eo_diagram_data_df, eo_master_temp_df_1, on='eo_code', how='left')
+        
+        
+        
+      
+
+
+        
     eo_master_temp_df['qty_by_end_of_year'] = 1
     eo_master_temp_df['age'] = (year_last_date - eo_master_temp_df['operation_start_date']).dt.days / 365.25
     
@@ -107,10 +170,6 @@ def generate_eo_diagram_data():
     # выборка в которой в указанный период было поступление
     eo_master_temp_in_df = master_eo_df.loc[master_eo_df['operation_start_date'] >= year_first_date]
     eo_master_temp_in_df = eo_master_temp_in_df.loc[eo_master_temp_in_df['operation_start_date'] <= year_last_date]
-    
-    eo_master_temp_in_df = eo_master_temp_in_df.loc[~eo_master_temp_in_df['sap_system_status'].isin(sap_system_status_ban_list)]
-    
-    eo_master_temp_in_df = eo_master_temp_in_df.loc[~eo_master_temp_in_df['sap_user_status'].isin(sap_user_status_ban_list)]
     
     eo_master_temp_in_df['qty_in'] = 1
     eo_master_temp_in_df = eo_master_temp_in_df.loc[:, ['eo_code', 'qty_in']]
@@ -123,8 +182,6 @@ def generate_eo_diagram_data():
     # выборка в которой в указанный период было выбытие
     eo_master_temp_out_df = master_eo_df.loc[master_eo_df['evaluated_operation_finish_date'] >= year_first_date] 
     eo_master_temp_out_df = eo_master_temp_out_df.loc[eo_master_temp_out_df['evaluated_operation_finish_date']<=year_last_date]
-    eo_master_temp_out_df = eo_master_temp_out_df.loc[~eo_master_temp_out_df['sap_system_status'].isin(sap_system_status_ban_list)]
-    eo_master_temp_out_df = eo_master_temp_out_df.loc[~eo_master_temp_out_df['sap_user_status'].isin(sap_user_status_ban_list)]
 
     eo_master_temp_out_df['qty_out'] = -1
     
@@ -144,4 +201,6 @@ def generate_eo_diagram_data():
 
     
     # result_diagram_data_df.to_csv('temp_data/result_diagram_data_df.csv')
+  result_diagram_data_df["operation_start_date"] = result_diagram_data_df["operation_start_date"].dt.strftime("%d.%m.%Y")  
+  result_diagram_data_df["evaluated_operation_finish_date"] = result_diagram_data_df["evaluated_operation_finish_date"].dt.strftime("%d.%m.%Y")  
   result_diagram_data_df.to_excel('downloads/eo_calendar_data_v2.xlsx', index = False)
