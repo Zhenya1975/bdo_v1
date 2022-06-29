@@ -116,6 +116,8 @@ def generate_eo_diagram_data():
     indexes = list(eo_master_temp_df_1.index.values)
     eo_master_current_year_df.loc[indexes, ['qty_by_end_of_year']] = eo_master_temp_df_1.loc[indexes, ['qty_by_end_of_year']]
     
+    # временный статус для фильтрации строк, которые участвуют в текущем году
+    eo_master_current_year_df.loc[indexes, ['current_year_operation_status']] = 1
     # возраст
     eo_master_temp_df_1['age'] = (eo_master_temp_df_1['evaluated_operation_finish_date']- eo_master_temp_df_1['operation_start_date']).dt.days / 365.25
     eo_master_current_year_df.loc[indexes, ['age']] = eo_master_temp_df_1.loc[indexes, ['age']]
@@ -131,6 +133,8 @@ def generate_eo_diagram_data():
     eo_master_temp_df_1['qty_by_end_of_year'] = eo_master_temp_df_1['operation_period_in_current_year'] / full_year_period
     indexes = list(eo_master_temp_df_1.index.values)
     eo_master_current_year_df.loc[indexes, ['qty_by_end_of_year']] = eo_master_temp_df_1.loc[indexes, ['qty_by_end_of_year']]
+    # временный статус для фильтрации строк, которые участвуют в текущем году
+    eo_master_current_year_df.loc[indexes, ['current_year_operation_status']] = 1
     # возраст
     eo_master_temp_df_1['age'] = (eo_master_temp_df_1['evaluated_operation_finish_date']- eo_master_temp_df_1['operation_start_date']).dt.days / 365.25
     eo_master_current_year_df.loc[indexes, ['age']] = eo_master_temp_df_1.loc[indexes, ['age']]
@@ -146,6 +150,8 @@ def generate_eo_diagram_data():
     eo_master_temp_df_1['qty_by_end_of_year'] = eo_master_temp_df_1['operation_period_in_current_year'] / full_year_period
     indexes = list(eo_master_temp_df_1.index.values)
     eo_master_current_year_df.loc[indexes, ['qty_by_end_of_year']] = eo_master_temp_df_1.loc[indexes, ['qty_by_end_of_year']]
+    # временный статус для фильтрации строк, которые участвуют в текущем году
+    eo_master_current_year_df.loc[indexes, ['current_year_operation_status']] = 1
     # возраст
     eo_master_temp_df_1['age'] = (year_last_date - eo_master_temp_df_1['operation_start_date']).dt.days / 365.25
     eo_master_current_year_df.loc[indexes, ['age']] = eo_master_temp_df_1.loc[indexes, ['age']]
@@ -156,6 +162,8 @@ def generate_eo_diagram_data():
     eo_master_temp_df_1['qty_by_end_of_year'] = 1
     indexes = list(eo_master_temp_df_1.index.values)
     eo_master_current_year_df.loc[indexes, ['qty_by_end_of_year']] = eo_master_temp_df_1.loc[indexes, ['qty_by_end_of_year']] 
+    # временный статус для фильтрации строк, которые участвуют в текущем году
+    eo_master_current_year_df.loc[indexes, ['current_year_operation_status']] = 1
     # возраст
     eo_master_temp_df_1['age'] = (year_last_date - eo_master_temp_df_1['operation_start_date']).dt.days / 365.25
     eo_master_current_year_df.loc[indexes, ['age']] = eo_master_temp_df_1.loc[indexes, ['age']]
@@ -163,11 +171,10 @@ def generate_eo_diagram_data():
     # заполняем пустые ячейки нулями 
     # eo_master_current_year_df['qty_by_end_of_year'].fillna(0, inplace = True)
 
-    eo_master_current_year_df = eo_master_current_year_df.loc[:, ['eo_code', 'year', 'age', 'qty_by_end_of_year']]
+    eo_master_current_year_df = eo_master_current_year_df.loc[:, ['eo_code', 'age', 'qty_by_end_of_year', 'current_year_operation_status']]
     
     # eo_master_temp_df.astype({"year": int, "qty_by_end_of_year": int})
     eo_diagram_data_df = pd.merge(eo_diagram_data_df, eo_master_current_year_df, on='eo_code', how='left')
-
 
     
     # выборка в которой в указанный период было поступление
@@ -178,10 +185,7 @@ def generate_eo_diagram_data():
     eo_master_temp_in_df = eo_master_temp_in_df.loc[:, ['eo_code', 'qty_in']]
     
     eo_diagram_data_df = pd.merge(eo_diagram_data_df, eo_master_temp_in_df, on='eo_code', how='left')
-    eo_diagram_data_df_temp = eo_diagram_data_df.loc[eo_diagram_data_df['qty_in']==1]
-    indexes = list(eo_diagram_data_df_temp.index.values)
-    eo_diagram_data_df.loc[indexes, ['year']] = year
-
+    
     # выборка в которой в указанный период было выбытие
     eo_master_temp_out_df = master_eo_df.loc[master_eo_df['evaluated_operation_finish_date'] >= year_first_date] 
     eo_master_temp_out_df = eo_master_temp_out_df.loc[eo_master_temp_out_df['evaluated_operation_finish_date']<=year_last_date]
@@ -190,9 +194,10 @@ def generate_eo_diagram_data():
     
     eo_master_temp_out_df = eo_master_temp_out_df.loc[:, ['eo_code', 'qty_out']]
     eo_diagram_data_df = pd.merge(eo_diagram_data_df, eo_master_temp_out_df, on='eo_code', how='left')
-    eo_diagram_data_df_temp = eo_diagram_data_df.loc[eo_diagram_data_df['qty_out']==-1]
-    indexes = list(eo_diagram_data_df_temp.index.values)
+    eo_diagram_data_df_temp_year = eo_diagram_data_df.loc[eo_diagram_data_df['current_year_operation_status']==1]
+    indexes = list(eo_diagram_data_df_temp_year.index.values)
     eo_diagram_data_df.loc[indexes, ['year']] = year
+    
     eo_diagram_data_df['year'].fillna(0, inplace = True)
     eo_diagram_data_df = eo_diagram_data_df.loc[eo_diagram_data_df['year'] !=0]
     eo_diagram_data_df['qty_by_end_of_year'].fillna(0, inplace = True)
