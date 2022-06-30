@@ -40,6 +40,11 @@ def read_date(date_input, eo_code):
 
     
 def eo_data_calculation():
+  """
+  1. Если expected_operation_finish_date не пустое, то в evaluated_operation_finish_date присваивается expected_operation_finish_date.
+  2. Если sap_planned_finish_operation_date не пустое, то в evaluated_operation_finish_date присваивается sap_planned_finish_operation_date
+  3. Если reported_operation_finish_date не пустое, то в evaluated_operation_finish_date присваивается reported_operation_finish_date
+  """
   con = sqlite3.connect("database/datab.db")
   cursor = con.cursor()
   # sql = "SELECT * FROM eo_DB JOIN be_DB"

@@ -110,7 +110,10 @@ class Eo_DB(db.Model):
   eo_class_code = db.Column(db.String, db.ForeignKey('eo_class_DB.eo_class_code'))
   operation_start_date=db.Column(db.DateTime)
   reported_operation_start_date=db.Column(db.DateTime)
-  expected_operation_period_years = db.Column(db.Integer) # расчетый период эксплуатации.
+  expected_operation_period_years = db.Column(db.Float, default = 10) # ожидаемый период эксплуатации.
+  operation_finish_date_sap = db.Column(db.DateTime, default = date_time_plug) # срок завершения эксплуатации из поля в сап
+  operation_finish_date_calc = db.Column(db.DateTime) #срок завершения эксплуатации, расчитанный из ожидаемого периода эксплуатации
+  operation_finish_date_sap_upd = db.Column(db.DateTime) # срок завершения эксплуатации, приведенный из поля в сап и если в поле пусто, то из расчета от ожидаемого срока эксплуатации.
   expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug) # расчетный срок завершения эксплуатации
   
   sap_planned_finish_operation_date = db.Column(db.DateTime) # дата из поля Плановая дата завершения эксплуатации
@@ -118,10 +121,12 @@ class Eo_DB(db.Model):
   expected_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code')) # статус в котором должно находиться оборудование на текущую дату
   expected_operation_status_code_date = db.Column(db.DateTime) # текущая дата снятия отчета в котором должно находиться оборудование
   reported_operation_status = db.Column(db.String)
-  reported_operation_finish_date = db.Column(db.DateTime)
+  reported_operation_finish_date = db.Column(db.DateTime) # срока завершения эксплуатации из файлов, полученных из бизнес-единиц
   reported_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code'))
   reported_operation_status_date = db.Column(db.DateTime)
-  evaluated_operation_finish_date = db.Column(db.DateTime)
+  
+  evaluated_operation_finish_date = db.Column(db.DateTime)  # срок завершения эксплуатации с учетом данных из бизнес-единиц
+  
   sap_system_status = db.Column(db.String)
   sap_user_status = db.Column(db.String)
   sap_model_name = db.Column(db.String)
@@ -131,29 +136,7 @@ class Eo_DB(db.Model):
   age_date = db.Column(db.DateTime)
   age_calc_operation_status = db.Column(db.Integer)
 
-  age_31122022 = db.Column(db.Float)
-  age_date_31122022 = db.Column(db.DateTime)
-  age_31122022_calc_operation_status = db.Column(db.Integer)
-
-  age_31122023 = db.Column(db.Float)
-  age_date_31122023 = db.Column(db.DateTime)
-  age_31122023_calc_operation_status = db.Column(db.Integer)
-
-  age_31122024 = db.Column(db.Float)
-  age_date_31122024 = db.Column(db.DateTime)
-  age_31122024_calc_operation_status = db.Column(db.Integer)
-
-  age_31122025 = db.Column(db.Float)
-  age_date_31122025 = db.Column(db.DateTime)
-  age_31122025_calc_operation_status = db.Column(db.Integer)
-
-  age_31122026 = db.Column(db.Float)
-  age_date_31122026 = db.Column(db.DateTime)
-  age_31122026_calc_operation_status = db.Column(db.Integer)
-
-  age_31122027 = db.Column(db.Float)
-  age_date_31122027 = db.Column(db.DateTime)
-  age_31122027_calc_operation_status = db.Column(db.Integer)
+  
   
   conflict_data = db.relationship('Eo_data_conflicts', backref='conflict_data')
   logs_data = db.relationship('LogsDB', backref='logs_data')

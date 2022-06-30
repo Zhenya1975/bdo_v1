@@ -12,6 +12,7 @@ Flask-Migrate = "^3.1.0"
 pytz = "^2022.1"
 pandas = "^1.4.3"
 openpyxl = "^3.0.10"
+shortuuid = "^1.0.9"
 
 [tool.poetry.dev-dependencies]
 

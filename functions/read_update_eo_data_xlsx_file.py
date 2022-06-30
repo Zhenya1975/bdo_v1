@@ -133,6 +133,13 @@ def read_update_eo_data_xlsx():
         if operation_start_datetime != datetime.strptime('1.1.2199', '%d.%m.%Y'):
           eo_master_data.operation_start_date = operation_start_datetime
           db.session.commit()    
+      if 'expected_operation_period_years' in update_eo_column_list:
+        expected_operation_period_years = getattr(row, 'expected_operation_period_years')
+        if expected_operation_period_years != 0:
+          eo_master_data.expected_operation_period_years = expected_operation_period_years
+          db.session.commit()
+      
+      
       if 'expected_operation_finish_date' in update_eo_column_list:
         expected_operation_finish_date_raw = getattr(row, "expected_operation_finish_date")
         expected_operation_finish_datetime = read_date(expected_operation_finish_date_raw, eo_code)

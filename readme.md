@@ -61,3 +61,11 @@ read_update_eo_data_xlsx_file.read_update_eo_data_xlsx():
 read_eo_models_xlsx_file.read_eo_models_xlsx()
 Итерируемся по загруженному файлу с моделями.
 Обновляем ранее созданные записи или создаем новые, если не находим в мастер-таблице
+
+
+eo_data_calculation():
+  """
+  1. Если expected_operation_finish_date не пустое, то в evaluated_operation_finish_date присваивается expected_operation_finish_date.
+  2. Если sap_planned_finish_operation_date не пустое, то в evaluated_operation_finish_date присваивается sap_planned_finish_operation_date
+  3. Если reported_operation_finish_date не пустое, то в evaluated_operation_finish_date присваивается reported_operation_finish_date
+  """

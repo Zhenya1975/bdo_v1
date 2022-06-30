@@ -104,6 +104,10 @@ def update_records():
 
 # update_records()
 
+
+
+
+
 def update_records():
   with app.app_context():
     con = sqlite3.connect("database/datab.db")
