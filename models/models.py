@@ -111,7 +111,6 @@ class Eo_DB(db.Model):
   operation_start_date=db.Column(db.DateTime)
   reported_operation_start_date=db.Column(db.DateTime)
   expected_operation_period_years = db.Column(db.Float, default = 10) # ожидаемый период эксплуатации.
-  operation_finish_date_sap = db.Column(db.DateTime, default = date_time_plug) # срок завершения эксплуатации из поля в сап
   operation_finish_date_calc = db.Column(db.DateTime) #срок завершения эксплуатации, расчитанный из ожидаемого периода эксплуатации
   operation_finish_date_sap_upd = db.Column(db.DateTime) # срок завершения эксплуатации, приведенный из поля в сап и если в поле пусто, то из расчета от ожидаемого срока эксплуатации.
   expected_operation_finish_date = db.Column(db.DateTime, default = date_time_plug) # расчетный срок завершения эксплуатации

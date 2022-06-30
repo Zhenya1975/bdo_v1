@@ -3,6 +3,7 @@ from extensions import extensions
 from datetime import datetime
 # from app import app
 import sqlite3
+from dateutil.relativedelta import relativedelta
 
 db = extensions.db
 
@@ -60,6 +61,7 @@ def eo_data_calculation():
   eo_DB.head_type, \
   eo_DB.operation_start_date, \
   eo_DB.expected_operation_period_years, \
+  eo_DB.operation_finish_date_calc, \
   eo_DB.expected_operation_finish_date, \
   eo_DB.sap_planned_finish_operation_date, \
   eo_DB.expected_operation_status_code, \
@@ -88,19 +90,35 @@ def eo_data_calculation():
   master_eo_df['sap_system_status'].fillna("plug", inplace = True)
   master_eo_df['sap_user_status'].fillna("plug", inplace = True)
 
+  # обновление значения в поле operation_finish_date_calc - расчетном значении даты завершения от срока службы
+
+  master_eo_df['expected_operation_period_years_timedelta'] = pd.to_timedelta(master_eo_df['expected_operation_period_years']*365.25, unit='D')
+  master_eo_df['operation_finish_date_calc'] = master_eo_df['operation_start_date'] + master_eo_df['expected_operation_period_years_timedelta']
+  # 
   
+  
+  # pd.DateOffset(years=12)
+
+    # indexes = list(eo_master_temp_df_1.index.values)
+    # eo_master_current_year_df.loc[indexes, ['avg_year_qty']] = eo_master_temp_df_1.loc[indexes, ['avg_year_qty']]
   
   for row in master_eo_df.itertuples():
     index_value = getattr(row, 'Index')
     eo_code = getattr(row, "eo_code")
     operation_start_date = getattr(row, "operation_start_date") 
     sap_planned_finish_operation_date = getattr(row, "sap_planned_finish_operation_date") 
+    operation_finish_date_calc = getattr(row, "operation_finish_date_calc")
     expected_operation_finish_date= getattr(row, "expected_operation_finish_date") 
     evaluated_operation_finish_date = getattr(row, "evaluated_operation_finish_date")
     sap_system_status = getattr(row, "sap_system_status")
     sap_user_status = getattr(row, "sap_user_status")
     reported_operation_finish_date = getattr(row, "reported_operation_finish_date")
     # print(eo_code, "reported_operation_finish_date: ", reported_operation_finish_date, "evaluated_operation_finish_date: ", evaluated_operation_finish_date)
+
+    # обновление значения расчетного значения времени выбытия по значению срока службы
+    operation_finish_date_calc_update_sql = f"UPDATE eo_DB SET operation_finish_date_calc='{operation_finish_date_calc}' WHERE eo_code='{eo_code}';"
+    cursor.execute(operation_finish_date_calc_update_sql)
+    con.commit()  
 
     if 'nat' not in str(type(expected_operation_finish_date)):
       evaluated_operation_finish_date = expected_operation_finish_date
