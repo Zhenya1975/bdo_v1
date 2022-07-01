@@ -41,6 +41,7 @@ def sql_to_eo_master():
   eo_DB.sap_system_status, \
   eo_DB.sap_user_status, \
   eo_DB.reported_operation_finish_date, \
+  eo_DB.finish_date_delta, \
   eo_DB.reported_operation_status, \
   eo_DB.reported_operation_status_date, \
   eo_DB.evaluated_operation_finish_date \

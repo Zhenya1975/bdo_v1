@@ -121,6 +121,7 @@ class Eo_DB(db.Model):
   expected_operation_status_code_date = db.Column(db.DateTime) # текущая дата снятия отчета в котором должно находиться оборудование
   reported_operation_status = db.Column(db.String)
   reported_operation_finish_date = db.Column(db.DateTime) # срока завершения эксплуатации из файлов, полученных из бизнес-единиц
+  finish_date_delta = db.Column(db.Float)
   reported_operation_status_code = db.Column(db.String, db.ForeignKey('operation_statusDB.operation_status_code'))
   reported_operation_status_date = db.Column(db.DateTime)
   

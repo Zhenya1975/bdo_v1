@@ -86,11 +86,14 @@ def eo_data_calculation():
   master_eo_df['operation_start_date'] = pd.to_datetime(master_eo_df['operation_start_date'])
   master_eo_df['sap_planned_finish_operation_date'] = pd.to_datetime(master_eo_df['sap_planned_finish_operation_date'])
   master_eo_df['expected_operation_finish_date'] = pd.to_datetime(master_eo_df['expected_operation_finish_date'])
+  
+  master_eo_df['operation_finish_date_sap_upd'] = pd.to_datetime(master_eo_df['operation_finish_date_sap_upd'])
+  
   master_eo_df['evaluated_operation_finish_date'] = pd.to_datetime(master_eo_df['evaluated_operation_finish_date'])
   master_eo_df['reported_operation_finish_date'] = pd.to_datetime(master_eo_df['reported_operation_finish_date'])
   master_eo_df['sap_system_status'].fillna("plug", inplace = True)
   master_eo_df['sap_user_status'].fillna("plug", inplace = True)
-
+  # print('засечка')
   # обновление значения в поле operation_finish_date_calc - расчетном значении даты завершения от срока службы
   master_eo_df['expected_operation_period_years_timedelta'] = pd.to_timedelta(master_eo_df['expected_operation_period_years']*365.25, unit='D')
   master_eo_df['operation_finish_date_calc'] = master_eo_df['operation_start_date'] + master_eo_df['expected_operation_period_years_timedelta']
@@ -104,13 +107,25 @@ def eo_data_calculation():
   # master_eo_df_temp = master_eo_df.loc[master_eo_df['operation_finish_date_sap_upd_temp']==date_time_plug]
   # indexes = list(master_eo_df_temp.index.values)
   # print(master_eo_df.loc[indexes, ['operation_finish_date_calc']])
-  
-  # master_eo_df.loc[indexes, ['operation_finish_date_sap_upd']] = master_eo_df.loc[indexes, ['operation_finish_date_calc']]
-  
-  # master_eo_df.to_csv('temp_data/master_eo_df.csv')
 
+  # master_eo_df.loc[indexes, ['operation_finish_date_sap_upd']] = master_eo_df.loc[indexes, ['operation_finish_date_calc']]
+  # рассчитываем отклонение приведенной даты сап от даты reported date
+  master_eo_df['reported_operation_finish_date'].fillna(date_time_plug, inplace = True)
+  master_eo_df_reported_dates = master_eo_df.loc[master_eo_df['reported_operation_finish_date'] != date_time_plug]
   
+  
+  master_eo_df_reported_dates = master_eo_df_reported_dates.copy()
+  master_eo_df_reported_dates['finish_date_delta'] = (master_eo_df_reported_dates['reported_operation_finish_date'] - master_eo_df_reported_dates['operation_finish_date_sap_upd']).dt.days 
+  indexes = list(master_eo_df_reported_dates.index.values)
+  master_eo_df['finish_date_delta'] = 0
+  master_eo_df.loc[indexes, 'finish_date_delta'] = master_eo_df_reported_dates.loc[indexes, 'finish_date_delta']
+  
+
+  i=0
+  lenght = len(master_eo_df)
   for row in master_eo_df.itertuples():
+    i = i +1
+    print(i, " из ", lenght)
     index_value = getattr(row, 'Index')
     eo_code = getattr(row, "eo_code")
     operation_start_date = getattr(row, "operation_start_date") 
@@ -139,7 +154,10 @@ def eo_data_calculation():
     operation_finish_date_sap_upd_sql = f"UPDATE eo_DB SET operation_finish_date_sap_upd='{operation_finish_date_sap_upd}' WHERE eo_code='{eo_code}';"   
     cursor.execute(operation_finish_date_sap_upd_sql)
     con.commit()    
-      
+    finish_date_delta = getattr(row, "finish_date_delta")
+    finish_date_delta_sql = f"UPDATE eo_DB SET finish_date_delta = {finish_date_delta} WHERE eo_code='{eo_code}'"
+    cursor.execute(finish_date_delta_sql)
+    con.commit() 
 
     if 'nat' not in str(type(expected_operation_finish_date)):
       evaluated_operation_finish_date = expected_operation_finish_date

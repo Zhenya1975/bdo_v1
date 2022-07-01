@@ -187,4 +187,13 @@ def read_be_eo_xlsx():
             infodata_sender_email, 
             infodata_sender_email_date
           )
-          
+        if 'reported_operation_finish_date' in be_eo_column_list:
+          be_data_reported_operation_finish_date_raw = getattr(row, "reported_operation_finish_date")
+          be_data_reported_operation_finish_datetime = read_date(be_data_reported_operation_finish_date_raw, be_data_eo_code)
+          eo_master_data.reported_operation_finish_date = be_data_reported_operation_finish_datetime
+          db.session.commit()  
+
+        if 'operation_status' in be_eo_column_list:
+          operation_status = str(getattr(row, "operation_status"))
+          eo_master_data.reported_operation_status = operation_status
+          db.session.commit()
